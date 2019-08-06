@@ -5,43 +5,16 @@ clear all;
 %% Lattice generation: silicon [110]
 W_B = waitbar(0, 'Preparing the specimen...');
 
-Lattice_Const = [3.8396, 5.4300]; % [a b]
+Lattice_Const = [3.84, 5.43]; % [a b]
 LayerDist = [1.9198, 1.9198]; % distance between each slice
-Cell_Num = [3, 2]; % expand the unit cell by Expan_Nx = 3 and Expan_Ny = 2, adaptive
-CoordShift = Cell_Num / 2 + 1; % center the lattice
+Cell_Num = [6, 4]; % expand the unit cell by Expan_Nx = 3 and Expan_Ny = 2, adaptive
 DistError = 1e-2;
 % Laters: Each column for an atom
 LayerA = [0, 0.5; 0, 0.75];
 LayerB = [0, 0.5; 0.25, 0.5];
-% Expansion:
-LayerA_base = LayerA;
-LayerB_base = LayerB;
-for i = 1: Cell_Num(1) + 1
-    LayerA = [LayerA, [LayerA_base(1, :) + i; LayerA_base(2, :)]];
-    LayerB = [LayerB, [LayerB_base(1, :) + i; LayerB_base(2, :)]];
-end
-LayerA_base = LayerA;
-LayerB_base = LayerB;
-for i = 1: Cell_Num(2) + 1
-    LayerA = [LayerA, [LayerA_base(1, :); LayerA_base(2, :) + i]];
-    LayerB = [LayerB, [LayerB_base(1, :); LayerB_base(2, :) + i]];
-end
-LayerA(1, :) = LayerA(1, :) - CoordShift(1);
-LayerA(2, :) = LayerA(2, :) - CoordShift(2);
-LayerB(1, :) = LayerB(1, :) - CoordShift(1);
-LayerB(2, :) = LayerB(2, :) - CoordShift(2);
-[rowA, columnA] = find((LayerA(1, :) <= Cell_Num(1) / 2 + DistError) & (LayerA(1, :) >= -Cell_Num(1) / 2 - DistError) ...
-                     & (LayerA(2, :) <= Cell_Num(2) / 2 + DistError) & (LayerA(2, :) >= -Cell_Num(2) / 2 - DistError));
-LayerA = LayerA(:,columnA);
-LayerA = (uniquetol(LayerA', DistError, 'ByRows', true))';
-LayerA(1, :) = Lattice_Const(1) * LayerA(1, :);
-LayerA(2, :) = Lattice_Const(2) * LayerA(2, :);
-[rowB, columnB] = find((LayerB(1, :) <= Cell_Num(1) / 2 + DistError) & (LayerB(1, :) >= -Cell_Num(1) / 2 - DistError) ...
-                     & (LayerB(2, :) <= Cell_Num(2) / 2 + DistError) & (LayerB(2, :) >= -Cell_Num(2) / 2 - DistError));
-LayerB = LayerB(:,columnB);
-LayerB = (uniquetol(LayerB', DistError, 'ByRows', true))';
-LayerB(1, :) = Lattice_Const(1) * LayerB(1, :);
-LayerB(2, :) = Lattice_Const(2) * LayerB(2, :);
+% Expansion
+LayerA = SquareLattExpan(LayerA, Lattice_Const, Cell_Num);
+LayerB = SquareLattExpan(LayerB, Lattice_Const, Cell_Num);
 %% basic settings
 % sampling:
 Lx = Cell_Num(1) * Lattice_Const(1);
