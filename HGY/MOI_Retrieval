@@ -1,0 +1,142 @@
+% it is a way in the paper,giving the relationships between COM and MOI
+clc;
+close all;
+clear all;
+%% basic settings
+% sampling:
+Lx = 15; % in Angstrom
+Ly = Lx;
+Nx = 512;
+Ny = 512;
+dx = Lx / Nx;
+dy = Ly / Ny;
+x = -Lx / 2 : dx : Lx / 2 - dx;
+y = -Ly / 2 : dy : Ly / 2 - dy;
+[X, Y] = meshgrid(x, y);
+fx = -1 / (2 * dx) : 1 / Lx : 1 / (2 * dx) - 1 / Lx;
+fy = -1 / (2 * dy) : 1 / Ly : 1 / (2 * dy) - 1 / Ly;
+[Fx, Fy] = meshgrid(fx, fy);
+% STEM settings:
+Params.KeV = 300;
+InterCoeff = InteractionCoefficient(Params.KeV);
+WaveLength = 12.3986 / sqrt((2 * 511.0 + Params.KeV) * Params.KeV);  %wavelength
+WaveNumber = 2 * pi / WaveLength;     %wavenumber
+Params.amax = 23; % Initial value for the aperture size
+Params.Cs = 0;
+Params.df = 0;
+%% Quadrant Example & scan
+R = sqrt(X.^2+Y.^2);
+Table_Potential = -500*R.^2 + 2000*ones(size(R));
+Table_Potential(R>=2) = 0;
+TableTF = exp(InterCoeff*1i*Table_Potential/1000);
+
+% Proj_Pot = ProjectedPotential(Lx, Lx, Nx, Nx, 12, 0, 0);
+% Proj_Pot = ProjectedPotential(Lx, Lx, Nx, Nx,6, -4, 0) + ProjectedPotential(Lx, Lx, Nx, Nx,14, -2, 0) + ProjectedPotential(Lx, Lx, Nx, Nx,29, 0, 0) + ProjectedPotential(Lx, Lx, Nx, Nx,79, 2, 0) + ProjectedPotential(Lx, Lx, Nx, Nx,92, 4, 0);
+% SpecimenTF = exp(InterCoeff*1i* Proj_Pot/1000);
+%% Scanning module
+Scan_N = 32;
+Scan_L = Lx/1.5;
+Scan_d = Scan_L/(Scan_N-1);
+ADF_x = linspace(-Scan_L/2,Scan_L/2,Scan_N);
+ADF_y = linspace(-Scan_L/2,Scan_L/2,Scan_N);
+[ADF_Xmesh, ADF_Ymesh] = meshgrid(ADF_x,ADF_y);
+ADF_FreqX = linspace(-1/(2*Scan_d),1/(2*Scan_d),Scan_N);
+ADF_FreqY = linspace(-1/(2*Scan_d),1/(2*Scan_d),Scan_N);
+[ADF_FreqXmesh,ADF_FreqYmesh] = meshgrid(ADF_FreqX,ADF_FreqY);
+
+TestTF = TableTF ; % Choose transfer function
+Test_Potential = Table_Potential  ; % Choose potential to image and plot
+
+figure;
+subplot(1,2,1);
+imagesc(x,y,Test_Potential);
+colormap('gray');
+axis square;
+xlabel('x (in Angstrom)');ylabel('y (in Angstrom)');
+title('Original Potential');
+subplot(1,2,2);
+plot(x,Test_Potential(Nx/2 +1,:)/1000,'b');
+axis square;
+xlabel('x (in Angstrom）');ylabel('keV');
+title('Original Potential profile');
+
+[EleField_x, EleField_y] = gradient(Test_Potential, dx, dx);
+EleField = sqrt(EleField_x.^2 +EleField_y.^2);
+
+figure;
+subplot(1,2,1);
+imagesc(x, y, EleField);
+colormap('gray');
+axis square; 
+xlabel('x (in Angstrom)');ylabel('y (in Angstrom)');
+title('Original Electric Field');
+subplot(1,2,2);
+plot(x,EleField(Nx/2+1,:));
+axis square;
+xlim([-2 2]);
+xlabel('x (in Angstrom）');ylabel('keV');
+title('Original Electric Field profile');
+
+[Chargedensity_x, Chargedensity_y] = gradient(EleField, dx, dx);
+Chargedensity = sqrt(Chargedensity_x.^2 +Chargedensity_y.^2);
+
+figure;
+subplot(1,2,1);
+imagesc(x, y, Chargedensity);
+colormap('gray');
+axis square; 
+xlabel('x (in Angstrom)');ylabel('y (in Angstrom)');
+title('Original charge density');
+subplot(1,2,2);
+plot(x,Chargedensity(Nx/2 + 1,:));
+axis square;
+xlim([-2 2]);
+xlabel('x (in Angstrom）');ylabel('keV');
+title('Original Charge density profile');
+
+
+COM = zeros(2,Scan_N*Scan_N);
+MOI_X = zeros(Scan_N);
+MOI_Y = zeros(Scan_N);
+Density_X = zeros(Scan_N);
+Density_Y = zeros(Scan_N);
+MOI = zeros(2,Scan_N*Scan_N);
+for i=1:Scan_N
+    yp = ADF_y(i);
+    for j=1:Scan_N
+        xp = ADF_x(j);
+        Probe = ProbeCreate(Params,xp,yp,Lx,Ly,Nx,Ny);
+        Trans_Wave = Probe.*TestTF;
+        Probe_Intensity = ifftshift(fft2(fftshift(Probe.^2)*dx^2));
+        Trans_Wave_Far = ifftshift(fft2(fftshift(Trans_Wave))*dx^2);
+        COM(1,(i-1)*Scan_N+j) = 2*pi*(sum(sum(abs(Trans_Wave_Far.^2).*Fx))); % COM denotes "center of mass"
+        COM(2,(i-1)*Scan_N+j) = 2*pi*(sum(sum(abs(Trans_Wave_Far.^2).*Fy)));
+        MOI_X(i,j) = ifft2(ifftshift(COM(1,(i-1)*Scan_N+j)));
+        MOI_Y(i,j) = ifft2(ifftshift(COM(2,(i-1)*Scan_N+j)));  %MOI denotes "moment of inertia"  k space
+    end
+    disp(i/Scan_N);
+end
+%% Retrieval 
+% Density_X = abs(ifft2(ifftshift(2*pi*fft2(MOI_X)./abs(Probe_Intensity))));
+% Density_Y = abs(ifft2(ifftshift(2*pi*fft2(MOI_Y)./abs(Probe_Intensity))));
+% Density = sqrt(Density_X.^2 +Density_Y.^2);
+% figure
+% imagesc(ADF_x,ADF_y,Density);
+% colormap('gray');
+% axis square;
+% xlabel('x (in Angstrom)');ylabel('y (in Angstrom)');
+% title('MOI Retrieved Density');
+
+MOI_Intensity = sqrt(MOI_X.^2 +MOI_Y.^2);
+figure;
+subplot(1,2,1);
+imagesc(ADF_x,ADF_y,MOI_Intensity);
+colormap('gray');
+axis square;
+xlabel('x (in Angstrom)');ylabel('y (in Angstrom)');
+title('MOI Retrieved CBED');
+subplot(1,2,2);
+plot(ADF_x,MOI_Intensity(Scan_N/2 + 1,:),'b');
+axis square;
+xlabel('x (in Angstrom）');ylabel('keV');
+title('MOI Intensity Profile');
