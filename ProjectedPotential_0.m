@@ -2,8 +2,7 @@ function Proj_Pot = ProjectedPotential_0(Lx, Ly, Nx, Ny, AtomCoordType)
 %ProjectedPotential.m calculates the projected potential of a series of
 %atoms on a slice.
 %   Lx, Ly, Nx, Ny -- sampling parameters;
-%   AtomZ -- atomic numbers of the input atom series;
-%   AtomX, AtomY -- atomic coordinates corresponding to the atomic series;
+%   AtomCoordType -- [x1, ..., xN; y1, ..., yN; z1, ..., zN; Type1, ..., TypeN];
 
 AtomNum = size(AtomCoordType, 2);
 

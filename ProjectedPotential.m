@@ -1,11 +1,11 @@
-function Proj_Pot = ProjectedPotential(Lx, Ly, Nx, Ny, AtomZ, Atom_X, Atom_Y)
+function Proj_Pot = ProjectedPotential(Lx, Ly, Nx, Ny, AtomType, Atom_X, Atom_Y)
 %ProjectedPotential.m calculates the projected potential of a series of
 %atoms on a slice.
 %   Lx, Ly, Nx, Ny -- sampling parameters;
 %   AtomZ -- atomic numbers of the input atom series;
 %   AtomX, AtomY -- atomic coordinates corresponding to the atomic series;
 
-AtomNum = length(AtomZ);
+AtomNum = length(AtomType);
 
 dx = Lx / Nx;
 dy = Ly / Ny;
@@ -28,7 +28,7 @@ Proj_Pot = zeros(size(X));
 for i = 1 : AtomNum
     RHOsq = (X - Atom_X(i)).^2 + (Y - Atom_Y(i)).^2;
     RHOsq(RHOsq < deltaSq) = deltaSq;
-    StartIndex = 3 * (AtomZ(i) - 1) + 1;
+    StartIndex = 3 * (AtomType(i) - 1) + 1;
     A = [Scatt_Fac(StartIndex, 1), Scatt_Fac(StartIndex, 3), Scatt_Fac(StartIndex + 1, 1)];
     B = [Scatt_Fac(StartIndex, 2), Scatt_Fac(StartIndex, 4), Scatt_Fac(StartIndex + 1, 2)];
     C = [Scatt_Fac(StartIndex + 1, 3), Scatt_Fac(StartIndex + 2, 1), Scatt_Fac(StartIndex + 2, 3)];
