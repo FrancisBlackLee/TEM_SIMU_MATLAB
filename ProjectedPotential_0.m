@@ -1,10 +1,11 @@
-function Proj_Pot = ProjectedPotential_0(Lx, Ly, Nx, Ny, AtomCoordType)
+function Proj_Pot = ProjectedPotential_0(Lx, Ly, Nx, Ny, AtomTypeCoord)
 %ProjectedPotential.m calculates the projected potential of a series of
 %atoms on a slice.
 %   Lx, Ly, Nx, Ny -- sampling parameters;
-%   AtomCoordType -- [x1, ..., xN; y1, ..., yN; z1, ..., zN; Type1, ..., TypeN];
+%   AtomTypeCoord -- [Type1, ..., TypeN; x1, ..., xN; y1, ..., yN; z1, ..., zN];
+%   Note that the forth row is required;
 
-AtomNum = size(AtomCoordType, 2);
+AtomNum = size(AtomTypeCoord, 2);
 
 dx = Lx / Nx;
 dy = Ly / Ny;
@@ -25,9 +26,9 @@ Scatt_Fac = load(Pot_txt_name);
 
 Proj_Pot = zeros(size(X));
 for i = 1 : AtomNum
-    AtomX = AtomCoordType(1, i);
-    AtomY = AtomCoordType(2, i);
-    AtomType = AtomCoordType(4, i);
+    AtomX = AtomTypeCoord(2, i);
+    AtomY = AtomTypeCoord(3, i);
+    AtomType = AtomTypeCoord(1, i);
     RHOsq = (X - AtomX).^2 + (Y - AtomY).^2;
     RHOsq(RHOsq < deltaSq) = deltaSq;
     StartIndex = 3 * (AtomType - 1) + 1;

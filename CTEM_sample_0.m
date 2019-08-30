@@ -3,20 +3,17 @@ clc;
 close all;
 clear all;
 %% Lattice generation: silicon [110]
-Lattice_Const = [3.8396, 5.4300]; % [a b]
+LattConst = [3.8396, 5.4300, 0]; % [a b]
 LayerDist = [1.9198, 1.9198]; % distance between each slice
-Cell_Num = [3, 2]; % expand the unit cell by Expan_Nx = 3 and Expan_Ny = 2, adaptive
+CellNum = [3, 2]; % expand the unit cell by Expan_Nx = 3 and Expan_Ny = 2, adaptive
 DistError = 1e-2;
 % Laters: Each column for an atom
-LayerA = [0, 0.5; 0, 0.75];
-LayerB = [0, 0.5; 0.25, 0.5];
-% Expansion
-LayerA = SquareLattExpan(LayerA, Lattice_Const, Cell_Num);
-LayerB = SquareLattExpan(LayerB, Lattice_Const, Cell_Num);
+LayerA = [14, 14; 0, 0.5; 0, 0.75];
+LayerB = [14, 14; 0, 0.5; 0.25, 0.5];
 %% basic settings
 % sampling:
-Lx = Cell_Num(1) * Lattice_Const(1);
-Ly = Cell_Num(2) * Lattice_Const(2);
+Lx = CellNum(1) * LattConst(1);
+Ly = CellNum(2) * LattConst(2);
 Nx = 512;
 Ny = 512;
 dx = Lx / Nx;
@@ -38,9 +35,9 @@ Params.df = 566;
 
 %% Transmission functions
 % Layer A:
-Proj_PotA = ProjectedPotential(Lx, Ly, Nx, Ny, 14 * ones(size(LayerA, 2), 1), LayerA(1, :), LayerA(2, :));
+Proj_PotA = MultiProjPot_conv_0(LayerA, CellNum, LattConst, Lx, Ly, Nx, Ny);
 % Layer B:
-Proj_PotB = ProjectedPotential(Lx, Ly, Nx, Ny, 14 * ones(size(LayerB, 2), 1), LayerB(1, :), LayerB(2, :));
+Proj_PotB = MultiProjPot_conv_0(LayerB, CellNum, LattConst, Lx, Ly, Nx, Ny);
 % test
 figure;
 imagesc(x, y, Proj_PotA);
