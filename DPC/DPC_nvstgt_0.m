@@ -57,12 +57,12 @@ TF_B = BandwidthLimit(TF_B, Lx, Ly, Nx, Ny, 0.67);
 TransFuncs(:, :, 1) = TF_A;
 TransFuncs(:, :, 2) = TF_B;
 %% Scanning module
-WaveFileName = 'D:\Francis. B. Lee\cooperation\Group Cooperation\ZJR\testfile.txt';
-SavePrec = 10;
+SaveDir = 'D:\Francis. B. Lee\cooperation\Group Cooperation\ZJR\WaveFuncs';
+SaveSliceSeries = [1, 3, 7, 8, 9, 15, 19, 20, 21];
 
 Probe = ProbeCreate(Params, 0, 0, Lx, Ly, Nx, Ny);
-Trans_Wave = multislice(Probe, WaveLength, Lx, Ly, TransFuncs, LayerDist, 10, WaveFileName, SavePrec);
-Trans_Wave_Far = ifftshift(fft2(fftshift(Trans_Wave)) * dx * dy);
+TransWave = multislice(Probe, WaveLength, Lx, Ly, TransFuncs, LayerDist, 10, SaveDir, SaveSliceSeries);
+Trans_Wave_Far = ifftshift(fft2(fftshift(TransWave)) * dx * dy);
 DetectInten = log(abs(Trans_Wave_Far.^2));
 % DetectInten = abs(Trans_Wave_Far.^2);
 
@@ -71,18 +71,3 @@ figure;
 imagesc(x, y, DetectInten);
 colormap('gray');
 axis square;
-
-% for StackingNum = 2 : 2 : 100
-%     Probe = ProbeCreate(Params, 0, 0, Lx, Ly, Nx, Ny);
-%     Trans_Wave = multislice(Probe, WaveLength, Lx, Ly, TransFuncs, LayerDist, StackingNum);
-%     Trans_Wave_Far = ifftshift(fft2(fftshift(Trans_Wave)) * dx * dy);
-%     DetectInten = log(abs(Trans_Wave_Far.^2));
-%     % DetectInten = abs(Trans_Wave_Far.^2);
-% 
-%     % Show the detected image:
-%     figure;
-%     imagesc(x, y, DetectInten);
-%     colormap('gray');
-%     axis square;
-%     set(gcf,'units','normalized','outerposition',[0 0 1 1])
-% end
