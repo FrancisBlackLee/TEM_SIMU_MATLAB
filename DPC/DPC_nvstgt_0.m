@@ -4,23 +4,20 @@ clc;
 close all;
 clear all;
 %% Lattice generation: silicon [110]
-Lattice_Const = [3.84, 5.43]; % [a b]
+LattConst = [3.84, 5.43, 0]; % [a b]
 LayerDist = [1.9198, 1.9198]; % distance between each slice
-M = 1;
-Cell_Num = [3 * M, 2 * M]; % expand the unit cell by Expan_Nx = 3M and Expan_Ny = 2M, adaptive integer M
+M = 3;
+CellNum = [3 * M, 2 * M]; % expand the unit cell by Expan_Nx = 3M and Expan_Ny = 2M, adaptive integer M
 DistError = 1e-2;
 % Laters: Each column for an atom
-LayerA = [0, 0.5; 0, 0.75];
-LayerB = [0, 0.5; 0.25, 0.5];
-% Expansion
-LayerA = SquareLattExpan(LayerA, Lattice_Const, Cell_Num);
-LayerB = SquareLattExpan(LayerB, Lattice_Const, Cell_Num);
+LayerA = [14, 14; 0, 0.5; 0, 0.75];
+LayerB = [14, 14; 0, 0.5; 0.25, 0.5];
 %% basic settings
 % sampling:
-Lx = Cell_Num(1) * Lattice_Const(1);
-Ly = Cell_Num(2) * Lattice_Const(2);
-Nx = 256;
-Ny = 256;
+Lx = CellNum(1) * LattConst(1);
+Ly = CellNum(2) * LattConst(2);
+Nx = 512;
+Ny = 512;
 dx = Lx / Nx;
 dy = Ly / Ny;
 x = -Lx / 2 : dx : Lx / 2 - dx;
@@ -34,14 +31,14 @@ Params.KeV = 100;
 InterCoeff = InteractionCoefficient(Params.KeV);
 WaveLength = 12.3986 / sqrt((2 * 511.0 + Params.KeV) * Params.KeV);  %wavelength
 WaveNumber = 2 * pi / WaveLength;     %wavenumber
-Params.amax = 11.43;
-Params.Cs = 1.3;
-Params.df = 850;
+Params.amax = 8;
+Params.Cs = 0;
+Params.df = 0;
 %% Transmission functions
 % Layer A:
-Proj_PotA = ProjectedPotential(Lx, Ly, Nx, Ny, 14 * ones(size(LayerA, 2), 1), LayerA(1, :), LayerA(2, :));
+Proj_PotA = MultiProjPot_conv_0(LayerA, CellNum, LattConst, Lx, Ly, Nx, Ny);
 % Layer B:
-Proj_PotB = ProjectedPotential(Lx, Ly, Nx, Ny, 14 * ones(size(LayerB, 2), 1), LayerB(1, :), LayerB(2, :));
+Proj_PotB = MultiProjPot_conv_0(LayerB, CellNum, LattConst, Lx, Ly, Nx, Ny);
 % test
 % figure;
 % imagesc(x, y, Proj_PotA);
@@ -52,22 +49,37 @@ Proj_PotB = ProjectedPotential(Lx, Ly, Nx, Ny, 14 * ones(size(LayerB, 2), 1), La
 
 TF_A = exp(1i * InterCoeff * Proj_PotA / 1000);
 TF_B = exp(1i * InterCoeff * Proj_PotB / 1000);
-TF_A = BandwidthLimit(TF_A, Lx, Ly, Nx, Ny, 0.67);
-TF_B = BandwidthLimit(TF_B, Lx, Ly, Nx, Ny, 0.67);
+% TF_A = BandwidthLimit(TF_A, Lx, Ly, Nx, Ny, 0.67);
+% TF_B = BandwidthLimit(TF_B, Lx, Ly, Nx, Ny, 0.67);
 TransFuncs(:, :, 1) = TF_A;
 TransFuncs(:, :, 2) = TF_B;
 %% Scanning module
-SaveDir = 'D:\Francis. B. Lee\cooperation\Group Cooperation\ZJR\WaveFuncs';
-SaveSliceSeries = [1, 3, 7, 8, 9, 15, 19, 20, 21];
-
 Probe = ProbeCreate(Params, 0, 0, Lx, Ly, Nx, Ny);
-TransWave = multislice(Probe, WaveLength, Lx, Ly, TransFuncs, LayerDist, 10, SaveDir, SaveSliceSeries);
+TransWave = multislice(Probe, WaveLength, Lx, Ly, TransFuncs, LayerDist, 10);
 Trans_Wave_Far = ifftshift(fft2(fftshift(TransWave)) * dx * dy);
-DetectInten = log(abs(Trans_Wave_Far.^2));
+DetectInten = log10(abs(Trans_Wave_Far.^2));
 % DetectInten = abs(Trans_Wave_Far.^2);
+DetectInten = mat2gray(DetectInten);
+DetectInten = imadjust(DetectInten, [0.2 1], [0 1], 4);
+imshow(DetectInten);
 
-% Show the detected image:
-figure;
-imagesc(x, y, DetectInten);
-colormap('gray');
-axis square;
+% % Show the detected image:
+% figure;
+% imagesc(x, y, DetectInten);
+% colormap('gray');
+% axis square;
+
+% for StackingNum = 2 : 2 : 100
+%     Probe = ProbeCreate(Params, 0, 0, Lx, Ly, Nx, Ny);
+%     Trans_Wave = multislice(Probe, WaveLength, Lx, Ly, TransFuncs, LayerDist, StackingNum);
+%     Trans_Wave_Far = ifftshift(fft2(fftshift(Trans_Wave)) * dx * dy);
+%     DetectInten = log(abs(Trans_Wave_Far.^2));
+%     % DetectInten = abs(Trans_Wave_Far.^2);
+% 
+%     % Show the detected image:
+%     figure;
+%     imagesc(x, y, DetectInten);
+%     colormap('gray');
+%     axis square;
+%     set(gcf,'units','normalized','outerposition',[0 0 1 1])
+% end

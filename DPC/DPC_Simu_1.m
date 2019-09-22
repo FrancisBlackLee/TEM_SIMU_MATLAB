@@ -32,10 +32,11 @@ subplot(1, 2, 2);
 mesh(x, y, Probe_test_Intensity);
 
 %% Table Example
-R = sqrt((X - 0 * ones(size(X))).^2 + (Y - 0 * ones(size(Y))).^2);
-Table_Potential = -1000 * R + 2000 * ones(size(R));
-Table_Potential(R <= 0.5) = 1500;
-Table_Potential(R >= 2) = 0;
+R = sqrt((X - 0).^2 + (Y - 0).^2);
+% Table_Potential = -1000 * R + 2000;
+Table_Potential = 1500 * exp(-0.5 * log(1500) * R.^0.75);
+% Table_Potential(R <= 0.5) = 1500;
+% Table_Potential(R >= 2) = 0;
 TableTF = exp(InterCoeff * 1i * Table_Potential / 1000);
 % TableTF = BandwidthLimit(TableTF,L,L,M,M,0.5);
 
@@ -50,7 +51,7 @@ SpecimenTF = exp(InterCoeff * 1i * Proj_Pot / 1000);   %Proj_ is the projected a
 
 %% Scanning module
 % Scanning parameters:
-Scan_N = 256;
+Scan_N = 64;
 Scan_L = L / 1.5;
 Scan_d = Scan_L / Scan_N;
 ADF_x = -Scan_L / 2 : Scan_d : Scan_L / 2 - Scan_d;
@@ -63,9 +64,9 @@ ADF_FreqY = ADF_FreqX;
 COM = zeros(2, Scan_N * Scan_N);
 Phase_GradX = zeros(Scan_N);
 Phase_GradY = zeros(Scan_N);
-TestTF = SpecimenTF; % Choose transfer function
+TestTF = TableTF; % Choose transfer function
 % Show the images of original potential
-Test_Potential = Proj_Pot; % Choose potential to image and plot
+Test_Potential = Table_Potential; % Choose potential to image and plot
 figure;
 subplot(1, 2, 1);
 imagesc(x, y, Test_Potential / 1000);
@@ -74,7 +75,7 @@ axis square;
 xlabel('x (in Angstrom)'); ylabel('y (in Angstrom)');
 title('Original Potential');
 subplot(1, 2, 2);
-plot(x, Test_Potential(M/2, : ) / 1000, 'b');
+plot(x, Test_Potential(M/2 + 1, : ) / 1000, 'b');
 axis square;
 xlabel('x (in Angstrom)'); ylabel('keV');
 title('Original Potential profile');
@@ -99,41 +100,41 @@ for i = 1 : Scan_N
 end
 delete(W_B);
 
-%% DPC Electric Field Retrieval
-% The original electric field
-[EleField_x, EleField_y] = gradient(Test_Potential, dx, dx);
-Ori_EleField = wasted_temp();
-% Retrieved electric field
-ElectricField = sqrt(Phase_GradX.^2 + Phase_GradY.^2);
+% %% DPC Electric Field Retrieval
+% % The original electric field
+% [EleField_x, EleField_y] = gradient(Test_Potential, dx, dx);
+% Ori_EleField = wasted_temp();
+% % Retrieved electric field
+% ElectricField = sqrt(Phase_GradX.^2 + Phase_GradY.^2);
+% % figure;
+% % imagesc(ADF_x, ADF_y, ElectricField);
+% % colormap('gray');
+% % axis square;
+% % xlabel('x (in Angstrom)');ylabel('y (in Angstrom)');
+% % title('Electric Field');
 % figure;
-% imagesc(ADF_x, ADF_y, ElectricField);
-% colormap('gray');
+% subplot(1, 2, 1);
+% contour(x, y, Test_Potential);
+% hold on;
+% quiver(x, y, -EleField_x, -EleField_y);
+% hold off;
+% axis square; 
+% xlabel('x (in Angstrom)'); ylabel('y (in Angstrom)');
+% title('Original Electric Field');
+% subplot(1, 2, 2);
+% contour(ADF_x, ADF_y, ElectricField);
+% hold on;
+% quiver(ADF_x, ADF_y, -Phase_GradX, -Phase_GradY);
+% hold off;
 % axis square;
-% xlabel('x (in Angstrom)');ylabel('y (in Angstrom)');
-% title('Electric Field');
-figure;
-subplot(1, 2, 1);
-contour(x, y, Test_Potential);
-hold on;
-quiver(x, y, -EleField_x, -EleField_y);
-hold off;
-axis square; 
-xlabel('x (in Angstrom)'); ylabel('y (in Angstrom)');
-title('Original Electric Field');
-subplot(1, 2, 2);
-contour(ADF_x, ADF_y, ElectricField);
-hold on;
-quiver(ADF_x, ADF_y, -Phase_GradX, -Phase_GradY);
-hold off;
-axis square;
-xlabel('x (in Angstrom)'); ylabel('y (in Angstrom)');
-title('Retrived Electric Field');
-figure;
-plot(ADF_x, Ori_EleField(Scan_N/2, :), 'r', ADF_x, ElectricField(Scan_N/2, :), 'b');
-legend('Original', 'Retrieved');
-xlabel('x (Angstrom)');
-ylabel('kV / Ang.');
-title('Electric field');
+% xlabel('x (in Angstrom)'); ylabel('y (in Angstrom)');
+% title('Retrived Electric Field');
+% figure;
+% plot(ADF_x, Ori_EleField(Scan_N/2, :), 'r', ADF_x, ElectricField(Scan_N/2, :), 'b');
+% legend('Original', 'Retrieved');
+% xlabel('x (Angstrom)');
+% ylabel('kV / Ang.');
+% title('Electric field');
 
 %% Retrieve along X and Y respectively
 Retri_PotX_L2R = zeros(size(Phase_GradX));
@@ -155,14 +156,14 @@ Retri_PotX = Retri_PotX_L2R;
 % Retri_PotX = Retri_PotX_R2L;
 
 figure;
-% subplot(1,2,1);
-% imagesc(ADF_x,ADF_y,Retri_PotX);
-% colormap('gray');
-% axis square;
-% xlabel('x (in Angstrom)');ylabel('y (in Angstrom)');
-% title('DPC Retrieved Potential');
-% subplot(1,2,2);
-plot(ADF_x, Retri_PotX(Scan_N / 2, : ), 'b');
+subplot(1, 2, 1);
+imagesc(ADF_x, ADF_y, Retri_PotX);
+colormap('gray');
+axis square;
+xlabel('x (in Angstrom)'); ylabel('y (in Angstrom)');
+title('DPC Retrieved Potential');
+subplot(1, 2, 2);
+plot(ADF_x, Retri_PotX(Scan_N / 2 + 1, : ), 'b');
 axis square;
 xlabel('x (in Angstrom)'); ylabel('keV');
 title('Potential Profile');
