@@ -1,4 +1,4 @@
-function [Lp, slice, SliceDist] = CrystalSlicing_X(L, DistError, Zmax, YN, PlotColor)
+function [slice, SliceDist] = CrystalSlicing_X(L, DistError, Zmax, YN, PlotColor)
 %CrystalSlicing.m slices a given crystal described by the atomic numbers
 %and atomic coordinates.
 %   L -- Crystal matrix, where the first row denotes the atomic types, the
@@ -10,6 +10,7 @@ function [Lp, slice, SliceDist] = CrystalSlicing_X(L, DistError, Zmax, YN, PlotC
 %   YN -- whether to show each slice: 1 --yes, 0 --no.
 %   NOTE: X denotes an experimental version!
 
+AtomNum = size(L, 2);
 [Z, Order] = sort(L(5,:));
 Lp = L(:,Order);
 PlotColor = PlotColor(Order);
@@ -35,7 +36,20 @@ for i = 1 : length(SliceInfo) - 1
     SliceDist(i) = Lp(5, n + 1) - Lp(5, n);
     n = n + SliceInfo(i + 1);
 end
-SliceDist(i + 1) = Zmax - sum(SliceDist(1 : i));
+if Zmax - sum(SliceDist(1 : i)) >= DistError
+    SliceDist(i + 1) = Zmax - sum(SliceDist(1 : i));
+else
+    SliceDist(i) = SliceDist(i) + Zmax - sum(SliceDist(1 : i));
+    slice{i+1}(5, : ) = Z(1);
+    Lp(5, AtomNum - SliceInfo(i + 1) + 1 : AtomNum) = Lp(5, 1);
+    Lp = [Lp( : , AtomNum - SliceInfo(i + 1) + 1 : AtomNum), Lp( : , 1 : AtomNum - SliceInfo(i + 1))];
+    PlotColor = [PlotColor(AtomNum - SliceInfo(i + 1) + 1 : AtomNum), PlotColor(1 : AtomNum - SliceInfo(i + 1))];
+    slice{1} = [slice{1}, slice{i+1}];
+    slice(i + 1) = [];
+    SliceDist(i + 1) = [];
+    SliceInfo(1) = SliceInfo(1) + SliceInfo(i + 1);
+    SliceInfo(i + 1) = [];
+end
 % Show the slices
 if YN == 1
     n = 1;
