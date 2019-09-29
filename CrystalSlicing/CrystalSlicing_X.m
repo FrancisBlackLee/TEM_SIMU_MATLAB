@@ -60,7 +60,7 @@ if YN == 1
             if Lp(1,j)~=0
                 % No more than 8 types of color
                 Colors = ['r', 'g', 'b', 'y', 'm', 'c', 'w', 'k'];
-                scatter(Lp(3, j), Lp(4, j), 'o', Colors(PlotColor(j)));
+                scatter(Lp(3, j), Lp(4, j), 'o', Colors(PlotColor(j)), 'filled');
             end
         end
         axis([min(Lp(3,:)) max(Lp(3,:)) min(Lp(4,:)) max(Lp(4,:))]);
