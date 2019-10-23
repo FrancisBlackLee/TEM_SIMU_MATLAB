@@ -13,7 +13,7 @@ x = -Lx / 2 : dx : Lx / 2 - dx;
 y = -Ly / 2 : dy : Ly / 2 - dy;
 [X, Y] = meshgrid(x, y);
 % delta = 0.1 * dx;
-deltaSq = dx * dx + dy * dy;
+deltaSq = 0.5 * (dx * dx + dy * dy);
 
 a = 0.529; % Bohr radius in angstrom
 e = 14.4; % elemental charge in volt - angstrom

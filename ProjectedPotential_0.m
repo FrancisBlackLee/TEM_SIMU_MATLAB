@@ -1,11 +1,10 @@
-function Proj_Pot = ProjectedPotential_0(Lx, Ly, Nx, Ny, AtomTypeCoord)
+function Proj_Pot = ProjectedPotential_0(Lx, Ly, Nx, Ny, AtomCoordType)
 %ProjectedPotential.m calculates the projected potential of a series of
 %atoms on a slice.
 %   Lx, Ly, Nx, Ny -- sampling parameters;
-%   AtomTypeCoord -- [Type1, ..., TypeN; x1, ..., xN; y1, ..., yN; z1, ..., zN];
-%   Note that the forth row is required;
+%   AtomCoordType -- [x1, ..., xN; y1, ..., yN; z1, ..., zN; Type1, ..., TypeN];
 
-AtomNum = size(AtomTypeCoord, 2);
+AtomNum = size(AtomCoordType, 2);
 
 dx = Lx / Nx;
 dy = Ly / Ny;
@@ -13,7 +12,7 @@ x = -Lx / 2 : dx : Lx / 2 - dx;
 y = -Ly / 2 : dy : Ly / 2 - dy;
 [X, Y] = meshgrid(x, y);
 % delta = 0.1 * dx;
-deltaSq = dx * dx + dy * dy;
+deltaSq = 0.5 * (dx * dx + dy * dy);
 
 a = 0.529; % Bohr radius in angstrom
 e = 14.4; % elemental charge in volt - angstrom
@@ -26,9 +25,9 @@ Scatt_Fac = load(Pot_txt_name);
 
 Proj_Pot = zeros(size(X));
 for i = 1 : AtomNum
-    AtomX = AtomTypeCoord(2, i);
-    AtomY = AtomTypeCoord(3, i);
-    AtomType = AtomTypeCoord(1, i);
+    AtomX = AtomCoordType(1, i);
+    AtomY = AtomCoordType(2, i);
+    AtomType = AtomCoordType(4, i);
     RHOsq = (X - AtomX).^2 + (Y - AtomY).^2;
     RHOsq(RHOsq < deltaSq) = deltaSq;
     StartIndex = 3 * (AtomType - 1) + 1;
