@@ -2,6 +2,11 @@
 clc;
 close all;
 clear all;
+%       Aberr{1} = [C10, C12];
+%       Aberr{2} = [C21, C23];
+%       Aberr{3} = [C30, C32, C34];
+%       Aberr{4} = [C41, C43, C45];
+%       Aberr{5} = [C50, C52, C54, C56];
 %% Parameter setting:
 % unit of aberrations is angstrom
 Aberr{1} = [0, 0];
@@ -20,7 +25,7 @@ y = -Ly / 2 : dy : Ly / 2 - dy;
 fx = -1 / (2 * dx) : 1 / Lx : 1 / (2 * dx) - 1 / Lx;
 fy = -1 / (2 * dy) : 1 / Ly : 1 / (2 * dy) - 1 / Ly;
 
-KeV = 200;
+KeV = 300;
 WavLen = 12.3986 / sqrt((2 * 511.0 + KeV) * KeV);  %wavelength
 
 PhaseError = MultiAberrPhaseError_X(Aberr, WavLen, Lx, Ly, Nx, Ny);
