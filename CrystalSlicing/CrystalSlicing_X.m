@@ -1,72 +1,97 @@
-function [slice, SliceDist] = CrystalSlicing_X(L, DistError, Zmax, YN, PlotColor)
-%CrystalSlicing.m slices a given crystal described by the atomic numbers
+function [slice, SliceDist, ExtraSlice] = CrystalSlicing_X(StdLatt, ThermoLatt, DistError, zMax, YN, PlotColor)
+%CrystalSlicing_X.m slices a given crystal described by the atomic numbers
 %and atomic coordinates.
-%   L -- Crystal matrix, where the first row denotes the atomic types, the
-%       second row denotes the fractional concentrations and the third to
-%       the fifth rows denote the atomic coordinates, whether fractional or
-%       orthogonal;
+%   StdLatt -- standard lattice matrix (without thermo-displacements), uses
+%       the most recently accepted crystal info matrix format: [T; P; X; Y;
+%       Z], T: atomic types (atomic numbers); P: elemental proportion; X,
+%       Y and Z: orthogonal atomic coordinates.
+%   ThermoLatt -- lattice with thermo-displacements, adopt the same format
+%       of StdLatt;
 %   DistError -- the largest error distance to judge whether atoms of
 %       different heights be rearranged to one slice;
 %   YN -- whether to show each slice: 1 --yes, 0 --no.
+%   PlotColor -- colors for each type of atom;
 %   NOTE: X denotes an experimental version!
+%   Current target: lattice with thermo-displacements.
 
-AtomNum = size(L, 2);
-[Z, Order] = sort(L(5,:));
-Lp = L(:,Order);
-PlotColor = PlotColor(Order);
-SliceInfo = 1;
-n = 1;
-slice{n} = Lp( : , 1);
-Slice_Z = Z(1);
-for i = 2:length(Z)
-    if abs(Z(i)-Slice_Z) >= DistError
-        SliceInfo = [SliceInfo 1];
-        n = n + 1;
-        slice{n} = Lp( : , i);
-        Slice_Z = Z(i);
+[zStd, zOrder] = sort(StdLatt(5, : ));
+StdLatt = StdLatt( : , zOrder);
+ThermoLatt = ThermoLatt( : , zOrder);
+PlotColor = PlotColor(zOrder);
+
+SliceNum = 1;
+slice{SliceNum} = ThermoLatt( : , 1);
+color{SliceNum} = PlotColor(1);
+TempZ = zStd(1);
+for zIdx = 2 : length(zStd)
+    if abs(zStd(zIdx) - TempZ) >= DistError
+        SliceDist(SliceNum) = abs(zStd(zIdx) - TempZ);
+        SliceNum = SliceNum + 1;
+        TempZ = zStd(zIdx);
+        ThermoLatt(5, zIdx) = TempZ;
+        slice{SliceNum} = ThermoLatt( : , zIdx);
+        color{SliceNum} = PlotColor(zIdx);
     else
-        SliceInfo(n) = SliceInfo(n) + 1;
-        Lp(5, i) = Slice_Z;
-        slice{n} = [slice{n}, Lp( : , i)];
+        ThermoLatt(5, zIdx) = TempZ;
+        slice{SliceNum} = [slice{SliceNum}, ThermoLatt( : , zIdx)];
+        color{SliceNum} = [color{SliceNum}, PlotColor(zIdx)];
     end
 end
-SliceDist = zeros(size(SliceInfo));
-n = SliceInfo(1);
-for i = 1 : length(SliceInfo) - 1
-    SliceDist(i) = Lp(5, n + 1) - Lp(5, n);
-    n = n + SliceInfo(i + 1);
-end
-if Zmax - sum(SliceDist(1 : i)) >= DistError
-    SliceDist(i + 1) = Zmax - sum(SliceDist(1 : i));
+% determine whether the last slice should be preserved, deleted or counted
+% as the first slice:
+if zMax - sum(SliceDist) >= DistError
+    SliceDist(SliceNum) = zMax - sum(SliceDist);
+    ExtraSlice = 0;
 else
-    SliceDist(i) = SliceDist(i) + Zmax - sum(SliceDist(1 : i));
-    slice{i+1}(5, : ) = Z(1);
-    Lp(5, AtomNum - SliceInfo(i + 1) + 1 : AtomNum) = Lp(5, 1);
-    Lp = [Lp( : , AtomNum - SliceInfo(i + 1) + 1 : AtomNum), Lp( : , 1 : AtomNum - SliceInfo(i + 1))];
-    PlotColor = [PlotColor(AtomNum - SliceInfo(i + 1) + 1 : AtomNum), PlotColor(1 : AtomNum - SliceInfo(i + 1))];
-    slice{1} = [slice{1}, slice{i+1}];
-    slice(i + 1) = [];
-    SliceDist(i + 1) = [];
-    SliceInfo(1) = SliceInfo(1) + SliceInfo(i + 1);
-    SliceInfo(i + 1) = [];
-end
-% Show the slices
-if YN == 1
-    n = 1;
-    for i = 1:length(SliceInfo)
-        figure;
-        hold on;
-        for j = n:n+SliceInfo(i)-1
-            if Lp(1,j)~=0
-                % No more than 8 types of color
-                Colors = ['r', 'g', 'b', 'y', 'm', 'c', 'w', 'k'];
-                scatter(Lp(3, j), Lp(4, j), 'o', Colors(PlotColor(j)), 'filled');
+    % rearrange the first slice and last slice by ascending order of x,
+    % then y, so that whether the last slice is identical to the first
+    % slice could be determined
+    IdMinDist = 1e-2;
+    IdCrit = 0;
+    for TopIdx = 1 : size(slice{1}, 2)
+        for BotIdx = 1 : size(slice{SliceNum}, 2)
+            TempDist = sqrt(sum((slice{1}(3:4, TopIdx) - slice{SliceNum}(3:4, BotIdx)).^2));
+            if (TempDist <= IdMinDist) && (slice{1}(1, TopIdx) == slice{4}(1, BotIdx))
+                IdCrit = 1;
+                break;
             end
         end
-        axis([min(Lp(3,:)) max(Lp(3,:)) min(Lp(4,:)) max(Lp(4,:))]);
+        if IdCrit == 1
+            break;
+        end
+    end
+    if IdCrit == 1
+        ExtraSlice = slice{SliceNum};
+        SliceDist(SliceNum - 1) = SliceDist(SliceNum - 1) + zMax - sum(SliceDist);
+        slice(SliceNum) = [];
+        color(SliceNum) = [];
+        SliceNum = SliceNum - 1;
+    else
+        ExtraSlice = 0;
+        SliceDist(SliceNum - 1) = SliceDist(SliceNum - 1) + zMax - sum(SliceDist);
+        slice{SliceNum}(5, : ) = zStd(1);
+        slice{1} = [slice{1}, slice{SliceNum}];
+        color{1} = [color{1}, color{SliceNum}];
+        slice(SliceNum) = [];
+        color(SliceNum) = [];
+        SliceNum = SliceNum - 1;
+    end
+end
+xmin = min(StdLatt(3, : )) - 1;
+xmax = max(StdLatt(3, : )) + 1;
+ymin = min(StdLatt(4, : )) - 1;
+ymax = max(StdLatt(4, : )) + 1;
+if YN == 1
+    for SliceIdx = 1 : SliceNum
+        ColorList = ['r', 'g', 'b', 'y', 'm', 'c', 'w', 'k'];
+        figure;
+        hold on;
+        for AtomIdx = 1 : size(slice{SliceIdx}, 2)
+            scatter(slice{SliceIdx}(3, AtomIdx), slice{SliceIdx}(4, AtomIdx), 'o', ColorList(color{SliceIdx}(AtomIdx)));
+        end
+        axis([xmin xmax ymin ymax]);
         axis equal;
-        title(['z= ' num2str(Z(n))]);
-        n=n+SliceInfo(i);
+        title(['slice ', num2str(SliceIdx)]);
     end
 end
 
