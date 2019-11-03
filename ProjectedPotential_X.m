@@ -1,4 +1,4 @@
-function Proj_Pot = ProjectedPotential_1(Lx, Ly, Nx, Ny, CrysMat)
+function Proj_Pot = ProjectedPotential_X(Lx, Ly, Nx, Ny, CrysMat, deltaSq)
 %ProjectedPotential.m calculates the projected potential of a series of
 %atoms on a slice.
 %   Lx, Ly, Nx, Ny -- sampling parameters;
@@ -7,6 +7,8 @@ function Proj_Pot = ProjectedPotential_1(Lx, Ly, Nx, Ny, CrysMat)
 %       ranging from 1 to 103; P denotes the proportion of the elemnetal
 %       concentration; third to fifth row are the atomic coordinates,
 %       whether fractional or orthogonal;
+%   deltaSq -- criterion to remove the singularity induced by coord 0.
+% X denotes an experimental version.
 
 AtomNum = size(CrysMat, 2);
 
@@ -15,7 +17,6 @@ dy = Ly / Ny;
 x = -Lx / 2 : dx : Lx / 2 - dx;
 y = -Ly / 2 : dy : Ly / 2 - dy;
 [X, Y] = meshgrid(x, y);
-deltaSq = 0.5 * (dx * dx + dy * dy);
 
 a = 0.529; % Bohr radius in angstrom
 e = 14.4; % elemental charge in volt - angstrom
@@ -47,4 +48,5 @@ end
 Proj_Pot = a * e * Proj_Pot;
 
 end
+
 
