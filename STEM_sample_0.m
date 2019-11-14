@@ -85,7 +85,7 @@ for i=1:Scan_Ny
         DetectInten = abs(Trans_Wave_Far.^2).*detector;
         STEM_IMAGE(i,j) = sum(sum(DetectInten));
         CurrentNum = (i - 1) * Scan_Nx + j;
-        imagesc(ADF_x, -ADF_y, STEM_IMAGE);
+        imagesc(ADF_x, ADF_y, STEM_IMAGE);
         map = colormap(gray);
         axis square;
         title('Example');
