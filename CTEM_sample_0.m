@@ -55,7 +55,7 @@ TransFuncs(:, :, 2) = TF_B;
 
 %% BF-CTEM
 IncidentWave = ones(Ny, Nx);
-TransWave = multislice(IncidentWave, WaveLength, Lx, Ly, TransFuncs, LayerDist, 20);
+TransWave = multislice(IncidentWave, WaveLength, Lx, Ly, TransFuncs, LayerDist, 200);
 ReciTransWave = fft2(fftshift(TransWave));
 ObjLens = fftshift(AberrationFunction(Params, Lx, Ly, Nx, Ny));
 ReciTFWave = ReciTransWave.*ObjLens;
