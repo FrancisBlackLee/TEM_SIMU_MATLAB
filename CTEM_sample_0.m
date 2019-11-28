@@ -12,8 +12,8 @@ LayerA = [14, 14; 0, 0.5; 0, 0.75];
 LayerB = [14, 14; 0, 0.5; 0.25, 0.5];
 %% basic settings
 % sampling:
-Lx = CellNum(1) * LattConst(1);
-Ly = CellNum(2) * LattConst(2);
+Lx = 2 * CellNum(1) * LattConst(1);
+Ly = 2 * CellNum(2) * LattConst(2);
 Nx = 512;
 Ny = 512;
 dx = Lx / Nx;
