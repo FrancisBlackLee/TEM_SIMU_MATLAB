@@ -16,18 +16,20 @@
 
 %   Email: warner323@outllok.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [MeanDisplace] = ThermoDisplace_0(MassNum, DebyeTemp, Temp)
-%ThermoDisplace_0.m calculates the standard deviation of
-%thermo-displacement using Einstein model.
-%   Input:
-%       MassNum -- mass number, i.e. for carbon is 12.01;
-%       DebyeTemp -- Debye temperature (in Kelvin);
-%       Temp -- simulation temperature;
-%   Output:
-%       MeanDisplace -- standard deviation of the thermo-displacement (in
-%       Angstrom);
+function [PropKernel] = FresnelPropKernel_X(Lx, Ly, Nx, Ny, WavLen, PropDist)
+%FresnelPropKernel_X.m computes the Fresnel propagation kernel.
+%   Lx, Ly -- sampling side length;
+%   Nx, Ny -- sampling number;
+%   WavLen -- wavelength;
+%   PropDist -- propagation distance
+% Note: X denotes an experimental version!
 
-MeanDisplace = sqrt(144.38 * Temp ./ (MassNum .* DebyeTemp.^2));
+dx = Lx / Nx;
+dy = Ly / Ny;
+fx = -1 / (2 * dx) : 1 / Lx : 1 / (2 * dx) - 1 / Lx;
+fy = -1 / (2 * dy) : 1 / Ly : 1 / (2 * dy) - 1 / Ly;
+[FX, FY] = meshgrid(fx, fy);
+PropKernel = exp(-1i * pi * WavLen * PropDist * (FX.^2 + FY.^2));
 
 end
 

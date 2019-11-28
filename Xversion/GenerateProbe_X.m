@@ -16,18 +16,23 @@
 
 %   Email: warner323@outllok.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [MeanDisplace] = ThermoDisplace_0(MassNum, DebyeTemp, Temp)
-%ThermoDisplace_0.m calculates the standard deviation of
-%thermo-displacement using Einstein model.
-%   Input:
-%       MassNum -- mass number, i.e. for carbon is 12.01;
-%       DebyeTemp -- Debye temperature (in Kelvin);
-%       Temp -- simulation temperature;
-%   Output:
-%       MeanDisplace -- standard deviation of the thermo-displacement (in
-%       Angstrom);
+function [probe] = GenerateProbe_X(OTF, xp, yp, Lx, Ly, Nx, Ny)
+%GenerateProbe_X.m generates an electron probe.
+%   OTF -- prepared objective transfer function in reciprocal space;
+%   Lx, Ly, Nx, Ny -- sampling parameters, L denotes side length and N the
+%       sampling number in real space;
+%   xp, yp -- probe position in real space;
+% Note: X denotes an experimental version!
 
-MeanDisplace = sqrt(144.38 * Temp ./ (MassNum .* DebyeTemp.^2));
+dx = Lx / Nx;
+dy = Ly / Ny;
+fx = -1 / (2 * dx) : 1 / Lx : 1 / (2 * dx) - 1 / Lx;
+fy = -1 / (2 * dy) : 1 / Ly : 1 / (2 * dy) - 1 / Ly;
+[FX, FY] = meshgrid(fx, fy);
+probe = ifftshift(ifft2(fftshift(OTF .* exp(-1i * 2 * pi * (FX * xp + FY * yp)))));
+
+NormCoeff = sqrt(sum(sum(abs(probe.^2))) * dx * dy);
+probe = probe / NormCoeff;
 
 end
 

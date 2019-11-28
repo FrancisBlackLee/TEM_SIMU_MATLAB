@@ -16,18 +16,22 @@
 
 %   Email: warner323@outllok.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [MeanDisplace] = ThermoDisplace_0(MassNum, DebyeTemp, Temp)
-%ThermoDisplace_0.m calculates the standard deviation of
-%thermo-displacement using Einstein model.
-%   Input:
-%       MassNum -- mass number, i.e. for carbon is 12.01;
-%       DebyeTemp -- Debye temperature (in Kelvin);
-%       Temp -- simulation temperature;
-%   Output:
-%       MeanDisplace -- standard deviation of the thermo-displacement (in
-%       Angstrom);
+function [Aperture] = CircApert_X(Lx, Ly, Nx, Ny, WavLen, NA)
+%CircApert_X.m generates a circular aperture in reciprocal space.
+%   Lx, Ly, Nx, Ny -- sampling parameters, L denotes side length and N the
+%       sampling number in real space;
+%   WavLen -- wavelength;
+%   NA -- numerical aperture in mrad;
+% Note: X denotes an experimental version!
 
-MeanDisplace = sqrt(144.38 * Temp ./ (MassNum .* DebyeTemp.^2));
+dx = Lx / Nx;
+dy = Ly / Ny;
+fx = -1 / (2 * dx) : 1 / Lx : 1 / (2 * dx) - 1 / Lx;
+fy = -1 / (2 * dy) : 1 / Ly : 1 / (2 * dy) - 1 / Ly;
+[FX, FY] = meshgrid(fx, fy);
+FreqSqu = FX.^2 + FY.^2;
+
+Aperture = (FreqSqu < (NA * 1e-3 / WavLen)^2);
 
 end
 

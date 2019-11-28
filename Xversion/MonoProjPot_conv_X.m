@@ -16,14 +16,16 @@
 
 %   Email: warner323@outllok.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [ProjPot] = MonoProjPot_conv_0(AtomType, ScaleCoord, CellNum, LattConst, Lx, Ly, Nx, Ny)
+function [ProjPot] = MonoProjPot_conv_X(AtomType, EleProp, ScaleCoord, CellNum, LattConst, Lx, Ly, Nx, Ny)
 %MonoProjPot_conv_0.m calculates the projected potential for one type of
-%atom, more comprehensive function to be released soon.
+%atom.
+%   EleProp -- elemental proportion;
 %   ScaleCoord -- scaled planar coordinates, syntax: [ScaleX1,..., ScaleXN;
 %       ScaleY1, ScaleYN];
 %   CellNum -- number of unit cells to be included, sytax: [CellNumX, CellNumY];
 %   LattConst -- lattice constants, syntax: [a, b];
 %   Lx, Ly, Nx, Ny -- sampling parameters;
+% Note: X denotes an experimental version!
 
 AtomNum = size(ScaleCoord, 2);
 SingPot_fft = fft2(fftshift(ProjectedPotential(Lx, Ly, Nx, Ny, AtomType, 0, 0)));
@@ -37,12 +39,12 @@ fy = -1 / (2 * dy) : 1 / Ly : 1 / (2 * dy) - 1 / Ly;
 Kernel = 0;
 ScaleXshift = CellNum(1) / 2;
 ScaleYshift = CellNum(2) / 2;
-for Atom_Idx = 1 : AtomNum
+for AtomIdx = 1 : AtomNum
     for Cellx_Idx = 0 : CellNum(1) - 1
-        CoordX = LattConst(1) * (ScaleCoord(1, Atom_Idx) + Cellx_Idx - ScaleXshift);
+        CoordX = LattConst(1) * (ScaleCoord(1, AtomIdx) + Cellx_Idx - ScaleXshift);
         for Celly_Idx = 0 : CellNum(2) - 1
-            CoordY = LattConst(2) * (ScaleCoord(2, Atom_Idx) + Celly_Idx - ScaleYshift);
-            Kernel = Kernel + exp(-1i * 2 * pi *(Fx * CoordX + Fy * CoordY));
+            CoordY = LattConst(2) * (ScaleCoord(2, AtomIdx) + Celly_Idx - ScaleYshift);
+            Kernel = Kernel + EleProp(AtomIdx) * exp(-1i * 2 * pi *(Fx * CoordX + Fy * CoordY));
         end
     end
 end

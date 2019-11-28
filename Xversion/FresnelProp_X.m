@@ -16,18 +16,19 @@
 
 %   Email: warner323@outllok.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [MeanDisplace] = ThermoDisplace_0(MassNum, DebyeTemp, Temp)
-%ThermoDisplace_0.m calculates the standard deviation of
-%thermo-displacement using Einstein model.
-%   Input:
-%       MassNum -- mass number, i.e. for carbon is 12.01;
-%       DebyeTemp -- Debye temperature (in Kelvin);
-%       Temp -- simulation temperature;
-%   Output:
-%       MeanDisplace -- standard deviation of the thermo-displacement (in
-%       Angstrom);
+function [shifted_u2] = FresnelProp_X(shifted_u1, shifted_PropKernel)
+%FresnelProp_X.m computes Fresnel propagation with input wave and prop
+%kernel.
+%   shifted_u1 -- fftshifted incident wave;
+%   shifted_PropKernel -- fftshifted propagation kernel in Fourier space,
+%       corresponding to the wave propagation theory, not restricted to
+%       Fresnel propagation.
+%   shifted_u2 -- fftshifted exit wave.
+% Note: X denotes an experimental version! All the functions are kept
+% fftshifted deliberately to reduce unnecessary computation, for it is not
+% an illustration version!
 
-MeanDisplace = sqrt(144.38 * Temp ./ (MassNum .* DebyeTemp.^2));
+shifted_u2 = ifft2(shifted_PropKernel .* fft2(shifted_u1));
 
 end
 

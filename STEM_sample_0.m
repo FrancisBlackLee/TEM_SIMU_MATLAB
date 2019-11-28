@@ -1,3 +1,21 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%   Copyright (C) 2019  Francis Black Lee and Li Xian
+
+%   This program is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+
+%   This program is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+
+%   You should have received a copy of the GNU General Public License
+%   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+%   Email: warner323@outllok.com
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % ADF-STEM sample: silicon [110]
 clc;
 close all;
@@ -85,7 +103,7 @@ for i=1:Scan_Ny
         DetectInten = abs(Trans_Wave_Far.^2).*detector;
         STEM_IMAGE(i,j) = sum(sum(DetectInten));
         CurrentNum = (i - 1) * Scan_Nx + j;
-        imagesc(ADF_x, -ADF_y, STEM_IMAGE);
+        imagesc(ADF_x, ADF_y, STEM_IMAGE);
         map = colormap(gray);
         axis square;
         title('Example');

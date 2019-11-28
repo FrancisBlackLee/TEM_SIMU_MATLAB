@@ -16,18 +16,17 @@
 
 %   Email: warner323@outllok.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [MeanDisplace] = ThermoDisplace_0(MassNum, DebyeTemp, Temp)
-%ThermoDisplace_0.m calculates the standard deviation of
-%thermo-displacement using Einstein model.
-%   Input:
-%       MassNum -- mass number, i.e. for carbon is 12.01;
-%       DebyeTemp -- Debye temperature (in Kelvin);
-%       Temp -- simulation temperature;
-%   Output:
-%       MeanDisplace -- standard deviation of the thermo-displacement (in
-%       Angstrom);
-
-MeanDisplace = sqrt(144.38 * Temp ./ (MassNum .* DebyeTemp.^2));
-
-end
-
+% multislice_X_test_0.m -- multislice_X.m loading file test:
+clc;
+clear all;
+close all;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ProjPotDir = 'E:\practice\wasted\Posi_Pot_Img_1';
+Lx = 30.8242;
+Ly = 30.7420;
+Nx = 512;
+Ny = 512;
+KeV = 300;
+InciWave = ones(Ny, Nx);
+SliceDist = [1.6410, 2.1053, 1.7477, 2.2120];
+ExitWave = multislice_X(InciWave, KeV, Lx, Ly, 'files', SliceDist, 1, ProjPotDir, '*.txt');
