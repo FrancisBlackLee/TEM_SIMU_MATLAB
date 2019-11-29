@@ -4,7 +4,7 @@
 %   This program is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
 %   the Free Software Foundation, either version 3 of the License, or
-%   (at your option) any later version.
+%   any later version.
 
 %   This program is distributed in the hope that it will be useful,
 %   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -14,7 +14,7 @@
 %   You should have received a copy of the GNU General Public License
 %   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%   Email: warner323@outllok.com
+%   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [ProjPot] = MultiProjPot_conv_X(ScaleTypeCoord, CellNum, LattConst, Lx, Ly, Nx, Ny, RmvDistError)
 %MultiProjPot_conv_0.m calculates the projected potential of one slice
