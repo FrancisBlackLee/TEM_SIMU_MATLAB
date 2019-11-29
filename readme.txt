@@ -7,4 +7,4 @@ Please add the folder to your MATLAB path, note that Scattering_Factors.txt must
 
 Note added on 2019/11/29:
 The DPC component is removed to be a dependent repo to be released in the futurre, and a tutorial is
-deing written by Francis Black Lee, and shall catch up with the repo development by the end of 2019.
+being written by Francis Black Lee, and shall catch up with the repo development by the end of 2019.
