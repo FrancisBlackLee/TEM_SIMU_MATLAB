@@ -16,7 +16,7 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% ADF-STEM sample: silicon [110]
+% ADF-STEM sample 0: silicon [110]
 clc;
 close all;
 clear all;

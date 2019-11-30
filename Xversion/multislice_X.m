@@ -38,7 +38,10 @@ function [ExitWave] = multislice_X(InciWave, KeV, Lx, Ly, TransFuncs, SliceDist,
 %       style, name ordering is the same as the slice ordering.
 %   FileExtension -- a required input if TransFuncDir is input. '*.txt' is
 %       suggested.
-%   Note: X denotes an experimental version.
+%   Note: X denotes an experimental version. This function can be further
+%       optimized for ADF-STEM, but there is no need to keep modifying this
+%       function, thus a dependent multislice for ADF-STEM is to be
+%       released.
 
 WavLen = 12.3986 / sqrt((2 * 511.0 + KeV) * KeV);
 switch nargin
@@ -46,6 +49,7 @@ switch nargin
         TempWave = fftshift(InciWave);
         SliceNum = length(SliceDist);
         [Ny, Nx] = size(InciWave);
+        ShiftedPropKernels = zeros(Ny, Nx, SliceNum) + 1i * ones(Ny, Nx, SliceNum);
         for SliceIdx = 1 : SliceNum
             ShiftedPropKernels(:, :, SliceIdx) = fftshift(FresnelPropKernel_X(Lx, Ly, Nx, Ny, WavLen, SliceDist(SliceIdx)));
         end

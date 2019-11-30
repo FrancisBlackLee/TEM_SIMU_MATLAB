@@ -18,7 +18,10 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [probe] = GenerateProbe_X(OTF, xp, yp, Lx, Ly, Nx, Ny)
 %GenerateProbe_X.m generates an electron probe.
-%   OTF -- prepared objective transfer function in reciprocal space;
+%   OTF -- prepared objective transfer function in reciprocal space, note
+%       that ObjTransFunc_X.m does not generate the OTF with an aperture,
+%       thus the input OTF must have been multiplied by an aperture in
+%       advance;
 %   Lx, Ly, Nx, Ny -- sampling parameters, L denotes side length and N the
 %       sampling number in real space;
 %   xp, yp -- probe position in real space;
