@@ -61,7 +61,7 @@ for SliceIdx = 1 : SliceNum
     shiftPropKer(:, :, SliceIdx) = fftshift(FresnelPropKernel_X(Lx, Ly, Nx, Ny, WavLen, SliceDist(SliceIdx)));
 end
 % generate objective transfer function with an aperture:
-OTF = params.aperture .* ObjTransFunc_X(params, Lx, Ly, Nx, Ny);
+OTF = CircApert_X(Lx, Ly, Nx, Ny, WavLen, params.NA) .* ObjTransFunc_X(params, Lx, Ly, Nx, Ny);
 
 % fftshift all the transmission function in place:
 TransFuncs = fftshift(TransFuncs, 1);
