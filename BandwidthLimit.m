@@ -31,6 +31,7 @@ R_apert = proportion * min(1 / (2 * dx), 1 / (2 * dy));
 Aperture(FreqSquare > R_apert^2) = 0;
 reciprocal = fftshift(Aperture) .* fft2(fftshift(unlimited));
 limited = ifftshift(ifft2(reciprocal));
+limited = limited / (sum(limited(:)) / (Nx*Ny));
 
 end
 

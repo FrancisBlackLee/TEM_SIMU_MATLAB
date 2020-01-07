@@ -47,8 +47,8 @@ Params.aperture = CircApert_X(Lx, Ly, Nx, Ny, WavLen, 23);
 Params.Cs3 = 0;
 Params.Cs5 = 0;
 Params.df = 0;
-Params.scanx = linspace(-5, 0, 16);
-Params.scany = linspace(3, 8, 16);
+Params.scanx = linspace(-5, 0, 32);
+Params.scany = linspace(3, 8, 32);
 
 HighAngle = 200; % im mrad
 LowAngle = 40; %in mrad
@@ -76,6 +76,6 @@ TransFuncs(:, :, 2) = TF_B;
 %% Imaging section:
 stemImg = ADF_STEM_X(Lx, Ly, Params, TransFuncs, SliceDist, 20, 0);
 
-% figure;
-% imagesc(stemImg);
-% colormap('gray'); axis square;
+figure;
+imagesc(stemImg);
+colormap('gray'); axis square;
