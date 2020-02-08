@@ -1,5 +1,5 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (C) 2019  Francis Black Lee and Li Xian
+%   Copyright (C) 2019 - 2020  Francis Black Lee and Li Xian
 
 %   This program is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ function [ProjPot] = MonoProjPot_conv_0(AtomType, ScaleCoord, CellNum, LattConst
 
 AtomNum = size(ScaleCoord, 2);
 SingPot_fft = fft2(fftshift(ProjectedPotential(Lx, Ly, Nx, Ny, AtomType, 0, 0)));
+% SingPot_fft = fft2(fftshift(ProjectedPotential_X(Lx, Ly, Nx, Ny, [AtomType, 1, 0, 0, 0]', 1e-10)));
 % Sampling:
 dx = Lx / Nx;
 dy = Ly / Ny;
