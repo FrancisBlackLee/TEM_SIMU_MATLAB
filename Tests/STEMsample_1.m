@@ -43,10 +43,10 @@ Ny = 512;
 Params.KeV = 200;
 InterCoeff = InteractionCoefficient(Params.KeV);
 WavLen = HighEnergyWavLen_X(Params.KeV);
-Params.aperture = CircApert_X(Lx, Ly, Nx, Ny, WavLen, 23);
-Params.Cs3 = 0;
+Params.aperture = CircApert_X(Lx, Ly, Nx, Ny, WavLen, 10.37);
+Params.Cs3 = 1.3;
 Params.Cs5 = 0;
-Params.df = 0;
+Params.df = 700;
 Params.scanx = linspace(-5, 0, 32);
 Params.scany = linspace(3, 8, 32);
 
@@ -66,7 +66,7 @@ ProjPotB = MultiProjPot_conv_X(SliceB, CellNum, LattConst, Lx, Ly, Nx, Ny, 1e-5)
 % imagesc(x, y, ProjPotB);
 % colormap('gray'); axis square;
 % title('Proj.Pot. B');
-
+tic;
 TF_A = exp(1i * InterCoeff * ProjPotA / 1000);
 TF_B = exp(1i * InterCoeff * ProjPotB / 1000);
 TF_A = BandwidthLimit(TF_A, Lx, Ly, Nx, Ny, 0.67);
@@ -74,7 +74,8 @@ TF_B = BandwidthLimit(TF_B, Lx, Ly, Nx, Ny, 0.67);
 TransFuncs(:, :, 1) = TF_A;
 TransFuncs(:, :, 2) = TF_B;
 %% Imaging section:
-stemImg = ADF_STEM_X(Lx, Ly, Params, TransFuncs, SliceDist, 20, 0);
+stemImg = ADF_STEM_X(Lx, Ly, Params, TransFuncs, SliceDist, 50, 0);
+toc;
 
 figure;
 imagesc(stemImg);

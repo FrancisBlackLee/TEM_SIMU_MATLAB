@@ -46,7 +46,7 @@ AngFreqSqu = (FX.^2 + FY.^2) * WavLen^2; % squared angular frequency
 
 PhaseError = 2*pi/WavLen * (0.5 * df * AngFreqSqu + 0.25 * Cs3 * AngFreqSqu.^2 ...
                             + 1/6 * Cs5 * AngFreqSqu.^3);
-OTF = exp(1i * PhaseError);
+OTF = exp(-1i * PhaseError);
 
 end
 

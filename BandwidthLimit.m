@@ -32,7 +32,7 @@ Aperture(FreqSquare > R_apert^2) = 0;
 reciprocal = fftshift(Aperture) .* fft2(fftshift(unlimited));
 limited = ifftshift(ifft2(reciprocal));
 amp = abs(limited);
-limited = limited / (sum(amp(:)) / (Nx*Ny));
+limited = limited ./ amp;
 
 end
 
