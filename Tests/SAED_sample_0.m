@@ -74,14 +74,18 @@ TransFuncs(:, :, 1) = TF_A;
 TransFuncs(:, :, 2) = TF_B;
 
 %% SAED
-wave = ones(Ny, Nx).*(R < min(Lx, Ly) / 4);
-% wave = ones(Ny, Nx);
+% wave = ones(Ny, Nx).*(R < min(Lx, Ly) / 4);
+wave = ones(Ny, Nx);
 wave = multislice(wave, WaveLength, Lx, Ly, TransFuncs, LayerDist, 100);
-% wave = wave .* exp(1i * InterCoeff * 50 *(Proj_PotA + Proj_PotB));
-wave = ifftshift(fft2(fftshift(wave)));
+% phase_0 = angle(wave);
+% figure;
+% imagesc(phase_0);
+% axis square;colorbar;
+% wave = wave .* exp(1i * InterCoeff * 50 *(Proj_PotA + Proj_PotB) / 1.0e3);
+wave = ifftshift(fft2(fftshift(wave))) / (Lx * Ly);
 
 waveI = abs(wave.^2);
-Img = log(1 + 1e-6 * waveI);
+Img = log(1 + 1e-1 * waveI);
 
 figure;
 subplot(1, 2, 1);
