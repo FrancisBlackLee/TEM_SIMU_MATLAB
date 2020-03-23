@@ -40,7 +40,7 @@ if nargin == 6
     PlotColor = ones(1, AtomNum);
 end
 
-[zStd, zOrder] = sort(StdLatt(5, : ));
+[zStd, zOrder] = sort(StdLatt(5, : ), 'descend');
 StdLatt = StdLatt( : , zOrder);
 ThermoLatt = ThermoLatt( : , zOrder);
 PlotColor = PlotColor(zOrder);
