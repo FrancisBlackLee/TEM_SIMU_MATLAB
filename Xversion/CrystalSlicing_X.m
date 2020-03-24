@@ -49,11 +49,13 @@ SliceNum = 1;
 slice{SliceNum} = ThermoLatt( : , 1);
 color{SliceNum} = PlotColor(1);
 TempZ = zStd(1);
+disp(TempZ);
 for zIdx = 2 : length(zStd)
     if abs(zStd(zIdx) - TempZ) >= DistError
         SliceDist(SliceNum) = abs(zStd(zIdx) - TempZ);
         SliceNum = SliceNum + 1;
         TempZ = zStd(zIdx);
+        disp(TempZ);
         ThermoLatt(5, zIdx) = TempZ;
         slice{SliceNum} = ThermoLatt( : , zIdx);
         color{SliceNum} = PlotColor(zIdx);
@@ -136,6 +138,7 @@ else
             for AtomIdx = 1 : size(slice{SliceIdx}, 2)
                 scatter(slice{SliceIdx}(3, AtomIdx), slice{SliceIdx}(4, AtomIdx), 'o', ColorList(color{SliceIdx}(AtomIdx)));
             end
+%             drawnow;
             axis([xmin xmax ymin ymax]);
             axis equal;
             title(['slice ', num2str(SliceIdx)]);

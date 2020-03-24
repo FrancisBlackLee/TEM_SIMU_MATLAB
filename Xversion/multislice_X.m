@@ -73,11 +73,13 @@ switch nargin
         TempWave = fftshift(InciWave);
         [Ny, Nx] = size(InciWave);
         for FileIdx = 1 : numel(SortedNames)
-            TempProjPot = load(fullfile(ProjPotDir, SortedNames{FileIdx}));
-            TempTransFunc = exp(1i * InterCoeff * TempProjPot);
+            filename = fullfile(ProjPotDir, SortedNames{FileIdx});
+            TempProjPot = load(filename);
+            TempTransFunc = exp(1i * InterCoeff * TempProjPot / 1e3);
             TempWave = TempWave .* fftshift(TempTransFunc);
             ShiftedPropKernel = fftshift(FresnelPropKernel_X(Lx, Ly, Nx, Ny, WavLen, SliceDist(FileIdx)));
             TempWave = ifft2(ShiftedPropKernel .* fft2(TempWave));
+            disp(filename);
         end
         ExitWave = ifftshift(TempWave);
 end
