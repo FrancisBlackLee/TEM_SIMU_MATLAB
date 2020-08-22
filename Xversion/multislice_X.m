@@ -72,7 +72,7 @@ switch nargin
         SortedNames = natsortfiles(FileNames);
         TempWave = fftshift(InciWave);
         [Ny, Nx] = size(InciWave);
-        for FileIdx = 1 : numel(SortedNames)
+        for FileIdx = 1 : min(numel(SortedNames), length(SliceDist))
             filename = fullfile(ProjPotDir, SortedNames{FileIdx});
             TempProjPot = load(filename);
             TempTransFunc = exp(1i * InterCoeff * TempProjPot / 1e3);

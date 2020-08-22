@@ -47,7 +47,7 @@ Params.KeV = 200;
 InterCoeff = InteractionCoefficient(Params.KeV);
 WaveLength = 12.3986 / sqrt((2 * 511.0 + Params.KeV) * Params.KeV);  %wavelength
 WaveNumber = 2 * pi / WaveLength;     %wavenumber
-Params.amax = 12;
+Params.amax = 10.67;
 Params.Cs = 1.3;
 Params.df = 700;
 

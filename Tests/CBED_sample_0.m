@@ -24,8 +24,8 @@ clear all;
 %% Lattice generation: silicon [110]
 LattConst = [3.84, 5.43, 0]; % [a b]
 LayerDist = [1.9198, 1.9198]; % distance between each slice
-M = 3;
-CellNum = [3 * M, 2 * M]; % expand the unit cell by Expan_Nx = 3M and Expan_Ny = 2M, adaptive integer M
+M = 5;
+CellNum = M * [3, 2]; % expand the unit cell by Expan_Nx = 3M and Expan_Ny = 2M, adaptive integer M
 DistError = 1e-2;
 % Laters: Each column for an atom
 LayerA = [14, 14; 0, 0.5; 0, 0.75];
@@ -49,7 +49,7 @@ Params.KeV = 100;
 InterCoeff = InteractionCoefficient(Params.KeV);
 WaveLength = 12.3986 / sqrt((2 * 511.0 + Params.KeV) * Params.KeV);  %wavelength
 WaveNumber = 2 * pi / WaveLength;     %wavenumber
-Params.amax = 8;
+Params.amax = 6;
 Params.Cs = 0;
 Params.df = 0;
 %% Transmission functions
@@ -58,22 +58,22 @@ Proj_PotA = MultiProjPot_conv_0(LayerA, CellNum, LattConst, Lx, Ly, Nx, Ny);
 % Layer B:
 Proj_PotB = MultiProjPot_conv_0(LayerB, CellNum, LattConst, Lx, Ly, Nx, Ny);
 % test
-% figure;
-% imagesc(x, y, Proj_PotA);
-% colormap('gray');
-% figure;
-% imagesc(x, y, Proj_PotB);
-% colormap('gray');
+figure;
+imagesc(x, y, Proj_PotA);
+colormap('gray');
+figure;
+imagesc(x, y, Proj_PotB);
+colormap('gray');
 
 TF_A = exp(1i * InterCoeff * Proj_PotA / 1000);
 TF_B = exp(1i * InterCoeff * Proj_PotB / 1000);
-% TF_A = BandwidthLimit(TF_A, Lx, Ly, Nx, Ny, 0.67);
-% TF_B = BandwidthLimit(TF_B, Lx, Ly, Nx, Ny, 0.67);
+TF_A = BandwidthLimit(TF_A, Lx, Ly, Nx, Ny, 0.67);
+TF_B = BandwidthLimit(TF_B, Lx, Ly, Nx, Ny, 0.67);
 TransFuncs(:, :, 1) = TF_A;
 TransFuncs(:, :, 2) = TF_B;
 %% Scanning module
-Probe = ProbeCreate(Params, 0, 0, Lx, Ly, Nx, Ny);
-TransWave = multislice(Probe, WaveLength, Lx, Ly, TransFuncs, LayerDist, 40);
+Probe = ProbeCreate(Params, 1, 0, Lx, Ly, Nx, Ny);
+TransWave = multislice(Probe, WaveLength, Lx, Ly, TransFuncs, LayerDist, 100);
 % Trans_Wave_Far = ifftshift(fft2(fftshift(TransWave)) * dx * dy);
 Trans_Wave_Far = ifftshift(fft2(fftshift(TransWave)));
 DetectInten = log(1 + 0.1 * abs(Trans_Wave_Far.^2));

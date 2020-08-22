@@ -23,7 +23,7 @@ clear all;
 %% specimen preparation:
 LattConst = [3.995, 5.65, 0]; % [a b]
 SliceDist = [1.998, 1.998]; % distance between each slice
-CellNum = [6, 4]; % expand the unit cell by Expan_Nx = 3 and Expan_Ny = 2, adaptive
+CellNum = 4 * [3, 2]; % expand the unit cell by Expan_Nx = 3 and Expan_Ny = 2, adaptive
 % Laters: Each column for an atom
 SliceA = [31,  31,  31,  31,  33;...
           1,   1,   1,   1,   1;...
@@ -39,16 +39,18 @@ Lx = CellNum(1) * LattConst(1);
 Ly = CellNum(2) * LattConst(2);
 Nx = 512;
 Ny = 512;
+dx = Lx / Nx;
+dy = Ly / Ny;
 %% STEM settings:
 Params.KeV = 200;
 InterCoeff = InteractionCoefficient(Params.KeV);
 WavLen = HighEnergyWavLen_X(Params.KeV);
-Params.aperture = CircApert_X(Lx, Ly, Nx, Ny, WavLen, 10.37);
-Params.Cs3 = 1.3;
+Params.aperture = CircApert_X(Lx, Ly, Nx, Ny, WavLen, 18);
+Params.Cs3 = 0;
 Params.Cs5 = 0;
-Params.df = 700;
-Params.scanx = linspace(-5, 0, 32);
-Params.scany = linspace(3, 8, 32);
+Params.df = 0;
+Params.scanx = linspace(0, 3.995 - dx, 32);
+Params.scany = linspace(0, 5.65 - dy, 46);
 
 HighAngle = 200; % im mrad
 LowAngle = 40; %in mrad
@@ -74,9 +76,11 @@ TF_B = BandwidthLimit(TF_B, Lx, Ly, Nx, Ny, 0.67);
 TransFuncs(:, :, 1) = TF_A;
 TransFuncs(:, :, 2) = TF_B;
 %% Imaging section:
-stemImg = ADF_STEM_X(Lx, Ly, Params, TransFuncs, SliceDist, 50, 0);
+stemImg = ADF_STEM_X(Lx, Ly, Params, TransFuncs, SliceDist, 5, 0);
 toc;
 
+repStemImg = repmat(stemImg, 2, 3);
+
 figure;
-imagesc(stemImg);
+imagesc(repStemImg);
 colormap('gray'); axis square;
