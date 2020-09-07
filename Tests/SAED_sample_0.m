@@ -23,7 +23,7 @@ close all;
 %% Lattice generation: silicon [110]
 LattConst = [3.8396, 5.4300, 0]; % [a b]
 LayerDist = [1.9198, 1.9198]; % distance between each slice
-M = 10;
+M = 2;
 CellNum = [3*M, 2*M]; % expand the unit cell by Expan_Nx = 3 and Expan_Ny = 2, adaptive
 DistError = 1e-2;
 % Laters: Each column for an atom
@@ -33,8 +33,8 @@ LayerB = [14, 14; 0, 0.5; 0.25, 0.5];
 % sampling:
 Lx = CellNum(1) * LattConst(1);
 Ly = CellNum(2) * LattConst(2);
-Nx = 1024;
-Ny = 1024;
+Nx = 512;
+Ny = 512;
 dx = Lx / Nx;
 dy = Ly / Ny;
 x = -Lx / 2 : dx : Lx / 2 - dx;
