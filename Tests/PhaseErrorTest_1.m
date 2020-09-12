@@ -41,11 +41,11 @@ clear all;
 %       C56  A5  6-Fold astigmatism
 %% Parameter setting:
 % unit of aberrations is angstrom
-Aberr{1} = [-2350, 3.865];
-Aberr{2} = [264.7, 364.6];
-Aberr{3} = [1742, 6092, 1.08e7];
-Aberr{4} = [0, 0, 25.12e7];
-Aberr{5} = [0, 0, 0, 0];
+aberr{1} = [-2350, 3.865];
+aberr{2} = [264.7, 364.6];
+aberr{3} = [1742, 6092, 1.08e7];
+aberr{4} = [0, 0, 25.12e7];
+aberr{5} = [0, 0, 0, 0];
 
 dx = 0.1407; % Angstrome, expand reciprocal space to about 70 mrad.
 dy = dx;
@@ -62,7 +62,7 @@ fy = -1 / (2 * dy) : 1 / Ly : 1 / (2 * dy) - 1 / Ly;
 KeV = 300;
 WavLen = 12.3986 / sqrt((2 * 511.0 + KeV) * KeV);  %wavelength
 
-PhaseError = MultiAberrPhaseError_X(Aberr, WavLen, Lx, Ly, Nx, Ny);
+PhaseError = MultiAberrPhaseError_X(aberr, WavLen, Lx, Ly, Nx, Ny);
 WrapPhaseError = wrapTo2Pi(PhaseError);
 
 imagesc(fx, fy, WrapPhaseError);

@@ -42,7 +42,7 @@ function [PhaseError] = MultiAberrPhaseError_X_v2(Aberr, RealRotAngle,...
 %       C52  S5  5th order axial star
 %       C54  R5  5th order rosette
 %       C56  A5  6-Fold astigmatism
-%   RealRotAngle -- real rotational angle:
+%   RealRotAngle -- real rotational angle in degree:
 %       RealRotAngle{1} = [phi_10, phi_12];
 %       RealRotAngle{2} = [phi_21, phi_23];
 %       RealRotAngle{3} = [phi_30, phi_32, phi_34];
@@ -68,7 +68,7 @@ for n = 1 : 5
     for Idx = 1 : AberrNum(n)
         m = (Idx - 1) * 2 + mod(n - 1, 2);
         PhaseError = PhaseError + Aberr{n}(Idx) * PolAng.^(n + 1)...
-            .* cos(m * (AziAng - RealRotAngle{n}(Idx))) / (n + 1);
+            .* cos(m * (AziAng - deg2rad(RealRotAngle{n}(Idx)))) / (n + 1);
     end
 end
 PhaseError = 2 * pi / WavLen * PhaseError;

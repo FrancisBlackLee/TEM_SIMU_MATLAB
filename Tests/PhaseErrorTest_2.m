@@ -40,7 +40,7 @@ close all;
 %       C52  S5  5th order axial star
 %       C54  R5  5th order rosette
 %       C56  A5  6-Fold astigmatism
-%   RealRotAngle -- real rotational angle:
+%   RealRotAngle -- real rotational angle in degree:
 %       RealRotAngle{1} = [phi_10, phi_12];
 %       RealRotAngle{2} = [phi_21, phi_23];
 %       RealRotAngle{3} = [phi_30, phi_32, phi_34];
@@ -54,11 +54,11 @@ aberr{3} = [1742, 6092, 1.08e7];
 aberr{4} = [0, 0, 25.12e7];
 aberr{5} = [0, 0, 0, 0];
 
-realRotAngle{1} = [0, 0] + pi / 4;
-realRotAngle{2} = [0, 0] + pi / 4;
-realRotAngle{3} = [0, 0, 0] + pi / 4;
-realRotAngle{4} = [0, 0, 0] + pi / 4;
-realRotAngle{5} = [0, 0, 0, 0] + pi / 4;
+realRotAngle{1} = [0, 45];
+realRotAngle{2} = [45, 45];
+realRotAngle{3} = [0, 45, 45];
+realRotAngle{4} = [0, 0, 0];
+realRotAngle{5} = [0, 0, 0, 0];
 
 dx = 0.1407; % Angstrome, expand reciprocal space to about 70 mrad.
 dy = dx;
@@ -75,8 +75,8 @@ KeV = 300;
 wavLen = 12.3986 / sqrt((2 * 511.0 + KeV) * KeV);  %wavelength
 
 phaseError = MultiAberrPhaseError_X_v2(aberr, realRotAngle, wavLen, Lx, Ly, Nx, Ny);
-wrappedPhaseError = wrapTo2Pi(phaseError);
+wrappedPhaseError = mat2gray(wrapTo2Pi(phaseError));
 
 figure;
-imagesc(fx, fy, wrappedPhaseError);
+imshow(wrappedPhaseError);
 colormap('gray'); axis square;

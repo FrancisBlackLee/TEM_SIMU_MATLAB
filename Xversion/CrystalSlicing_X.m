@@ -16,7 +16,8 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [slice, SliceDist, ExtraSlice] = CrystalSlicing_X(StdLatt, ThermoLatt, DistError, zMax, LattMode, YN, PlotColor)
+function [slice, SliceDist, ExtraSlice] = CrystalSlicing_X(StdLatt, ...
+    ThermoLatt, maxSliceSpacing, zMax, LattMode, YN, PlotColor)
 %CrystalSlicing_X.m slices a given crystal described by the atomic numbers
 %and atomic coordinates.
 %   StdLatt -- standard lattice matrix (without thermo-displacements), uses
@@ -51,7 +52,7 @@ color{SliceNum} = PlotColor(1);
 TempZ = zStd(1);
 disp(TempZ);
 for zIdx = 2 : length(zStd)
-    if abs(zStd(zIdx) - TempZ) >= DistError
+    if abs(zStd(zIdx) - TempZ) >= maxSliceSpacing
         SliceDist(SliceNum) = abs(zStd(zIdx) - TempZ);
         SliceNum = SliceNum + 1;
         TempZ = zStd(zIdx);
@@ -88,7 +89,7 @@ if LattMode == 1
         end
     end
 else
-    if zMax - sum(SliceDist) >= DistError
+    if zMax - sum(SliceDist) >= maxSliceSpacing
         SliceDist(SliceNum) = zMax - sum(SliceDist);
         ExtraSlice = 0;
     else
