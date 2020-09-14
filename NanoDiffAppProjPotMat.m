@@ -13,7 +13,7 @@ function [projPotMat, sliceDist] = NanoDiffAppProjPotMat(crystalMatrix,...
 
 if ~isempty(crystalMatrix)
     maxSliceSpacing = 2.0;
-    zMax = max(crystalMatrix(5, :));
+    zMax = max(crystalMatrix(5, :)) - min(crystalMatrix(5, :));
     specimenType = 1;
     plotYN = 0;
     [slice, sliceDist, extraSlice] = CrystalSlicing_X(crystalMatrix,...
