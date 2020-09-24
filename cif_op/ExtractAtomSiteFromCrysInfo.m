@@ -68,7 +68,7 @@ index = find(atomSiteMat(5, :) < 0 - tolerance);
 atomSiteMat(5, index) = atomSiteMat(5, index) - floor(atomSiteMat(5, index));
 
 atomSiteMat = atomSiteMat';
-atomSiteMat = uniquetol(atomSiteMat, tolerance, 'ByRows', true');
+atomSiteMat = uniquetol(atomSiteMat, tolerance, 'ByRows', true);
 atomSiteMat = atomSiteMat';
 
 end

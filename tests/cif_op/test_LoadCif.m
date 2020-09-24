@@ -24,11 +24,12 @@ crysInfo = LoadCif(filename_4);
 atomSiteMat = ExtractAtomSiteFromCrysInfo(crysInfo);
 fullAtomSiteMat = AddEquivAtomSites(atomSiteMat);
 
-hkl = [0, 0, 1];
+hkl = [-3, 2, 3];
 convMat = ConversionMatrix_hkl(cellLengths, cellAngles, hkl);
 atomCartCoord = convMat * fullAtomSiteMat(3 : 5, :);
 
 figure;
-scatter(atomCartCoord(1, :), atomCartCoord(2, :), 'filled');
+% scatter(atomCartCoord(1, :), atomCartCoord(2, :), 'filled');
+scatter3(atomCartCoord(1, :), atomCartCoord(2, :), atomCartCoord(3, :), 'filled');
 axis equal;
 title(['hkl = ', num2str(hkl)]);

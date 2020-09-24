@@ -1,6 +1,14 @@
 function [newAtomSiteMat] = AddEquivAtomSites(atomSiteMat)
-%UNTITLED3 Summary of this function goes here
-%   Detailed explanation goes here
+%AddEquivAtomSites() adds equivalent atom sites on the cell boundaries.
+% Input:
+%   atomSiteMat -- atomic site matrix to which equivalent atoms are added,
+%       format: [type; occupancy; fractX; fractY; fractZ];
+% Output:
+%   newAtomSiteMat -- atomic site matrix to which equivalent atoms are
+%       already added, format: [type; occupancy; fractX; fractY; fractZ];
+%
+% NOTE:
+%   The input cell is best to be a unit cell.
 
 initAtomNum = size(atomSiteMat, 2);
 
@@ -38,7 +46,7 @@ index = find(newAtomSiteMat(5, :) < 0 - tolerance);
 newAtomSiteMat(5, index) = newAtomSiteMat(5, index) - floor(newAtomSiteMat(5, index));
 
 newAtomSiteMat = newAtomSiteMat';
-newAtomSiteMat = uniquetol(newAtomSiteMat, tolerance, 'ByRows', true');
+newAtomSiteMat = uniquetol(newAtomSiteMat, tolerance, 'ByRows', true);
 newAtomSiteMat = newAtomSiteMat';
 
 end

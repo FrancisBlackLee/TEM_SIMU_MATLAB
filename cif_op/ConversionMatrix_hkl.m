@@ -1,6 +1,15 @@
 function [convMat] = ConversionMatrix_hkl(cellLengths, cellAngles, hkl)
-%UNTITLED2 Summary of this function goes here
-%   Detailed explanation goes here
+%ConversionMatrix_hkl() computes the conversion matrix, given the cell
+%constants and corresponding miller indices (hkl).
+% Input:
+%   cellLengths -- element 1 for cell length a, 2 for cell length b and 3
+%       for cell length c;
+%   cellAngles -- element 1 for cell angle alpha (between bases a and c);
+%       2 for cell angle beta (between bases b and c) and
+%       3 for cell angle gamma (between bases a and b);
+%   hkl -- miller indices;
+% Output:
+%   convMat -- conversion matrix;
 
 if all(cellLengths) && all(cellAngles) && any(hkl)
     a = cellLengths(1);
