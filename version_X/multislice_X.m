@@ -74,7 +74,16 @@ switch nargin
         [Ny, Nx] = size(InciWave);
         for FileIdx = 1 : min(numel(SortedNames), length(SliceDist))
             filename = fullfile(ProjPotDir, SortedNames{FileIdx});
-            TempProjPot = load(filename);
+            if strcmp(FileExtension, '*.txt')
+                TempProjPot = load(filename);
+            elseif strcmp(FileExtension, '*.bin')
+                fileID = fopen(filename);
+                TempProjPot = fread(fileID, [Ny, Nx], 'double');
+                fclose(fileID);
+            else
+                TempProjPot = zeros(Ny, Nx);
+            end
+%             TempProjPot = load(filename);
             TempTransFunc = exp(1i * InterCoeff * TempProjPot / 1e3);
             TempWave = TempWave .* fftshift(TempTransFunc);
             ShiftedPropKernel = fftshift(FresnelPropKernel_X(Lx, Ly, Nx, Ny, WavLen, SliceDist(FileIdx)));
