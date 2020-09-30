@@ -53,7 +53,7 @@ if (~any(mod(hkl, 1))) && (~isempty(atomSiteMat)) && all(cellLengths) && all(cel
         (norm(projBasis_1) * norm(projBasis_2)), 1), -1);
     sinProjBasisAngle = sqrt(1 - cosProjBasisAngle^2);
     if sinProjBasisAngle > 0
-        % 1.5 is magic number
+        % 1.5 is a magic number
         projBasis_1_repNum = ceil(sqrt(2) * 1.5 * sideLength / (norm(projBasis_1) * sinProjBasisAngle));
         projBasis_2_repNum = ceil(sqrt(2) * 1.5 * sideLength / (norm(projBasis_2) * sinProjBasisAngle));
         

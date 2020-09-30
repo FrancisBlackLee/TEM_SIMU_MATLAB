@@ -37,14 +37,14 @@ filename_5 = ['E:\practice\crystallography\cif\cif\@cif\',...
     'Langbeinite (ortho).cif'];
 
 %% main:
-crysInfo = LoadCif(filename_2);
+crysInfo = LoadCif(filename_4);
 
 [cellLengths, cellAngles] = ExtractCellConstFromCrysInfo(crysInfo);
 initAtomSiteMat = ExtractAtomSiteFromCrysInfo(crysInfo);
 fullAtomSiteMat = AddEquivAtomSites(initAtomSiteMat);
 
-sideLength = 100;
-hkl = [0, 2, 1];
+sideLength = 30;
+hkl = [1, 1, 1];
 
 atomCoordMat = CellExpand_hkl(fullAtomSiteMat, cellLengths, cellAngles, hkl, sideLength);
 
@@ -55,6 +55,6 @@ deleteIndices = find((atomCoordMat(3, :) > sideLength / 2) |...
 atomCoordMat(:, deleteIndices) = [];
 
 figure;
-scatter(atomCoordMat(3, :), atomCoordMat(4, :), 'filled');
+scatter(atomCoordMat(3, :), atomCoordMat(4, :), 10, 'filled');
 % scatter3(atomCoordMat(3, :), atomCoordMat(4, :), atomCoordMat(5, :), 'filled');
 axis equal;

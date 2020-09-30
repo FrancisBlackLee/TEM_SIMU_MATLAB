@@ -42,12 +42,81 @@ crysInfo = LoadCif(filename_4);
 atomSiteMat = ExtractAtomSiteFromCrysInfo(crysInfo);
 fullAtomSiteMat = AddEquivAtomSites(atomSiteMat);
 
-hkl = [-3, 2, 3];
+hkl = [1, 1, 1];
 convMat = ConversionMatrix_hkl(cellLengths, cellAngles, hkl);
 atomCartCoord = convMat * fullAtomSiteMat(3 : 5, :);
 
+PlotCell2D(convMat, fullAtomSiteMat);
+PlotCell3D(convMat, fullAtomSiteMat);
+
+%% extra function
+function PlotCell2D(convMat, atomSites)
+
+atomCartCoord = convMat * atomSites(3 : 5, :);
 figure;
-% scatter(atomCartCoord(1, :), atomCartCoord(2, :), 'filled');
-scatter3(atomCartCoord(1, :), atomCartCoord(2, :), atomCartCoord(3, :), 'filled');
+scatter(atomCartCoord(1, :), atomCartCoord(2, :), 75, 'filled');
+
+initVertexSites = [0, 0, 0; 0, 0, 1; 0, 1, 0; 0, 1, 1; 1, 0, 0; 1, 0, 1; 1, 1, 0; 1, 1, 1]';
+adjVertexSites1 = [0, 0, 1; 0, 0, 0; 0, 1, 1; 0, 1, 0; 1, 0, 1; 1, 0, 0; 1, 1, 1; 1, 1, 0]';
+adjVertexSites2 = [0, 1, 0; 0, 1, 1; 0, 0, 0; 0, 0, 1; 1, 1, 0; 1, 1, 1; 1, 0, 0; 1, 0, 1]';
+adjVertexSites3 = [1, 0, 0; 1, 0, 1; 1, 1, 0; 1, 1, 1; 0, 0, 0; 0, 0, 1; 0, 1, 0; 0, 1, 1]';
+
+initCellVertexes = convMat * initVertexSites;
+adjCellVertexes1 = convMat * adjVertexSites1;
+adjCellVertexes2 = convMat * adjVertexSites2;
+adjCellVertexes3 = convMat * adjVertexSites3;
+
+hold on;
+vertexNum = size(initCellVertexes, 2);
+for vertexIdx = 1 : vertexNum
+    line([initCellVertexes(1, vertexIdx), adjCellVertexes1(1, vertexIdx)],...
+        [initCellVertexes(2, vertexIdx), adjCellVertexes1(2, vertexIdx)], 'Color', 'blue');
+    
+    line([initCellVertexes(1, vertexIdx), adjCellVertexes2(1, vertexIdx)],...
+        [initCellVertexes(2, vertexIdx), adjCellVertexes2(2, vertexIdx)], 'Color', 'blue');
+    
+    line([initCellVertexes(1, vertexIdx), adjCellVertexes3(1, vertexIdx)],...
+        [initCellVertexes(2, vertexIdx), adjCellVertexes3(2, vertexIdx)], 'Color', 'blue');
+end
+hold off;
+
 axis equal;
-title(['hkl = ', num2str(hkl)]);
+
+end
+
+function PlotCell3D(convMat, atomSites)
+
+atomCartCoord = convMat * atomSites(3 : 5, :);
+figure;
+scatter3(atomCartCoord(1, :), atomCartCoord(2, :), atomCartCoord(3, :), 75, 'filled');
+
+initVertexSites = [0, 0, 0; 0, 0, 1; 0, 1, 0; 0, 1, 1; 1, 0, 0; 1, 0, 1; 1, 1, 0; 1, 1, 1]';
+adjVertexSites1 = [0, 0, 1; 0, 0, 0; 0, 1, 1; 0, 1, 0; 1, 0, 1; 1, 0, 0; 1, 1, 1; 1, 1, 0]';
+adjVertexSites2 = [0, 1, 0; 0, 1, 1; 0, 0, 0; 0, 0, 1; 1, 1, 0; 1, 1, 1; 1, 0, 0; 1, 0, 1]';
+adjVertexSites3 = [1, 0, 0; 1, 0, 1; 1, 1, 0; 1, 1, 1; 0, 0, 0; 0, 0, 1; 0, 1, 0; 0, 1, 1]';
+
+initCellVertexes = convMat * initVertexSites;
+adjCellVertexes1 = convMat * adjVertexSites1;
+adjCellVertexes2 = convMat * adjVertexSites2;
+adjCellVertexes3 = convMat * adjVertexSites3;
+
+hold on;
+vertexNum = size(initCellVertexes, 2);
+for vertexIdx = 1 : vertexNum
+    line([initCellVertexes(1, vertexIdx), adjCellVertexes1(1, vertexIdx)],...
+        [initCellVertexes(2, vertexIdx), adjCellVertexes1(2, vertexIdx)],...
+        [initCellVertexes(3, vertexIdx), adjCellVertexes1(3, vertexIdx)], 'Color', 'blue');
+    
+    line([initCellVertexes(1, vertexIdx), adjCellVertexes2(1, vertexIdx)],...
+        [initCellVertexes(2, vertexIdx), adjCellVertexes2(2, vertexIdx)],...
+        [initCellVertexes(3, vertexIdx), adjCellVertexes2(3, vertexIdx)], 'Color', 'blue');
+    
+    line([initCellVertexes(1, vertexIdx), adjCellVertexes3(1, vertexIdx)],...
+        [initCellVertexes(2, vertexIdx), adjCellVertexes3(2, vertexIdx)],...
+        [initCellVertexes(3, vertexIdx), adjCellVertexes3(3, vertexIdx)], 'Color', 'blue');
+end
+hold off;
+
+axis equal;
+
+end
