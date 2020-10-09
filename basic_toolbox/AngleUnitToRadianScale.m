@@ -16,25 +16,21 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function scaleCoeff = LengthUnitToAngstromScale(lengthUnit)
-%LengthUnitToAngstromScale() generates the scaling coefficient for
-%converting input length unit to angstrom.
+function scaleCoeff = AngleUnitToRadianScale(angleUnit)
+%AngleUnitToRadianScale() generates the scaling coefficient for converting
+%the angle unit to radian.
 % Input:
-%   lengthUnit -- valid input: mm, um, nm, pm
+%   angleUnit -- valid value: 'mrad', 'rad', 'degree';
 % Output:
-%   scaleCoeff -- scaling coefficient, 0 for invalid input
+%   scaleCoeff -- scaling coeffcient, 0 for invalid input;
 
-switch lengthUnit
-    case 'mm'
-        scaleCoeff = 1e7;
-    case 'um'
-        scaleCoeff = 1e4;
-    case [char(956), 'm']
-        scaleCoeff = 1e4;
-    case 'nm'
-        scaleCoeff = 10;
-    case 'pm'
-        scaleCoeff = 1e-2;
+switch angleUnit
+    case 'mrad'
+        scaleCoeff = 1.0e-3;
+    case 'rad'
+        scaleCoeff = 1.0;
+    case 'degree'
+        scaleCoeff = pi / 180;
     otherwise
         scaleCoeff = 0;
 end
