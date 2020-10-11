@@ -21,28 +21,30 @@ clc;
 clear;
 close all;
 %% main:
-filename_1 = ['E:\practice\crystallography\cif\cif\@cif\',...
+filename_1 = ['tests\cif_op\',...
     'AlGaAs2_mp-1228891_computed.cif'];
 
-filename_2 = ['E:\practice\crystallography\cif\cif\@cif\',...
+filename_2 = ['tests\cif_op\',...
     'AlGaAs2_mp-1228891_conventional_standard.cif'];
 
-filename_3 = ['E:\practice\crystallography\cif\cif\@cif\',...
+filename_3 = ['tests\cif_op\',...
     'AlGaAs2_mp-1228891_primitive.cif'];
 
-filename_4 = ['E:\practice\crystallography\cif\cif\@cif\',...
+filename_4 = ['tests\cif_op\',...
     'AlGaAs2_mp-1228891_symmetrized.cif'];
 
-filename_5 = ['E:\practice\crystallography\cif\cif\@cif\',...
-    'Langbeinite (ortho).cif'];
+filename_5 = 'tests\cif_op\Si_mp-149_computed.cif';
+filename_6 = 'tests\cif_op\Si_mp-149_conventional_standard.cif';
+filename_7 = 'tests\cif_op\Si_mp-149_primitive.cif';
+filename_8 = 'tests\cif_op\Si_mp-149_symmetrized.cif';
 
-crysInfo = LoadCif(filename_4);
+crysInfo = LoadCif(filename_8);
 
 [cellLengths, cellAngles] = ExtractCellConstFromCrysInfo(crysInfo);
 atomSiteMat = ExtractAtomSiteFromCrysInfo(crysInfo);
 fullAtomSiteMat = AddEquivAtomSites(atomSiteMat);
 
-hkl = [1, 1, 1];
+hkl = [1, 0, 0];
 convMat = ConversionMatrix_hkl(cellLengths, cellAngles, hkl);
 atomCartCoord = convMat * fullAtomSiteMat(3 : 5, :);
 

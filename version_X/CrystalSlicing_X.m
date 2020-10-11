@@ -50,13 +50,13 @@ SliceNum = 1;
 slice{SliceNum} = ThermoLatt( : , 1);
 color{SliceNum} = PlotColor(1);
 TempZ = zStd(1);
-disp(TempZ);
+% disp(TempZ);
 for zIdx = 2 : length(zStd)
     if abs(zStd(zIdx) - TempZ) >= maxSliceSpacing
         SliceDist(SliceNum) = abs(zStd(zIdx) - TempZ);
         SliceNum = SliceNum + 1;
         TempZ = zStd(zIdx);
-        disp(TempZ);
+%         disp(TempZ);
         ThermoLatt(5, zIdx) = TempZ;
         slice{SliceNum} = ThermoLatt( : , zIdx);
         color{SliceNum} = PlotColor(zIdx);

@@ -44,7 +44,7 @@ initAtomSiteMat = ExtractAtomSiteFromCrysInfo(crysInfo);
 fullAtomSiteMat = AddEquivAtomSites(initAtomSiteMat);
 
 sideLength = 30;
-hkl = [1, 1, 1];
+hkl = [1, 1, 0];
 
 atomCoordMat = CellExpand_hkl(fullAtomSiteMat, cellLengths, cellAngles, hkl, sideLength);
 

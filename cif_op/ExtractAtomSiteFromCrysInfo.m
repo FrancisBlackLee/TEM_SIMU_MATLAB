@@ -61,14 +61,15 @@ fractCoordMat(2, :) = str2double(crysInfo.loopProperty(fractYIdx, 2 : atomNum + 
 fractCoordMat(3, :) = str2double(crysInfo.loopProperty(fractZIdx, 2 : atomNum + 1));
 
 atomSiteMat = [typeList; occuList; fractCoordMat];
+atomSiteMat = repmat(atomSiteMat, 1, symEquivOpNum);
 for i = 1 : symEquivOpNum
-    symAtomSiteMat = atomSiteMat;
-    symAtomSiteMat(3 : 5, :) = symEquivOpMat(:, :, i) * symAtomSiteMat(3 : 5, :) +...
+    head = (i - 1) * atomNum + 1;
+    rear = i * atomNum;
+    atomSiteMat(3 : 5, head : rear) = symEquivOpMat(:, :, i) * atomSiteMat(3 : 5, head : rear) +...
         glideMat(:, i);
-    atomSiteMat = [atomSiteMat, symAtomSiteMat];
 end
 
-tolerance = 1e-8;
+tolerance = 1e-5;
 
 index = find(atomSiteMat(3, :) > 1 + tolerance);
 atomSiteMat(3, index) = mod(atomSiteMat(3, index), 1);
