@@ -81,6 +81,7 @@ else
     initAtomNum = size(atomSiteMat, 2);
     expanNum = cellNumA * cellNumB * cellNumC;
     atomCoordMat = repmat(atomSiteMat, 1, expanNum);
+    wbHandle = waitbar(0, 'Processing...');
     for aIdx = 0 : cellNumA - 1
         for bIdx = 0 : cellNumB - 1
             for cIdx = 0 : cellNumC - 1
@@ -94,7 +95,10 @@ else
                 repStart = repStart + initAtomNum;
             end
         end
+        waitbar((aIdx + 1) / cellNumA, wbHandle, 'Processing...');
     end
+    
+    close(wbHandle);
                     
     tolerance = 1e-8;
     atomCoordMat = atomCoordMat';
