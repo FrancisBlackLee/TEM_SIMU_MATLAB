@@ -21,17 +21,10 @@ clc;
 clear;
 close all;
 %% main:
-filename_1 = ['tests\cif_op\',...
-    'AlGaAs2_mp-1228891_computed.cif'];
-
-filename_2 = ['tests\cif_op\',...
-    'AlGaAs2_mp-1228891_conventional_standard.cif'];
-
-filename_3 = ['tests\cif_op\',...
-    'AlGaAs2_mp-1228891_primitive.cif'];
-
-filename_4 = ['tests\cif_op\',...
-    'AlGaAs2_mp-1228891_symmetrized.cif'];
+filename_1 = 'tests\cif_op\AlGaAs2_mp-1228891_computed.cif';
+filename_2 = 'tests\cif_op\AlGaAs2_mp-1228891_conventional_standard.cif';
+filename_3 = 'tests\cif_op\AlGaAs2_mp-1228891_primitive.cif';
+filename_4 = 'tests\cif_op\AlGaAs2_mp-1228891_symmetrized.cif';
 
 filename_5 = 'tests\cif_op\Si_mp-149_computed.cif';
 filename_6 = 'tests\cif_op\Si_mp-149_conventional_standard.cif';

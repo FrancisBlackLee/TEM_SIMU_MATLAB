@@ -21,30 +21,30 @@ clc;
 clear;
 close all;
 %% filenames:
-filename_1 = ['E:\practice\crystallography\cif\cif\@cif\',...
-    'AlGaAs2_mp-1228891_computed.cif'];
+filename_1 = 'tests\cif_op\AlGaAs2_mp-1228891_computed.cif';
+filename_2 = 'tests\cif_op\AlGaAs2_mp-1228891_conventional_standard.cif';
+filename_3 = 'tests\cif_op\AlGaAs2_mp-1228891_primitive.cif';
+filename_4 = 'tests\cif_op\AlGaAs2_mp-1228891_symmetrized.cif';
 
-filename_2 = ['E:\practice\crystallography\cif\cif\@cif\',...
-    'AlGaAs2_mp-1228891_conventional_standard.cif'];
-
-filename_3 = ['E:\practice\crystallography\cif\cif\@cif\',...
-    'AlGaAs2_mp-1228891_primitive.cif'];
-
-filename_4 = ['E:\practice\crystallography\cif\cif\@cif\',...
-    'AlGaAs2_mp-1228891_symmetrized.cif'];
-
-filename_5 = ['E:\practice\crystallography\cif\cif\@cif\',...
-    'Langbeinite (ortho).cif'];
+filename_5 = 'tests\cif_op\Si_mp-149_computed.cif';
+filename_6 = 'tests\cif_op\Si_mp-149_conventional_standard.cif';
+filename_7 = 'tests\cif_op\Si_mp-149_primitive.cif';
+filename_8 = 'tests\cif_op\Si_mp-149_symmetrized.cif';
 
 %% main:
-crysInfo = LoadCif(filename_4);
+crysInfo = LoadCif(filename_8);
 
 [cellLengths, cellAngles] = ExtractCellConstFromCrysInfo(crysInfo);
 initAtomSiteMat = ExtractAtomSiteFromCrysInfo(crysInfo);
 fullAtomSiteMat = AddEquivAtomSites(initAtomSiteMat);
 
-sideLength = 30;
-hkl = [1, 1, 0];
+sideLength = 20;
+hkl = [1, 1, 1];
+
+convMat = ConversionMatrix_hkl(cellLengths, cellAngles, hkl);
+viewDirection = hkl(1) * convMat(:, 1) +...
+        hkl(2) * convMat(:, 2) +...
+        hkl(3) * convMat(:, 3);
 
 atomCoordMat = CellExpand_hkl(fullAtomSiteMat, cellLengths, cellAngles, hkl, sideLength);
 
@@ -53,6 +53,13 @@ deleteIndices = find((atomCoordMat(3, :) > sideLength / 2) |...
     (atomCoordMat(4, :) > sideLength / 2) |...
     (atomCoordMat(4, :) < -sideLength / 2));
 atomCoordMat(:, deleteIndices) = [];
+
+maxSliceSpacing = 2.0;
+zMax = norm(viewDirection);
+lattMode = 0;
+plotYN = 0;
+[slice, sliceDist, extraSlice] = CrystalSlicing_X(atomCoordMat, atomCoordMat,...
+    maxSliceSpacing, zMax, lattMode, plotYN);
 
 figure;
 scatter(atomCoordMat(3, :), atomCoordMat(4, :), 10, 'filled');

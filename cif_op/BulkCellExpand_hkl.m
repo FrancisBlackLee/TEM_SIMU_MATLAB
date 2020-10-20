@@ -16,8 +16,8 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [atomCoordMat] = CellExpand_hkl(atomSiteMat, cellLengths,...
-    cellAngles, hkl, sideLength)
+function [atomCoordMat] = BulkCellExpand_hkl(atomSiteMat, cellLengths,...
+    cellAngles, hkl, width, thickness)
 %CellExpand_hkl() rotates the unit cell to the given orientation, duplicate
 %the unit cell and rehapes the cell.
 % Input:
@@ -32,18 +32,12 @@ function [atomCoordMat] = CellExpand_hkl(atomSiteMat, cellLengths,...
 % Output:
 %   atomCoordMat -- atomic coordinate matrix (cartesian);
 
-initConvMat = ConversionMatrix_hkl(cellLengths, cellAngles, hkl);
-viewDirection = hkl(1) * initConvMat(:, 1) +...
-        hkl(2) * initConvMat(:, 2) +...
-        hkl(3) * initConvMat(:, 3);
-Lz = norm(viewDirection);
-
-radius = sqrt(2 * sideLength^2 + Lz^2) / 2;
+radius = sqrt(2 * width^2 + thickness^2) / 2;
 atomCoordMat = CreateNanoCluster_hkl(atomSiteMat, cellLengths, cellAngles, hkl, radius);
 
 tolerance = 1e-8;
-atomCoordMat(:, (atomCoordMat(5, :) > Lz / 2 + tolerance) |...
-    (atomCoordMat(5, :) < -Lz / 2 - tolerance)) = [];
+atomCoordMat(:, (atomCoordMat(5, :) > thickness / 2 + tolerance) |...
+    (atomCoordMat(5, :) < -thickness / 2 - tolerance)) = [];
 
 end
 
