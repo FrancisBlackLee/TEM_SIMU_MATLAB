@@ -38,8 +38,8 @@ crysInfo = LoadCif(filename_8);
 initAtomSiteMat = ExtractAtomSiteFromCrysInfo(crysInfo);
 fullAtomSiteMat = AddEquivAtomSites(initAtomSiteMat);
 
-sideLength = 20;
-hkl = [1, 1, 1];
+sideLength = 50;
+hkl = [1, 1, 0];
 
 convMat = ConversionMatrix_hkl(cellLengths, cellAngles, hkl);
 viewDirection = hkl(1) * convMat(:, 1) +...

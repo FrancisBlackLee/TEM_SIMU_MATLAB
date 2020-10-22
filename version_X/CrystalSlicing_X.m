@@ -101,7 +101,7 @@ else
         for TopIdx = 1 : size(slice{1}, 2)
             for BotIdx = 1 : size(slice{SliceNum}, 2)
                 TempDist = sqrt(sum((slice{1}(3:4, TopIdx) - slice{SliceNum}(3:4, BotIdx)).^2));
-                if (TempDist <= IdMinDist) && (slice{1}(1, TopIdx) == slice{4}(1, BotIdx))
+                if (TempDist <= IdMinDist) && (slice{1}(1, TopIdx) == slice{SliceNum}(1, BotIdx))
                     IdCrit = 1;
                     break;
                 end

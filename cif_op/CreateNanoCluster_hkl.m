@@ -82,6 +82,8 @@ else
     expanNum = cellNumA * cellNumB * cellNumC;
     atomCoordMat = repmat(atomSiteMat, 1, expanNum);
     wbHandle = waitbar(0, 'Processing...');
+    totalTask = cellNumA * cellNumB * cellNumC;
+    finishedTask = 0;
     for aIdx = 0 : cellNumA - 1
         for bIdx = 0 : cellNumB - 1
             for cIdx = 0 : cellNumC - 1
@@ -93,12 +95,11 @@ else
                     atomCoordMat(5, repStart : repStart + initAtomNum - 1) + cIdx;
                 
                 repStart = repStart + initAtomNum;
+                finishedTask = finishedTask + 1;
+                waitbar(finishedTask / totalTask, wbHandle, 'Processing...');
             end
         end
-        waitbar((aIdx + 1) / cellNumA, wbHandle, 'Processing...');
     end
-    
-    close(wbHandle);
                     
     tolerance = 1e-8;
     atomCoordMat = atomCoordMat';
@@ -110,6 +111,8 @@ else
     atomCoordMat(3 : 5, :) = atomCoordMat(3 : 5, :) - center;
     distToOrigin = sqrt(sum(atomCoordMat(3 : 5, :).^2, 1));
     atomCoordMat(:, distToOrigin > radius) = [];
+    
+    close(wbHandle);
 end
 
 end
