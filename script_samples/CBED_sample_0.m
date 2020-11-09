@@ -24,8 +24,7 @@ clear all;
 %% Lattice generation: silicon [110]
 LattConst = [3.84, 5.43, 0]; % [a b]
 LayerDist = [1.9198, 1.9198]; % distance between each slice
-M = 5;
-CellNum = M * [3, 2]; % expand the unit cell by Expan_Nx = 3M and Expan_Ny = 2M, adaptive integer M
+CellNum = [24, 17]; % expand the unit cell by Expan_Nx = 3M and Expan_Ny = 2M, adaptive integer M
 DistError = 1e-2;
 % Laters: Each column for an atom
 LayerA = [14, 14; 0, 0.5; 0, 0.75];
@@ -34,8 +33,8 @@ LayerB = [14, 14; 0, 0.5; 0.25, 0.5];
 % sampling:
 Lx = CellNum(1) * LattConst(1);
 Ly = CellNum(2) * LattConst(2);
-Nx = 512;
-Ny = 512;
+Nx = 1024;
+Ny = 1024;
 dx = Lx / Nx;
 dy = Ly / Ny;
 x = -Lx / 2 : dx : Lx / 2 - dx;
@@ -57,13 +56,13 @@ Params.df = 0;
 Proj_PotA = MultiProjPot_conv_0(LayerA, CellNum, LattConst, Lx, Ly, Nx, Ny);
 % Layer B:
 Proj_PotB = MultiProjPot_conv_0(LayerB, CellNum, LattConst, Lx, Ly, Nx, Ny);
-% test
-figure;
-imagesc(x, y, Proj_PotA);
-colormap('gray');
-figure;
-imagesc(x, y, Proj_PotB);
-colormap('gray');
+% % test
+% figure;
+% imagesc(x, y, Proj_PotA);
+% colormap('gray');
+% figure;
+% imagesc(x, y, Proj_PotB);
+% colormap('gray');
 
 TF_A = exp(1i * InterCoeff * Proj_PotA / 1000);
 TF_B = exp(1i * InterCoeff * Proj_PotB / 1000);
@@ -73,7 +72,7 @@ TransFuncs(:, :, 1) = TF_A;
 TransFuncs(:, :, 2) = TF_B;
 %% Scanning module
 Probe = ProbeCreate(Params, 1, 0, Lx, Ly, Nx, Ny);
-TransWave = multislice(Probe, WaveLength, Lx, Ly, TransFuncs, LayerDist, 100);
+TransWave = multislice(Probe, WaveLength, Lx, Ly, TransFuncs, LayerDist, 260);
 % Trans_Wave_Far = ifftshift(fft2(fftshift(TransWave)) * dx * dy);
 Trans_Wave_Far = ifftshift(fft2(fftshift(TransWave)));
 DetectInten = log(1 + 0.1 * abs(Trans_Wave_Far.^2));

@@ -27,7 +27,7 @@ function [MeanDisplace] = ThermoDisplace_0(MassNum, DebyeTemp, Temp)
 %       MeanDisplace -- standard deviation of the thermo-displacement (in
 %       Angstrom);
 
-MeanDisplace = sqrt(2 * 144.38 * Temp ./ (MassNum .* DebyeTemp.^2));
+MeanDisplace = sqrt(144.38 * Temp ./ (MassNum .* DebyeTemp.^2));
 
 end
 
