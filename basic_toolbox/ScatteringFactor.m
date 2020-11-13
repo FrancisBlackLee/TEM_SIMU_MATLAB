@@ -22,11 +22,7 @@ function [sf] = ScatteringFactor(AtomType, q)
 %   AtomType: type of the atom (atomic number);
 %   q: scattering angle;
 
-FileName = mfilename('fullpath');
-FileName = strcat(FileName, '.m');
-[filepath, name, ext] = fileparts(FileName);
-Pot_txt_name = fullfile(filepath, 'Scattering_Factors.txt');
-Scatt_Fac = load(Pot_txt_name);
+Scatt_Fac = load('Scattering_Factors.txt');
 
 StartIndex = 3 * (AtomType - 1) + 1;
 A = [Scatt_Fac(StartIndex, 1), Scatt_Fac(StartIndex, 3), Scatt_Fac(StartIndex + 1, 1)];
@@ -36,7 +32,7 @@ D = [Scatt_Fac(StartIndex + 1, 4), Scatt_Fac(StartIndex + 2, 2), Scatt_Fac(Start
 
 sf = 0;
 for i = 1 : 3
-    sf = sf + A(i)/(q^2 + B(i)) + C(i)*exp(-D(i)*q^2);
+    sf = sf + A(i)./(q.^2 + B(i)) + C(i)*exp(-D(i)*q.^2);
 end
 end
 
