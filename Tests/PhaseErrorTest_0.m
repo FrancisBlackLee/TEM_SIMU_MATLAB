@@ -65,8 +65,8 @@ Aberr_TF = exp(1i * PhaseError) .* Aperture;
 xp = 0; yp = 0;
 Probe = ifft2(fftshift(Aberr_TF .* exp(-1i * 2 * pi * (FX * xp + FY * yp)))) / (dx * dy);
 Probe = ifftshift(Probe);
-NormEffi = sqrt(sum(sum(abs(Probe.^2))) * dx * dy);
-Probe = Probe / NormEffi;
+NormCoeff = sqrt(sum(sum(abs(Probe.^2))) * dx * dy);
+Probe = Probe / NormCoeff;
 
 figure;
 imagesc(x, y, abs(Probe.^2));
