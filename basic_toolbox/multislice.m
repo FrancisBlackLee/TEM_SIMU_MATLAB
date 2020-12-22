@@ -53,12 +53,14 @@ switch nargin
                 SliceIdx = (i - 1) * LayerNum + j;
                 if SaveSliceIdx <= SaveSliceNum
                     if SliceIdx == SaveSliceSeries(SaveSliceIdx)
-                        FileNameReal = strcat(SaveDir, '\', num2str(SliceIdx), '_real.txt');
-                        FileNameImag = strcat(SaveDir, '\', num2str(SliceIdx), '_imag.txt');
+                        FileNameReal = fullfile(SaveDir,...
+                            strcat(num2str(SliceIdx), '_real.bin'));
+                        FileNameImag = fullfile(SaveDir,...
+                            strcat(num2str(SliceIdx), '_imag.bin'));
                         WaveReal = real(Wave);
                         WaveImag = imag(Wave);
-                        save(FileNameReal, 'WaveReal', '-ascii', '-double', '-tabs');
-                        save(FileNameImag, 'WaveImag', '-ascii', '-double', '-tabs');
+                        WriteBinaryFile(FileNameReal, WaveReal);
+                        WriteBinaryFile(FileNameImag, WaveImag);
                         SaveSliceIdx = SaveSliceIdx + 1;
                     end
                 end
@@ -68,13 +70,15 @@ switch nargin
         end
         if SaveSliceIdx <= SaveSliceNum
             if SaveSliceSeries(SaveSliceIdx) == SliceIdx + 1
-                FileNameReal = strcat(SaveDir, '\', num2str(SliceIdx+1), '_real.txt');
-                FileNameImag = strcat(SaveDir, '\', num2str(SliceIdx+1), '_imag.txt');
+                FileNameReal = fullfile(SaveDir,...
+                    strcat(num2str(SliceIdx), '_real.bin'));
+                FileNameImag = fullfile(SaveDir,...
+                    strcat(num2str(SliceIdx), '_imag.bin'));
                 WaveReal = real(Wave);
                 WaveImag = imag(Wave);
                 disp([SliceIdx + 1, SaveSliceSeries(SaveSliceIdx)]);
-                save(FileNameReal, 'WaveReal', '-ascii', '-double', '-tabs');
-                save(FileNameImag, 'WaveImag', '-ascii', '-double', '-tabs');
+                WriteBinaryFile(FileNameReal, WaveReal);
+                WriteBinaryFile(FileNameImag, WaveImag);
             end
         end
         ExitWave = Wave;
