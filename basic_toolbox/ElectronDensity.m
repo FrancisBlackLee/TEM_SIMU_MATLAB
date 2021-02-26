@@ -16,20 +16,23 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [detector] = AnularDetector_X(LowAngle, HighAngle, WavLen, Lx, Ly, Nx, Ny)
-%AnularDetector_X.m generates the detector for ADF-STEM mode.
-%   LowAngle, HighAngle -- describe the shape of the detector in mrad;
-%   WavLen -- wavelength of the electron beam;
-%   Lx, Ly, Nx, Ny -- sampling parameters;
-% Note: X denotes an experimental version!
+function [electronDensity] = ElectronDensity(atomType, rCoords)
+%ElectronDensity.m calculates the radial atomic electron density.
+%   atomType -- atomic type, Z;
+%   rCoords -- radial coordinates;
+%   electronDensity -- electron density;
 
-dx = Lx / Nx;
-dy = Ly / Ny;
-fx = -1 / (2 * dx) : 1 / Lx : 1 / (2 * dx) - 1 / Lx;
-fy = -1 / (2 * dy) : 1 / Ly : 1 / (2 * dy) - 1 / Ly;
-[FX, FY] = meshgrid(fx, fy);
-FreqSqu = FX.^2 + FY.^2;
-detector = ((FreqSqu < (HighAngle * 1e-3 / WavLen)^2) & (FreqSqu > (LowAngle * 1e-3 / WavLen)^2));
+a0 = 0.529; % Bohr radius in angstrom
+scattParam = load('VanDyckScattParam.txt');
+paramA = scattParam(2 * atomType - 1, :);
+paramB = scattParam(2 * atomType, :);
+
+electronDensity = zeros(size(rCoords));
+for i = 1 : 5
+    electronDensity = electronDensity + paramA(i) / paramB(i)^2.5 *...
+        exp(-2 * pi * rCoords / sqrt(paramB(i)));
+end
+electronDensity = 2 * pi^4 * a0 * electronDensity;
 
 end
 
