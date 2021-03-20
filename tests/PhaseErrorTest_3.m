@@ -48,38 +48,26 @@ close all;
 %       RealRotAngle{5} = [phi_50, phi_52, phi_54, phi_56];
 %% Parameter setting:
 % unit of aberrations is angstrom
-aberr{1} = [-2350, 3.865];
-aberr{2} = [264.7, 364.6];
-aberr{3} = [1742, 6092, 1.08e7];
-aberr{4} = [0, 0, 25.12e7];
-aberr{5} = [0, 0, 0, 0];
-
-realRotAngle{1} = [0, 45];
-realRotAngle{2} = [45, 45];
-realRotAngle{3} = [0, 45, 45];
-realRotAngle{4} = [0, 0, 0];
-realRotAngle{5} = [0, 0, 0, 0];
-
 aberration = InitObjectiveLensAberrations_X();
-aberration.C1 = -2350;
-aberration.A1 = 3.865;
-aberration.B2 = 264.7;
-aberration.A2 = 364.6;
-aberration.C3 = 1742;
-aberration.S3 = 6092;
-aberration.A3 = 1.08e7;
-aberration.A4 = 25.12e7;
+aberration.C1 = -200;
+aberration.A1 = 0;
+aberration.B2 = 0;
+aberration.A2 = 0;
+aberration.C3 = 1.2e7;
+aberration.S3 = 0;
+aberration.A3 = 0;
+aberration.A4 = 0;
 
-aberration.A1_angle = 45;
-aberration.B2_angle = 45;
-aberration.A2_angle = 45;
-aberration.S3_angle = 45;
-aberration.A3_angle = 45;
+aberration.A1_angle = 0;
+aberration.B2_angle = 0;
+aberration.A2_angle = 0;
+aberration.S3_angle = 0;
+aberration.A3_angle = 0;
 
-dx = 0.1407; % Angstrome, expand reciprocal space to about 70 mrad.
+dx = 0.1; % Angstrome, expand reciprocal space to about 70 mrad.
 dy = dx;
-Nx = 1024;
-Ny = 1024;
+Nx = 2048;
+Ny = 2048;
 Lx = Nx * dx;
 Ly = Ny * dy;
 x = -Lx / 2 : dx : Lx / 2 - dx;
@@ -89,9 +77,25 @@ fy = -1 / (2 * dy) : 1 / Ly : 1 / (2 * dy) - 1 / Ly;
 
 KeV = 300;
 wavLen = HighEnergyWavLen_X(KeV);
+
+aperture = CircApert_X(Lx, Ly, Nx, Ny, wavLen, 12.5);
+
 phaseError = AberrationPhaseShift_X(aberration, wavLen, Lx, Ly, Nx, Ny);
-wrappedPhaseError = mat2gray(wrapTo2Pi(phaseError));
+wrappedPhaseError = mat2gray(wrapTo2Pi(phaseError)) .* aperture;
 
 figure;
 imshow(wrappedPhaseError);
 colormap('gray'); axis square;
+
+opticalTransFunc = exp(-1i * phaseError) .* aperture;
+probe = GenerateProbe_X(opticalTransFunc, 0, 0, Lx, Ly, Nx, Ny);
+
+probeI = abs(probe.^2);
+figure;
+imshow(probeI(513 : 1536, 513 : 1536));
+colormap('gray'); axis square;
+
+figure;
+plot(x(513 : 1536), probeI(1025, 513 : 1536));
+xlabel('$x (\AA)$', 'interpreter', 'latex');
+ylabel('Intensity');

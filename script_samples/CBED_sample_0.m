@@ -73,7 +73,6 @@ TransFuncs(:, :, 2) = TF_B;
 %% Scanning module
 Probe = ProbeCreate(Params, 1, 0, Lx, Ly, Nx, Ny);
 TransWave = multislice(Probe, WaveLength, Lx, Ly, TransFuncs, LayerDist, 260);
-% Trans_Wave_Far = ifftshift(fft2(fftshift(TransWave)) * dx * dy);
 Trans_Wave_Far = ifftshift(fft2(fftshift(TransWave)));
 DetectInten = log(1 + 0.1 * abs(Trans_Wave_Far.^2));
 

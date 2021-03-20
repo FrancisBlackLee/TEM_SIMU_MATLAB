@@ -27,7 +27,7 @@ function [strCellArray, lineType, canDelete] = CifLineParser(textLine, lastLoopO
 %       loop commad, 'true' for 'can delete', 'false' for 'cannot delete';
 
 tightTextLine = TightenCifTextLine(textLine);
-disp(tightTextLine);
+% disp(tightTextLine);
 strCellArray = strsplit(tightTextLine);
 
 strNum = numel(strCellArray);

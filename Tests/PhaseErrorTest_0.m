@@ -49,11 +49,8 @@ WavLen = 12.3986 / sqrt((2 * 511.0 + KeV) * KeV);  %wavelength
 PhaseError = MultiAberrPhaseError_X(Aberr, WavLen, Lx, Ly, Nx, Ny);
 
 figure;
-subplot(1, 2, 1);
 imagesc(fx, fy, PhaseError);
 colormap('gray'); axis square;
-subplot(1, 2, 2);
-plot(fx, PhaseError(Ny / 2 + 1, : ));
 
 amax = 20e-3; % rad;
 [FX, FY] = meshgrid(fx, fy);

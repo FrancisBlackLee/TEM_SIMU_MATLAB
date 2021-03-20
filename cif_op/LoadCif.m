@@ -35,7 +35,7 @@ loopPropertyHead = 0;
 loopPropertyNum = 0;
 loopValueColNum = 2;
 
-disp('CIF content');
+% disp('CIF content');
 textLine = fgetl(fileID);
 while ischar(textLine)
     [strCellArray, lineType, canDelete] = CifLineParser(textLine, loopObj);
