@@ -21,7 +21,7 @@ function [WavLen] = HighEnergyWavLen_X(KeV)
 %   KeV -- beam energy in KeV;
 % Note: X denotes an experimental version!
 
-WavLen = 12.3986 / sqrt((2 * 511.0 + KeV) * KeV);
+WavLen = 12.3986 ./ sqrt((2 * 511.0 + KeV) .* KeV);
 
 end
 
