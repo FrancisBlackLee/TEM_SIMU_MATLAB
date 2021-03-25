@@ -48,9 +48,9 @@ Params.KeV = 300;
 InterCoeff = InteractionCoefficient(Params.KeV);
 WaveLength = 12.3986 / sqrt((2 * 511.0 + Params.KeV) * Params.KeV);  %wavelength
 WaveNumber = 2 * pi / WaveLength;     %wavenumber
-Params.amax = 20;
+Params.amax = 10;
 Params.Cs = 0;
-Params.df = -3000;
+Params.df = 700;
 %% Transmission functions
 % Layer A:
 Proj_PotA = MultiProjPot_conv_0(LayerA, CellNum, LattConst, Lx, Ly, Nx, Ny);
@@ -82,7 +82,7 @@ TransFuncs(:, :, 3) = TF_C;
 
 %% BF-CTEM
 IncidentWave = ones(Ny, Nx);
-TransWave = multislice(IncidentWave, WaveLength, Lx, Ly, TransFuncs, LayerDist, 10);
+TransWave = multislice(IncidentWave, WaveLength, Lx, Ly, TransFuncs, LayerDist, 53);
 ReciTransWave = fft2(fftshift(TransWave));
 ObjLens = fftshift(AberrationFunction(Params, Lx, Ly, Nx, Ny));
 ReciTFWave = ReciTransWave .* ObjLens;

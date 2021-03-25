@@ -38,15 +38,15 @@ Ny = 512;
 dx = Lx / Nx;
 dy = Ly / Ny;
 %% STEM settings:
-Params.KeV = 200;
+Params.KeV = 300;
 InterCoeff = InteractionCoefficient(Params.KeV);
 WavLen = HighEnergyWavLen_X(Params.KeV);
 Params.aperture = CircApert_X(Lx, Ly, Nx, Ny, WavLen, 18);
 Params.Cs3 = 0;
 Params.Cs5 = 0;
 Params.df = 0;
-Params.scanx = linspace(0, 3.8, 20);
-Params.scany = linspace(0, 6.6, 34);
+Params.scanx = linspace(0, 3.8396, 38);
+Params.scany = linspace(0, 6.6504, 66);
 
 HighAngle = 200; % im mrad
 LowAngle = 40; %in mrad
@@ -82,7 +82,7 @@ TransFuncs(:, :, 1) = TF_A;
 TransFuncs(:, :, 2) = TF_B;
 TransFuncs(:, :, 3) = TF_C;
 %% Imaging section:
-stemImg = ADF_STEM_X(Lx, Ly, Params, TransFuncs, SliceDist, 10, 0);
+stemImg = ADF_STEM_X(Lx, Ly, Params, TransFuncs, SliceDist, 21, 0);
 toc;
 
 % repStemImg = repmat(stemImg, 6, 10);
