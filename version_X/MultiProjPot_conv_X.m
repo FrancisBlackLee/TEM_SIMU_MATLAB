@@ -22,10 +22,9 @@ function [ProjPot] = MultiProjPot_conv_X(ScaleTypeCoord, CellNum, LattConst, Lx,
 %   ScaleTypeCoord -- matrix that contains the lattice information, where
 %       the first row denotes the atomic types, the second row denotes the
 %       elemental proportion, and the third to the fifth row denotes the
-%       scaled atomic coordinates. Syntax: [T; P; ScaledX, ScaledY, ScaledZ];
+%       scaled atomic coordinates. Syntax: [T; P; ScaledX; ScaledY; ScaledZ];
 %       Since all the atoms included in this matrix are all on one slice,
-%       the fifth row is not required
-%       strictly;
+%       the fifth row is not required strictly;
 %   CellNum -- expansion of the unit cell, syntax: [CellNumX, CellNumY];
 %   LattConst -- lattice constants, syntax: [a, b];
 %   Lx, Ly, Nx, Ny -- sampling parameters;
@@ -41,15 +40,20 @@ if length(SortedType) > 1
     LastType = 1;
     for Atom_Idx = 1 : length(SortedType)
         if SortedType(Atom_Idx)~=SortedType(LastType)
-            ProjPot = ProjPot + MonoProjPot_conv_X(SortedType(LastType), ScaleTypeCoord(2, LastType : Atom_Idx-1),...
-                ScaleTypeCoord(3 : 4 , LastType : Atom_Idx-1), CellNum, LattConst, Lx, Ly, Nx, Ny);
+            ProjPot = ProjPot + MonoProjPot_conv_X(SortedType(LastType),...
+                ScaleTypeCoord(2, LastType : Atom_Idx-1),...
+                ScaleTypeCoord(3 : 4 , LastType : Atom_Idx-1),...
+                CellNum, LattConst, Lx, Ly, Nx, Ny);
             LastType = Atom_Idx;
         end
     end
-    ProjPot = ProjPot + MonoProjPot_conv_X(SortedType(LastType), ScaleTypeCoord(2, LastType : Atom_Idx),...
-            ScaleTypeCoord(3 : 4 , LastType : Atom_Idx), CellNum, LattConst, Lx, Ly, Nx, Ny);
+    ProjPot = ProjPot + MonoProjPot_conv_X(SortedType(LastType),...
+        ScaleTypeCoord(2, LastType : Atom_Idx),...
+        ScaleTypeCoord(3 : 4 , LastType : Atom_Idx), CellNum, LattConst,...
+        Lx, Ly, Nx, Ny);
 else
-    ProjPot = MonoProjPot_conv_X(SortedType, ScaleTypeCoord(2, : ), ScaleTypeCoord(3 : 4, : ), CellNum, LattConst, Lx, Ly, Nx, Ny);
+    ProjPot = MonoProjPot_conv_X(SortedType, ScaleTypeCoord(2, : ),...
+        ScaleTypeCoord(3 : 4, : ), CellNum, LattConst, Lx, Ly, Nx, Ny);
 end
 
 end

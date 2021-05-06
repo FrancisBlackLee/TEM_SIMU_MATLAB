@@ -33,16 +33,12 @@ dy = Ly / Ny;
 x = -Lx / 2 : dx : Lx / 2 - dx;
 y = -Ly / 2 : dy : Ly / 2 - dy;
 [X, Y] = meshgrid(x, y);
-deltaSq = 0.5 * (dx * dx + dy * dy);
+deltaSq = (0.5 * min(dx, dy))^2;
 
 a = 0.529; % Bohr radius in angstrom
 e = 14.4; % elemental charge in volt - angstrom
 
-FileName = mfilename('fullpath');
-FileName = strcat(FileName, '.m');
-[filepath, name, ext] = fileparts(FileName);
-Pot_txt_name = fullfile(filepath, 'Scattering_Factors.txt');
-Scatt_Fac = load(Pot_txt_name);
+Scatt_Fac = load('Scattering_Factors.txt');
 
 Proj_Pot = zeros(size(X));
 for i = 1 : AtomNum

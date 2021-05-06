@@ -45,8 +45,8 @@ Params.aperture = CircApert_X(Lx, Ly, Nx, Ny, WavLen, 18);
 Params.Cs3 = 0;
 Params.Cs5 = 0;
 Params.df = 0;
-Params.scanx = linspace(0, 3.8396, 38);
-Params.scany = linspace(0, 6.6504, 66);
+Params.scanx = linspace(0, 3.8396, 39);
+Params.scany = linspace(0, 6.6504, 67);
 
 HighAngle = 200; % im mrad
 LowAngle = 40; %in mrad
