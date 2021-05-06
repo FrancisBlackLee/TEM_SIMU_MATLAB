@@ -27,8 +27,8 @@ if ischar(tightTextLine)
     % delete spaces in the front of the text line
     tightTextLine = strtrim(tightTextLine);
     
-    % delete parentheses and the content inside
-    if contains(tightTextLine, '(') && contains(tightTextLine, ')')
+    % delete parentheses and the content inside 
+    while contains(tightTextLine, '(') && contains(tightTextLine, ')')
         leftParenIdx = strfind(tightTextLine, '(');
         rightParenIdx = strfind(tightTextLine, ')');
         tightTextLine(leftParenIdx : rightParenIdx) = [];
