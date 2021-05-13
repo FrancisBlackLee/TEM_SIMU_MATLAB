@@ -16,7 +16,7 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [detector] = AnularDetector_X(LowAngle, HighAngle, WavLen, Lx, Ly, Nx, Ny)
+function [detector] = AnnularDetector_X(LowAngle, HighAngle, WavLen, Lx, Ly, Nx, Ny)
 %AnularDetector_X.m generates the detector for ADF-STEM mode.
 %   LowAngle, HighAngle -- describe the shape of the detector in mrad;
 %   WavLen -- wavelength of the electron beam;
