@@ -55,7 +55,7 @@ Params.scany = linspace(0, 5.65 - dy, 46);
 HighAngle = 200; % im mrad
 LowAngle = 40; %in mrad
 
-Params.detector = AnularDetector_X(LowAngle, HighAngle, WavLen, Lx, Ly, Nx, Ny);
+Params.detector = AnnularDetector_X(LowAngle, HighAngle, WavLen, Lx, Ly, Nx, Ny);
 %% Transmission functions:
 ProjPotA = MultiProjPot_conv_X(SliceA, CellNum, LattConst, Lx, Ly, Nx, Ny, 1e-5);
 % figure;

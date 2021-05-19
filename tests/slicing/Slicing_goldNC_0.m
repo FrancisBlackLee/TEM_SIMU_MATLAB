@@ -35,7 +35,7 @@ latt(5, : ) = latt(5, : ) + 50.0;
 % scatter3(latt(3, : ), latt(4, : ), latt(5, : ));
 
 
-water = load('E:\Group_Affairs\Zhang_Jiarui\water_20nm.txt');
+water = load('water_20nm.txt');
 water = water';
 waterAN = size(water, 2);
 water = [water(1, :); ones(1, waterAN); water(2:4, :)];
@@ -51,7 +51,6 @@ water(:, sqrt((water(3,:)-30).^2 + (water(4,:)-30).^2 + (water(5,:)-50).^2) < 20
 sample = [latt, water];
 
 [slice, SliceDist, ExtraSlice] = CrystalSlicing_X(sample, sample, 2.0, 100.0, 1, 0);
-save('Tests\SliceDist_4nmGold_in_water.txt', 'SliceDist',  '-ascii', '-double', '-tabs');
 
 Lx = 60.0;
 Ly = Lx;
@@ -59,12 +58,22 @@ Nx = 1024;
 Ny = 1024;
 CellNum = [1, 1];
 LattConst = [Lx, Ly];
-for i = 1:length(SliceDist)
-    filename = strcat('Tests\ProjPot\p', num2str(i), '.txt');
-    tempSlice = slice{1, i};
+destDir = 'in_situ_gold_in_water';
+mkDirStat = mkdir(destDir);
+save(fullfile(destDir, 'SliceDist_4nmGold_in_water.txt'),...
+    'SliceDist',  '-ascii', '-double', '-tabs');
+
+wbHandle = waitbar(0, 'Generating projected potential...');
+sliceNum = length(SliceDist);
+for sliceIdx = 1 : sliceNum
+    filename = strcat('ppj', num2str(sliceIdx), '.bin');
+    filename = fullfile(destDir, filename);
+    tempSlice = slice{1, sliceIdx};
     tempSlice(3, : ) = tempSlice(3, : ) / Lx;
     tempSlice(4, : ) = tempSlice(4, : ) / Ly;
     ProjPot = MultiProjPot_conv_X(tempSlice, CellNum, LattConst, Lx, Ly, Nx, Ny, 1.0e-5);
-    save(filename, 'ProjPot', '-ascii', '-double', '-tabs');
-    disp(i);
+    WriteBinaryFile(filename, ProjPot);
+    waitbar(sliceIdx / sliceNum, wbHandle, 'Generating projected potential...');
 end
+
+close(wbHandle);

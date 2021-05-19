@@ -16,79 +16,76 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% ADF-STEM sample 3: C:mp-568286
+% ADF-STEM sample 3: SrTiO3 100
 clc;
 close all;
 clear all;
-%% Lattice generation: silicon [111]
-unitCell = load('E:\Group_Affairs\Huang_Guangyi\C Coordinates.txt');
-atomNumInUnitCell = size(unitCell, 1);
-unitCell = [unitCell(:, 1), ones(atomNumInUnitCell, 1), unitCell(:, 3),...
-    unitCell(:, 4), unitCell(:, 5)]';
-
-lattConstA = 4.2745;
-lattConstB = 4.9347;
-lattConstC = 8.0283;
-
-[slice, sliceDist, extraSlice] = CrystalSlicing_X(unitCell, unitCell, 0.2, 1, 0, 0);
-
-lattConst = [lattConstA, lattConstB];
-sliceDist = sliceDist * lattConstC;
-
-expanNum = [4, 4];
+%% specimen preparation:
+lattConst = [3.9051, 3.9051, 0]; % [a b]
+sliceDist = [1.9525, 1.9525]; % distance between each slice
+cellNum = [5, 5]; % expand the unit cell by Expan_Nx = 3 and Expan_Ny = 2, adaptive
+% Laters: Each column for an atom
+sliceA = [38,   8;...
+          1,    1;...
+          0,    0.5;...
+          0,    0.5];
+sliceB = [22,   8,      8;...
+          1,    1,      1;...
+          0.5,  0.5,    0;...
+          0.5,  0,      0.5];
 
 %% sampling:
-Lx = expanNum(1) * lattConst(1);
-Ly = expanNum(2) * lattConst(2);
-Nx = 428;
-Ny = 490;
+Lx = cellNum(1) * lattConst(1);
+Ly = cellNum(2) * lattConst(2);
+Nx = 512;
+Ny = 512;
 dx = Lx / Nx;
 dy = Ly / Ny;
 %% STEM settings:
-Params.KeV = 300;
-InterCoeff = InteractionCoefficient(Params.KeV);
-WavLen = HighEnergyWavLen_X(Params.KeV);
-Params.aperture = CircApert_X(Lx, Ly, Nx, Ny, WavLen, 23);
-Params.Cs3 = 0;
-Params.Cs5 = 0;
-Params.df = 0;
-Params.scanx = linspace(0, lattConstA, 46);
-Params.scany = linspace(0, lattConstB, 52);
+params.KeV = 200;
+interCoeff = InteractionCoefficient(params.KeV);
+wavLen = HighEnergyWavLen_X(params.KeV);
+params.aperture = CircApert_X(Lx, Ly, Nx, Ny, wavLen, 22);
+params.Cs3 = 0;
+params.Cs5 = 0;
+params.df = 0;
+params.scanx = linspace(0, 3.9051, 40);
+params.scany = linspace(0, 3.9051, 40);
 
-HighAngle = 200; % im mrad
-LowAngle = 40; %in mrad
-
-Params.detector = AnularDetector_X(LowAngle, HighAngle, WavLen, Lx, Ly, Nx, Ny);
+% define multiple STEM detectors:
+detectorNum = 2;
+params.detector = zeros(Ny, Nx, detectorNum);
+params.detector(:, :, 1) = AnnularDetector_X(90, 170, wavLen, Lx, Ly, Nx, Ny);
+params.detector(:, :, 2) = AnnularDetector_X(11, 22, wavLen, Lx, Ly, Nx, Ny);
 %% Transmission functions:
-% Layer A:
-ProjPotA = MultiProjPot_conv_X(slice{1}, expanNum, lattConst, Lx, Ly, Nx, Ny, 1.0e-5);
-% Layer B:
-ProjPotB = MultiProjPot_conv_X(slice{2}, expanNum, lattConst, Lx, Ly, Nx, Ny, 1.0e-5);
+projPotA = MultiProjPot_conv_X(sliceA, cellNum, lattConst, Lx, Ly, Nx, Ny, 1e-5);
+% figure;
+% imagesc(projPotA);
+% colormap('gray'); axis square;
+% title('Proj.Pot. A');
 
-% test
-figure;
-imagesc(ProjPotA);
-colormap('gray'); axis equal;
-figure;
-imagesc(ProjPotB);
-colormap('gray'); axis equal;
-
+projPotB = MultiProjPot_conv_X(sliceB, cellNum, lattConst, Lx, Ly, Nx, Ny, 1e-5);
+% figure;
+% imagesc(projPotB);
+% colormap('gray'); axis square;
+% title('Proj.Pot. B');
 tic;
-TF_A = exp(1i * InterCoeff * ProjPotA / 1000);
-TF_B = exp(1i * InterCoeff * ProjPotB / 1000);
-
+TF_A = exp(1i * interCoeff * projPotA / 1000);
+TF_B = exp(1i * interCoeff * projPotB / 1000);
 TF_A = BandwidthLimit(TF_A, Lx, Ly, Nx, Ny, 0.67);
 TF_B = BandwidthLimit(TF_B, Lx, Ly, Nx, Ny, 0.67);
-
-TransFuncs(:, :, 1) = TF_A;
-TransFuncs(:, :, 2) = TF_B;
-
+transFuncs(:, :, 1) = TF_A;
+transFuncs(:, :, 2) = TF_B;
 %% Imaging section:
-stemImg = ADF_STEM_X(Lx, Ly, Params, TransFuncs, sliceDist, 10, 0);
+stackNum = 20;
+cbedOption = 0;
+stemImg = STEM_X(Lx, Ly, params, transFuncs, sliceDist, stackNum,...
+    cbedOption);
 toc;
 
-% repStemImg = repmat(stemImg, 6, 10);
+repStemImg = repmat(stemImg, 6, 6, 1);
+stemImg_1 = mat2gray(repStemImg(:, :, 1));
+stemImg_2 = mat2gray(repStemImg(:, :, 2));
 
 figure;
-imagesc(stemImg);
-colormap('gray');
+imshowpair(stemImg_1, stemImg_2, 'montage');
