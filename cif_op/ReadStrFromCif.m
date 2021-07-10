@@ -1,3 +1,10 @@
+function [str] = ReadStrFromCif(fileID)
+%ReadStrFromCif() read a valid string from the CIF file.
+% Input:
+%   fileID -- file identity/handle/pointer of the file;
+% Output:
+%   str -- string;
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
 
@@ -16,12 +23,6 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [str] = ReadStrFromCif(fileID)
-%ReadStrFromCif() read a valid string from the CIF file.
-% Input:
-%   fileID -- file identity/handle/pointer of the file;
-% Output:
-%   str -- string;
 
 str = fscanf(fileID, '%s', 1);
 

@@ -1,3 +1,18 @@
+function [projPot] = MultiProjPot_conv_X(fracTypeCoord, expanNum, lattConst,...
+    Lx, Ly, Nx, Ny, rmvDistError)
+%MultiProjPot_conv_0.m calculates the projected potential of one slice
+%using convolution if this slice contains more than one type of atoms.
+%   fracTypeCoord -- matrix that contains the lattice information, where
+%       the first row denotes the atomic types, the second row denotes the
+%       elemental proportion, and the third to the fifth row denotes the
+%       fractional atomic coordinates. Syntax: [T; P; fracX; fracY; fracZ];
+%       Since all the atoms included in this matrix are all on one slice,
+%       the fifth row is not required strictly;
+%   expanNum -- expansion of the unit cell, syntax: [numX, numY];
+%   lattConst -- lattice constants, syntax: [a, b];
+%   Lx, Ly, Nx, Ny -- sampling parameters;
+% Note: X denotes an experimental version!
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
 
@@ -16,44 +31,31 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [ProjPot] = MultiProjPot_conv_X(ScaleTypeCoord, CellNum, LattConst, Lx, Ly, Nx, Ny, RmvDistError)
-%MultiProjPot_conv_0.m calculates the projected potential of one slice
-%using convolution if this slice contains more than one type of atoms.
-%   ScaleTypeCoord -- matrix that contains the lattice information, where
-%       the first row denotes the atomic types, the second row denotes the
-%       elemental proportion, and the third to the fifth row denotes the
-%       scaled atomic coordinates. Syntax: [T; P; ScaledX; ScaledY; ScaledZ];
-%       Since all the atoms included in this matrix are all on one slice,
-%       the fifth row is not required strictly;
-%   CellNum -- expansion of the unit cell, syntax: [CellNumX, CellNumY];
-%   LattConst -- lattice constants, syntax: [a, b];
-%   Lx, Ly, Nx, Ny -- sampling parameters;
-% Note: X denotes an experimental version!
 
 % Remove the periodically repeated atoms:
-ScaleTypeCoord = RmvSlcDplAtom_0(ScaleTypeCoord, RmvDistError);
+fracTypeCoord = RmvSlcDplAtom_0(fracTypeCoord, rmvDistError);
 % sort ScaleTypeCoord in an ascending order by atomic type:
-[SortedType, TypeOrder] = sort(ScaleTypeCoord(1, : ));
-ScaleTypeCoord = ScaleTypeCoord( : , TypeOrder);
-ProjPot = 0;
-if length(SortedType) > 1
-    LastType = 1;
-    for Atom_Idx = 1 : length(SortedType)
-        if SortedType(Atom_Idx)~=SortedType(LastType)
-            ProjPot = ProjPot + MonoProjPot_conv_X(SortedType(LastType),...
-                ScaleTypeCoord(2, LastType : Atom_Idx-1),...
-                ScaleTypeCoord(3 : 4 , LastType : Atom_Idx-1),...
-                CellNum, LattConst, Lx, Ly, Nx, Ny);
-            LastType = Atom_Idx;
+[sortedType, typeOrder] = sort(fracTypeCoord(1, : ));
+fracTypeCoord = fracTypeCoord( : , typeOrder);
+projPot = 0;
+if length(sortedType) > 1
+    lastType = 1;
+    for atomIdx = 1 : length(sortedType)
+        if sortedType(atomIdx) ~= sortedType(lastType)
+            projPot = projPot + MonoProjPot_conv_X(sortedType(lastType),...
+                fracTypeCoord(2, lastType : atomIdx-1),...
+                fracTypeCoord(3 : 4 , lastType : atomIdx-1),...
+                expanNum, lattConst, Lx, Ly, Nx, Ny);
+            lastType = atomIdx;
         end
     end
-    ProjPot = ProjPot + MonoProjPot_conv_X(SortedType(LastType),...
-        ScaleTypeCoord(2, LastType : Atom_Idx),...
-        ScaleTypeCoord(3 : 4 , LastType : Atom_Idx), CellNum, LattConst,...
+    projPot = projPot + MonoProjPot_conv_X(sortedType(lastType),...
+        fracTypeCoord(2, lastType : atomIdx),...
+        fracTypeCoord(3 : 4 , lastType : atomIdx), expanNum, lattConst,...
         Lx, Ly, Nx, Ny);
 else
-    ProjPot = MonoProjPot_conv_X(SortedType, ScaleTypeCoord(2, : ),...
-        ScaleTypeCoord(3 : 4, : ), CellNum, LattConst, Lx, Ly, Nx, Ny);
+    projPot = MonoProjPot_conv_X(sortedType, fracTypeCoord(2, : ),...
+        fracTypeCoord(3 : 4, : ), expanNum, lattConst, Lx, Ly, Nx, Ny);
 end
 
 end

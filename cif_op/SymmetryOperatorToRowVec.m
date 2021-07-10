@@ -1,3 +1,11 @@
+function [rowVec, glide] = SymmetryOperatorToRowVec(rowStr)
+%SymmetryOperatorToRowVec() calculates the symmetry operator as a vector by
+%parsing the input expression.
+% Input:
+%   rowStr -- symmetry operator an expression;
+% Output:
+%   rowVec -- symmetry operator as a 1-by-3 vector;
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
 
@@ -16,13 +24,6 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [rowVec, glide] = SymmetryOperatorToRowVec(rowStr)
-%SymmetryOperatorToRowVec() calculates the symmetry operator as a vector by
-%parsing the input expression.
-% Input:
-%   rowStr -- symmetry operator an expression;
-% Output:
-%   rowVec -- symmetry operator as a 1-by-3 vector;
 
 rowVecX = [1, 0, 0];
 rowVecY = [0, 1, 0];
@@ -79,12 +80,10 @@ end
 
 if ~isempty(rowStr)
     % only glide is left, find its sign:
-    glideSign = 1;
     if contains(rowStr, '+')
         plusIdx = strfind(rowStr, '+');
         rowStr(plusIdx) = [];
     elseif contains(rowStr, '-')
-        glideSign = -1;
         minusIdx = strfind(rowStr, '-');
         rowStr(minusIdx) = [];
     end

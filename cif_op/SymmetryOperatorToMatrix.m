@@ -1,3 +1,11 @@
+function [convMat, glideVec] = SymmetryOperatorToMatrix(stringExpression)
+%SymmetryOperatorToMatrix() calculates the symmetry operator as a matrix by
+%parsing the input 3 expressions, separated by commas.
+% Input:
+%   stringExpression -- symmetry operator as 3 expressions;
+% Output:
+%   matrixExpression -- symmetry operator as a 3-by-3 matrix;
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
 
@@ -16,13 +24,6 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [convMat, glideVec] = SymmetryOperatorToMatrix(stringExpression)
-%SymmetryOperatorToMatrix() calculates the symmetry operator as a matrix by
-%parsing the input 3 expressions, separated by commas.
-% Input:
-%   stringExpression -- symmetry operator as 3 expressions;
-% Output:
-%   matrixExpression -- symmetry operator as a 3-by-3 matrix;
 
 convMat = zeros(3);
 glideVec = zeros(3, 1);

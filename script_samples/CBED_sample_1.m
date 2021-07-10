@@ -22,73 +22,71 @@ clc;
 close all;
 clear all;
 %% Lattice generation: silicon [111]
-LattConst = [3.8396, 6.6504, 0]; % [a b]
-LayerDist = [3.1350, 3.1350, 3.1350]; % distance between each slice
-CellNum = 2 * [12, 7]; % expand the unit cell by Expan_Nx = 3M and Expan_Ny = 2M, adaptive integer M
-DistError = 1e-2;
-% Laters: Each column for an atom
-LayerA = [14, 14, 14, 14; 0.75, 0.75, 0.25, 0.25; 0.0833, 0.4167, 0.5833, 0.9167];
-LayerB = [14, 14, 14, 14; 0.75, 0.25, 0.25, 0.75; 0.0833, 0.25, 0.5833, 0.75];
-LayerC = [14, 14, 14, 14; 0.25, 0.75, 0.75, 0.25; 0.25, 0.4167, 0.75, 0.9167];
+lattConst = [3.8396, 6.6504, 0]; % [a b]
+sliceDist = [3.1350, 3.1350, 3.1350]; % distance between each slice
+expanNum = [12, 7]; % expand the unit cell by Expan_Nx = 3M and Expan_Ny = 2M, adaptive integer M
+% slices: Each column stands for an atom
+sliceA = [14, 14, 14, 14; 0.75, 0.75, 0.25, 0.25; 0.0833, 0.4167, 0.5833, 0.9167];
+sliceB = [14, 14, 14, 14; 0.75, 0.25, 0.25, 0.75; 0.0833, 0.25, 0.5833, 0.75];
+sliceC = [14, 14, 14, 14; 0.25, 0.75, 0.75, 0.25; 0.25, 0.4167, 0.75, 0.9167];
 %% basic settings
 % sampling:
-Lx = CellNum(1) * LattConst(1);
-Ly = CellNum(2) * LattConst(2);
-Nx = 1024;
-Ny = 1024;
-dx = Lx / Nx;
-dy = Ly / Ny;
-x = -Lx / 2 : dx : Lx / 2 - dx;
-y = -Ly / 2 : dy : Ly / 2 - dy;
-[X, Y] = meshgrid(x, y);
-fx = -1 / (2 * dx) : 1 / Lx : 1 / (2 * dx) - 1 / Lx;
-fy = -1 / (2 * dy) : 1 / Ly : 1 / (2 * dy) - 1 / Ly;
-[Fx, Fy] = meshgrid(fx, fy);
+Lx = expanNum(1) * lattConst(1);
+Ly = expanNum(2) * lattConst(2);
+Nx = 512;
+Ny = 512;
+fx = InitFreqAxis(Lx, Nx);
+fy = InitFreqAxis(Ly, Ny);
 % STEM settings:
-Params.KeV = 200;
-InterCoeff = InteractionCoefficient(Params.KeV);
-WaveLength = 12.3986 / sqrt((2 * 511.0 + Params.KeV) * Params.KeV);  %wavelength
-WaveNumber = 2 * pi / WaveLength;     %wavenumber
-Params.amax = 7.5;
-Params.Cs = 1.2;
-Params.df = 672;
+params.KeV = 100;
+interCoeff = InteractionCoefficient(params.KeV);
+wavLen = HighEnergyWavLen_X(params.KeV);
+params.amax = 8;
+params.Cs = 0;
+params.df = 0;
+
 %% Transmission functions
-% Layer A:
-Proj_PotA = MultiProjPot_conv_0(LayerA, CellNum, LattConst, Lx, Ly, Nx, Ny);
-% Layer B:
-Proj_PotB = MultiProjPot_conv_0(LayerB, CellNum, LattConst, Lx, Ly, Nx, Ny);
-% Layer B:
-Proj_PotC = MultiProjPot_conv_0(LayerC, CellNum, LattConst, Lx, Ly, Nx, Ny);
+% slice A projected potential:
+projPotA = MultiProjPot_conv_0(sliceA, expanNum, lattConst, Lx, Ly, Nx, Ny);
+% slice B projected potential:
+projPotB = MultiProjPot_conv_0(sliceB, expanNum, lattConst, Lx, Ly, Nx, Ny);
+% slice B projected potential:
+projPotC = MultiProjPot_conv_0(sliceC, expanNum, lattConst, Lx, Ly, Nx, Ny);
 
 % % test
 % figure;
-% imagesc(x, y, Proj_PotA);
+% imagesc(x, y, projPotA);
 % colormap('gray');
 % figure;
-% imagesc(x, y, Proj_PotB);
+% imagesc(x, y, projPotB);
 % colormap('gray');
 % figure;
-% imagesc(x, y, Proj_PotC);
+% imagesc(x, y, projPotC);
 % colormap('gray');
 
-TF_A = exp(1i * InterCoeff * Proj_PotA / 1000);
-TF_B = exp(1i * InterCoeff * Proj_PotB / 1000);
-TF_C = exp(1i * InterCoeff * Proj_PotC / 1000);
-TF_A = BandwidthLimit(TF_A, Lx, Ly, Nx, Ny, 0.67);
-TF_B = BandwidthLimit(TF_B, Lx, Ly, Nx, Ny, 0.67);
-TF_C = BandwidthLimit(TF_C, Lx, Ly, Nx, Ny, 0.67);
-TransFuncs(:, :, 1) = TF_A;
-TransFuncs(:, :, 2) = TF_B;
-TransFuncs(:, :, 3) = TF_C;
+tfA = exp(1i * interCoeff * projPotA / 1000);
+tfB = exp(1i * interCoeff * projPotB / 1000);
+tfC = exp(1i * interCoeff * projPotC / 1000);
+tfA = BandwidthLimit(tfA, Lx, Ly, Nx, Ny, 0.67);
+tfB = BandwidthLimit(tfB, Lx, Ly, Nx, Ny, 0.67);
+tfC = BandwidthLimit(tfC, Lx, Ly, Nx, Ny, 0.67);
+transFuncs(:, :, 1) = tfA;
+transFuncs(:, :, 2) = tfB;
+transFuncs(:, :, 3) = tfC;
 %% CBED module
-StackNum = 53;
-Probe = ProbeCreate(Params, 0, 0, Lx, Ly, Nx, Ny);
-TransWave = multislice(Probe, WaveLength, Lx, Ly, TransFuncs, LayerDist, StackNum);
-Trans_Wave_Far = ifftshift(fft2(fftshift(TransWave)));
-DetectInten = log(1 + 0.1 * abs(Trans_Wave_Far.^2));
+stackNum = 21;
+probe = ProbeCreate(params, 0, 0, Lx, Ly, Nx, Ny);
+wave = multislice(probe, wavLen, Lx, Ly, transFuncs, sliceDist, stackNum);
+wave = ifftshift(fft2(fftshift(wave)));
 
-% Show the detected image:
+%% show CBED pattern
+logCoeff = 300;
+waveI = abs(wave.^2);
+logWaveI = log(1 + logCoeff * waveI / max(waveI, [], 'all'));
+
 figure;
-imagesc(fx, fy, DetectInten);
+imagesc(fx, fy, logWaveI);
 colormap('gray');
 axis square;
+xlabel('$ f_x (\AA^{-1}) $', 'interpreter', 'latex');
+ylabel('$ f_y (\AA^{-1}) $', 'interpreter', 'latex');

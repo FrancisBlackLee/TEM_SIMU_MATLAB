@@ -1,4 +1,4 @@
-function [y] = IntegrateSiliconExpanCoeff_0(Tmin, Tmax)
+function [y] = IntegrateSiliconExpanCoeff_0(tMin, tMax)
 %Ref: https://trc.nist.gov/cryogenics/materials/Silicon/Silicon.htm
 %   
 
@@ -22,7 +22,7 @@ fun = @(T) (4.8e-5 * T.^3 + (a * T.^5 + b * T.^5.5 + c * T.^6 ...
     .* ((1 - erf(0.1 * (T - 200))) / 2) + ((i + j ./ T + k ./ T.^2 ...
     + l ./ T.^3) .* ((1 + erf(0.1 * (T - 200))) / 2));
 
-y = integral(fun, Tmin, Tmax);
+y = integral(fun, tMin, tMax);
 
 end
 

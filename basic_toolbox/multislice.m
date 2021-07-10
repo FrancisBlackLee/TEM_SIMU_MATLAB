@@ -1,3 +1,19 @@
+function [exitWave] = multislice(incidentWave, wavLen, Lx, Ly,...
+    transFuncs, sliceDist, stackNum, saveDir, saveSliceSeries)
+%MULTISLICE.M performs the multislice procedure. See E. J. Kirkland
+%Advanced Computing in Electron Microscopy.
+%   IncidentWave;
+%   Lx, Ly -- sampling parameters;
+%   TransFuncs -- transmission functions;
+%   LayerDist -- distance from one layer to the next layer;
+%   StackNum -- number of stackings;
+%   SaveDir -- the directory where you want these wave functions to be
+%       saved;
+%   SaveSliceSeries -- Slice indices upon which the wave functions are to
+%       be saved, i.e. [1, 2, 6, 8, 12, 34], note that the array should be
+%       in an increasing order and it maximum element should be no greater
+%       than N + 1, where N = StackNum * LayerNum;
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
 
@@ -16,72 +32,43 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [ExitWave] = multislice(IncidentWave, WaveLength, Lx, Ly, TransFuncs, LayerDist, StackNum, SaveDir, SaveSliceSeries)
-%MULTISLICE.M performs the multislice procedure. See E. J. Kirkland
-%Advanced Computing in Electron Microscopy.
-%   IncidentWave;
-%   Lx, Ly -- sampling parameters;
-%   TransFuncs -- transmission functions;
-%   LayerDist -- distance from one layer to the next layer;
-%   StackNum -- number of stackings;
-%   SaveDir -- the directory where you want these wave functions to be
-%       saved;
-%   SaveSliceSeries -- Slice indices upon which the wave functions are to
-%       be saved, i.e. [1, 2, 6, 8, 12, 34], note that the array should be
-%       in an increasing order and it maximum element should be no greater
-%       than N + 1, where N = StackNum * LayerNum;
 
 switch nargin
     case 7
-        Wave = IncidentWave;
-        LayerNum = length(LayerDist);
-        for i = 1: StackNum
-            for j = 1: LayerNum
-                Wave = Wave .* TransFuncs(:, :, j);
-                Wave = propTF_1(Wave, Lx, Ly, WaveLength, LayerDist(j));
+        wave = incidentWave;
+        sliceNum = length(sliceDist);
+        for stackIdx = 1: stackNum
+            for sliceIdxInStack = 1: sliceNum
+                wave = wave .* transFuncs(:, :, sliceIdxInStack);
+                wave = propTF_1(wave, Lx, Ly, wavLen, sliceDist(sliceIdxInStack));
             end
         end
-        ExitWave = Wave;
+        exitWave = wave;
     otherwise
-        MkDirStat = mkdir(SaveDir);
-        SaveSliceIdx = 1;
-        SaveSliceNum = length(SaveSliceSeries);
-        Wave = IncidentWave;
-        LayerNum = length(LayerDist);
-        for i = 1: StackNum
-            for j = 1: LayerNum
-                SliceIdx = (i - 1) * LayerNum + j;
-                if SaveSliceIdx <= SaveSliceNum
-                    if SliceIdx == SaveSliceSeries(SaveSliceIdx)
-                        FileNameReal = fullfile(SaveDir,...
-                            strcat(num2str(SliceIdx), '_real.bin'));
-                        FileNameImag = fullfile(SaveDir,...
-                            strcat(num2str(SliceIdx), '_imag.bin'));
-                        WaveReal = real(Wave);
-                        WaveImag = imag(Wave);
-                        WriteBinaryFile(FileNameReal, WaveReal);
-                        WriteBinaryFile(FileNameImag, WaveImag);
-                        SaveSliceIdx = SaveSliceIdx + 1;
+        mkDirStat = mkdir(saveDir);
+        saveSliceIdx = 1;
+        saveSliceNum = length(saveSliceSeries);
+        wave = incidentWave;
+        [Ny, Nx] = size(wave);
+        waveMat_3d = 1i * ones(Ny, Nx, saveSliceNum);
+        sliceNum = length(sliceDist);
+        for stackIdx = 1: stackNum
+            for sliceIdxInStack = 1: sliceNum
+                wave = wave .* transFuncs(:, :, sliceIdxInStack);
+                wave = propTF_1(wave, Lx, Ly, wavLen, sliceDist(sliceIdxInStack));
+                
+                sliceIdx = (stackIdx - 1) * sliceNum + sliceIdxInStack;
+                if saveSliceIdx <= saveSliceNum
+                    if sliceIdx == saveSliceSeries(saveSliceIdx)
+                        waveMat_3d(:, :, saveSliceIdx) = wave;
+                        saveSliceIdx = saveSliceIdx + 1;
                     end
                 end
-                Wave = Wave .* TransFuncs(:, :, j);
-                Wave = propTF_1(Wave, Lx, Ly, WaveLength, LayerDist(j));
             end
         end
-        if SaveSliceIdx <= SaveSliceNum
-            if SaveSliceSeries(SaveSliceIdx) == SliceIdx + 1
-                FileNameReal = fullfile(SaveDir,...
-                    strcat(num2str(SliceIdx), '_real.bin'));
-                FileNameImag = fullfile(SaveDir,...
-                    strcat(num2str(SliceIdx), '_imag.bin'));
-                WaveReal = real(Wave);
-                WaveImag = imag(Wave);
-                disp([SliceIdx + 1, SaveSliceSeries(SaveSliceIdx)]);
-                WriteBinaryFile(FileNameReal, WaveReal);
-                WriteBinaryFile(FileNameImag, WaveImag);
-            end
-        end
-        ExitWave = Wave;
+        filename = fullfile(saveDir, 'wave_data.mat');
+        save(filename, 'waveMat_3d', 'saveSliceSeries');
+        exitWave = wave;
 end
 
 end

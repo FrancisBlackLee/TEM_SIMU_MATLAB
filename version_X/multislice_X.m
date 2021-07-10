@@ -1,22 +1,5 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
-
-%   This program is free software: you can redistribute it and/or modify
-%   it under the terms of the GNU General Public License as published by
-%   the Free Software Foundation, either version 3 of the License, or
-%   any later version.
-
-%   This program is distributed in the hope that it will be useful,
-%   but WITHOUT ANY WARRANTY; without even the implied warranty of
-%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-%   GNU General Public License for more details.
-
-%   You should have received a copy of the GNU General Public License
-%   along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-%   Email: warner323@outlook.com
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [ExitWave] = multislice_X(InciWave, KeV, Lx, Ly, TransFuncs, SliceDist, StackNum, ProjPotDir, FileExtension)
+function [exitWave] = multislice_X(inciWave, KeV, Lx, Ly, transFuncs,...
+    sliceDist, stackNum, projPotDir, fileExtension)
 %multislice_X.m performs the multislice procedure. See E. J. Kirkland
 %Advanced Computing in Electron Microscopy for more details.
 %   InciWave -- incident wave;
@@ -43,54 +26,75 @@ function [ExitWave] = multislice_X(InciWave, KeV, Lx, Ly, TransFuncs, SliceDist,
 %       function, thus a dependent multislice for ADF-STEM is to be
 %       released.
 
-WavLen = 12.3986 / sqrt((2 * 511.0 + KeV) * KeV);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
+
+%   This program is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   any later version.
+
+%   This program is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+
+%   You should have received a copy of the GNU General Public License
+%   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+%   Email: warner323@outlook.com
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+wavLen = HighEnergyWavLen_X(KeV);
 switch nargin
     case 7
-        TempWave = fftshift(InciWave);
-        SliceNum = length(SliceDist);
-        [Ny, Nx] = size(InciWave);
-        ShiftedPropKernels = zeros(Ny, Nx, SliceNum) + 1i * ones(Ny, Nx, SliceNum);
-        for SliceIdx = 1 : SliceNum
-            ShiftedPropKernels(:, :, SliceIdx) = fftshift(FresnelPropKernel_X(Lx, Ly, Nx, Ny, WavLen, SliceDist(SliceIdx)));
+        tempWave = fftshift(inciWave);
+        sliceNum = length(sliceDist);
+        [Ny, Nx] = size(inciWave);
+        shiftedPropKernels = zeros(Ny, Nx, sliceNum) + 1i * ones(Ny, Nx, sliceNum);
+        for sliceIdx = 1 : sliceNum
+            shiftedPropKernels(:, :, sliceIdx) = ...
+                fftshift(FresnelPropKernel_X(Lx, Ly, Nx, Ny, wavLen, sliceDist(sliceIdx)));
         end
-        for StackIdx = 1 : StackNum
-            for SliceIdx = 1 : SliceNum
-                TempWave = TempWave .* fftshift(TransFuncs(:, :, SliceIdx));
-                TempWave = ifft2(ShiftedPropKernels(:, :, SliceIdx) .* fft2(TempWave));
+        for stackIdx = 1 : stackNum
+            for sliceIdx = 1 : sliceNum
+                tempWave = tempWave .* fftshift(transFuncs(:, :, sliceIdx));
+                tempWave = ifft2(shiftedPropKernels(:, :, sliceIdx) .* fft2(tempWave));
             end
         end
-        ExitWave = ifftshift(TempWave);
+        exitWave = ifftshift(tempWave);
     otherwise
-        if ~isfolder(ProjPotDir)
-          errorMessage = sprintf('Error: The following folder does not exist:\n%s', ProjPotDir);
+        if ~isfolder(projPotDir)
+          errorMessage = sprintf('Error: The following folder does not exist:\n%s', projPotDir);
           uiwait(warndlg(errorMessage));
           return;
         end
-        InterCoeff = InteractionCoefficient(KeV);
-        ProjPotFiles = dir(fullfile(ProjPotDir,FileExtension));
-        FileNames = {ProjPotFiles.name}';
-        SortedNames = natsortfiles(FileNames);
-        TempWave = fftshift(InciWave);
-        [Ny, Nx] = size(InciWave);
-        for FileIdx = 1 : min(numel(SortedNames), length(SliceDist))
-            filename = fullfile(ProjPotDir, SortedNames{FileIdx});
-            if strcmp(FileExtension, '*.txt')
-                TempProjPot = load(filename);
-            elseif strcmp(FileExtension, '*.bin')
+        interCoeff = InteractionCoefficient(KeV);
+        projPotFiles = dir(fullfile(projPotDir,fileExtension));
+        filenames = {projPotFiles.name}';
+        sortedNames = natsortfiles(filenames);
+        tempWave = fftshift(inciWave);
+        [Ny, Nx] = size(inciWave);
+        for fileIdx = 1 : min(numel(sortedNames), length(sliceDist))
+            filename = fullfile(projPotDir, sortedNames{fileIdx});
+            if strcmp(fileExtension, '*.txt')
+                tempProjPot = load(filename);
+            elseif strcmp(fileExtension, '*.bin')
                 fileID = fopen(filename);
-                TempProjPot = fread(fileID, [Ny, Nx], 'double');
+                tempProjPot = fread(fileID, [Ny, Nx], 'double');
                 fclose(fileID);
             else
-                TempProjPot = zeros(Ny, Nx);
+                tempProjPot = zeros(Ny, Nx);
             end
-%             TempProjPot = load(filename);
-            TempTransFunc = exp(1i * InterCoeff * TempProjPot / 1e3);
-            TempWave = TempWave .* fftshift(TempTransFunc);
-            ShiftedPropKernel = fftshift(FresnelPropKernel_X(Lx, Ly, Nx, Ny, WavLen, SliceDist(FileIdx)));
-            TempWave = ifft2(ShiftedPropKernel .* fft2(TempWave));
+            
+            tempTransFunc = exp(1i * interCoeff * tempProjPot / 1e3);
+            tempWave = tempWave .* fftshift(tempTransFunc);
+            shiftedPropKernel = fftshift(FresnelPropKernel_X(Lx, Ly, Nx, Ny,...
+                wavLen, sliceDist(fileIdx)));
+            tempWave = ifft2(shiftedPropKernel .* fft2(tempWave));
             disp(filename);
         end
-        ExitWave = ifftshift(TempWave);
+        exitWave = ifftshift(tempWave);
 end
 
 end

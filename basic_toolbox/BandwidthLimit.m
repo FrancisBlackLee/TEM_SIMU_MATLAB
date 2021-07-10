@@ -1,3 +1,11 @@
+function [limited] = BandwidthLimit(unlimited, Lx, Ly, Nx, Ny, proportion)
+%BandwidthLimit limits the input 2D matrix in the frequency space with 
+%input cutoff proportion ranging from 0 to 1.
+%   unlimited -- matrix to be bandwidth limited;
+%   Lx, Ly, Nx, Ny -- sampling parameters;
+%   proportion -- bandwidth limit proportion;
+%   limited -- bandwidth limited matrix;
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
 
@@ -16,9 +24,6 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [limited] = BandwidthLimit(unlimited, Lx, Ly, Nx, Ny, proportion)
-%UNTITLED Summary of this function goes here
-%   Detailed explanation goes here
 
 dx = Lx / Nx;
 dy = Ly / Ny;

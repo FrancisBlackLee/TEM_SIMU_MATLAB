@@ -1,3 +1,12 @@
+function [newTypeCoord] = RmvSlcDplAtom_0(fracTypeCoord, tolerance)
+%RmvSlcDplAtom_0.m removes the periodically duplicate atoms on each slice.
+%   Version 0:
+%   fracTypeCoord -- fractional atomic type-coordinate matrix:
+%       format: [T; P; FracX; FracY; FracZ], note that T denotes atomic
+%       types represented by their atomic numbers, P denotes the atomic
+%       proportions, FracX, FracY, FracZ denote the fractional atomic
+%       coordinates, FracZ is not requested.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
 
@@ -16,68 +25,60 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [NewTypeCoord] = RmvSlcDplAtom_0(FracTypeCoord, DistError)
-%RmvSlcDplAtom_0.m removes the periodically duplicate atoms on each slice.
-%   Version 0:
-%   FracTypeCoord -- fractional atomic type-coordinate matrix:
-%       format: [T; P; FracX; FracY; FracZ], note that T denotes atomic
-%       types represented by their atomic numbers, P denotes the atomic
-%       proportions, FracX, FracY, FracZ denote the fractional atomic
-%       coordinates, FracZ is not requested.
 
 % search along x:
 % sort the matrix first so that the greater duplicate coord is removed
-[Xsort, Xorder] = sort(FracTypeCoord(3, : ));
-NewTypeCoord = FracTypeCoord( : , Xorder);
-StatIdx = 1;
-while StatIdx <= size(NewTypeCoord, 2) - 1
-    SrchIdx = StatIdx + 1;
-    while SrchIdx <=size(NewTypeCoord, 2)
-        if (abs(abs(NewTypeCoord(3, SrchIdx) - NewTypeCoord(3, StatIdx)) - 1) < DistError)&&...
-                (abs(NewTypeCoord(4, SrchIdx) - NewTypeCoord(4, StatIdx)) < DistError)&&...
-                (NewTypeCoord(1, SrchIdx) == NewTypeCoord(1, StatIdx))
-            NewTypeCoord( : , SrchIdx) = [];
+[~, xOrder] = sort(fracTypeCoord(3, : ));
+newTypeCoord = fracTypeCoord( : , xOrder);
+statIdx = 1;
+while statIdx <= size(newTypeCoord, 2) - 1
+    srchIdx = statIdx + 1;
+    while srchIdx <=size(newTypeCoord, 2)
+        if (abs(abs(newTypeCoord(3, srchIdx) - newTypeCoord(3, statIdx)) - 1) < tolerance)&&...
+                (abs(newTypeCoord(4, srchIdx) - newTypeCoord(4, statIdx)) < tolerance)&&...
+                (newTypeCoord(1, srchIdx) == newTypeCoord(1, statIdx))
+            newTypeCoord( : , srchIdx) = [];
         else
-            SrchIdx = SrchIdx + 1;
+            srchIdx = srchIdx + 1;
         end
     end
-    StatIdx = StatIdx + 1;
+    statIdx = statIdx + 1;
 end
 % search along y:
 % sort y first
-[Ysort, Yorder] = sort(NewTypeCoord(4, : ));
-NewTypeCoord = NewTypeCoord( : , Yorder);
-StatIdx = 1;
-while StatIdx <= size(NewTypeCoord, 2) - 1
-    SrchIdx = StatIdx + 1;
-    while SrchIdx <=size(NewTypeCoord, 2)
-        if (abs(abs(NewTypeCoord(4, SrchIdx) - NewTypeCoord(4, StatIdx)) - 1) < DistError)&&...
-                (abs(NewTypeCoord(3, SrchIdx) - NewTypeCoord(3, StatIdx)) < DistError)&&...
-                (NewTypeCoord(1, SrchIdx) == NewTypeCoord(1, StatIdx))
-            NewTypeCoord( : , SrchIdx) = [];
+[~, yOrder] = sort(newTypeCoord(4, : ));
+newTypeCoord = newTypeCoord( : , yOrder);
+statIdx = 1;
+while statIdx <= size(newTypeCoord, 2) - 1
+    srchIdx = statIdx + 1;
+    while srchIdx <=size(newTypeCoord, 2)
+        if (abs(abs(newTypeCoord(4, srchIdx) - newTypeCoord(4, statIdx)) - 1) < tolerance)&&...
+                (abs(newTypeCoord(3, srchIdx) - newTypeCoord(3, statIdx)) < tolerance)&&...
+                (newTypeCoord(1, srchIdx) == newTypeCoord(1, statIdx))
+            newTypeCoord( : , srchIdx) = [];
         else
-            SrchIdx = SrchIdx + 1;
+            srchIdx = srchIdx + 1;
         end
     end
-    StatIdx = StatIdx + 1;
+    statIdx = statIdx + 1;
 end
 % search along diagonal:
 % sort by the distance to the origin:
-[DiagSort, DiagOrder] = sort(NewTypeCoord(3, : ).^2 + NewTypeCoord(4, : ).^2);
-NewTypeCoord = NewTypeCoord( : , DiagOrder);
-StatIdx = 1;
-while StatIdx <= size(NewTypeCoord, 2) - 1
-    SrchIdx = StatIdx + 1;
-    while SrchIdx <=size(NewTypeCoord, 2)
-        if (abs(abs(NewTypeCoord(3, SrchIdx) - NewTypeCoord(3, StatIdx)) - 1) < DistError)&&...
-           (abs(abs(NewTypeCoord(4, SrchIdx) - NewTypeCoord(4, StatIdx)) - 1) < DistError)&&...
-                (NewTypeCoord(1, SrchIdx) == NewTypeCoord(1, StatIdx))
-            NewTypeCoord( : , SrchIdx) = [];
+[~, diagOrder] = sort(newTypeCoord(3, : ).^2 + newTypeCoord(4, : ).^2);
+newTypeCoord = newTypeCoord( : , diagOrder);
+statIdx = 1;
+while statIdx <= size(newTypeCoord, 2) - 1
+    srchIdx = statIdx + 1;
+    while srchIdx <=size(newTypeCoord, 2)
+        if (abs(abs(newTypeCoord(3, srchIdx) - newTypeCoord(3, statIdx)) - 1) < tolerance)&&...
+           (abs(abs(newTypeCoord(4, srchIdx) - newTypeCoord(4, statIdx)) - 1) < tolerance)&&...
+                (newTypeCoord(1, srchIdx) == newTypeCoord(1, statIdx))
+            newTypeCoord( : , srchIdx) = [];
         else
-            SrchIdx = SrchIdx + 1;
+            srchIdx = srchIdx + 1;
         end
     end
-    StatIdx = StatIdx + 1;
+    statIdx = statIdx + 1;
 end
 
 end

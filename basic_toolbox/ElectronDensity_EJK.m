@@ -1,3 +1,10 @@
+function [electronDensity] = ElectronDensity_EJK(atomType, r)
+%ElectronDensity_EJK.m calculates the electron density using the
+%parameterization given by E. J. Kirkland.
+%   atomType -- atomic type, Z;
+%   r -- radial coordinates;
+%   rho -- electron density;
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
 
@@ -16,25 +23,19 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [rho] = ElectronDensity_EJK(atomType, r)
-%ElectronDensity_EJK.m calculates the electron density using the
-%parameterization given by E. J. Kirkland.
-%   atomType -- atomic type, Z;
-%   r -- radial coordinates;
-%   rho -- electron density;
 
 a = 0.529; % Bohr radius in angstrom
-scattFac = load('Scattering_Factors.txt');
+scattParam = load('Scattering_Factors.txt');
 startIndex = 3 * (atomType - 1) + 1;
-A = [scattFac(startIndex, 1), scattFac(startIndex, 3), scattFac(startIndex + 1, 1)];
-B = [scattFac(startIndex, 2), scattFac(startIndex, 4), scattFac(startIndex + 1, 2)];
-C = [scattFac(startIndex + 1, 3), scattFac(startIndex + 2, 1), scattFac(startIndex + 2, 3)];
-D = [scattFac(startIndex + 1, 4), scattFac(startIndex + 2, 2), scattFac(startIndex + 2, 4)];
+A = [scattParam(startIndex, 1), scattParam(startIndex, 3), scattParam(startIndex + 1, 1)];
+B = [scattParam(startIndex, 2), scattParam(startIndex, 4), scattParam(startIndex + 1, 2)];
+C = [scattParam(startIndex + 1, 3), scattParam(startIndex + 2, 1), scattParam(startIndex + 2, 3)];
+D = [scattParam(startIndex + 1, 4), scattParam(startIndex + 2, 2), scattParam(startIndex + 2, 4)];
 
-rho = zeros(size(r));
+electronDensity = zeros(size(r));
 % note: the delta function part is excluded:
 for i = 1 : 3
-    rho = rho + 2 * pi^3 * a * A(i) * B(i) * exp(-2 * pi * sqrt(B(i)) * r) ./ r +...
+    electronDensity = electronDensity + 2 * pi^3 * a * A(i) * B(i) * exp(-2 * pi * sqrt(B(i)) * r) ./ r +...
         pi^5.5 * a * C(i) / (D(i))^3.5 * (2 * r.^2 - 3 * D(i) / pi^2) .*...
         exp(-pi^2 * r.^2 / D(i));
 end

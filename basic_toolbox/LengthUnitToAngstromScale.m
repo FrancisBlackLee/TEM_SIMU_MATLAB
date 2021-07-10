@@ -1,3 +1,11 @@
+function scaleCoeff = LengthUnitToAngstromScale(lengthUnit)
+%LengthUnitToAngstromScale() generates the scaling coefficient for
+%converting input length unit to angstrom.
+% Input:
+%   lengthUnit -- valid input: mm, um, nm, pm
+% Output:
+%   scaleCoeff -- scaling coefficient, 0 for invalid input
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
 
@@ -16,13 +24,6 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function scaleCoeff = LengthUnitToAngstromScale(lengthUnit)
-%LengthUnitToAngstromScale() generates the scaling coefficient for
-%converting input length unit to angstrom.
-% Input:
-%   lengthUnit -- valid input: mm, um, nm, pm
-% Output:
-%   scaleCoeff -- scaling coefficient, 0 for invalid input
 
 switch lengthUnit
     case 'mm'

@@ -16,25 +16,20 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% test_CreateNanoCluster_hkl.m
+% test_CreateNanoCluster_uvw.m
 clc;
 clear;
 close all;
 %% filenames:
-filename_1 = ['E:\practice\crystallography\cif\cif\@cif\',...
-    'AlGaAs2_mp-1228891_computed.cif'];
+filename_1 = 'tests\cif_op\AlGaAs2_mp-1228891_computed.cif';
+filename_2 = 'tests\cif_op\AlGaAs2_mp-1228891_conventional_standard.cif';
+filename_3 = 'tests\cif_op\AlGaAs2_mp-1228891_primitive.cif';
+filename_4 = 'tests\cif_op\AlGaAs2_mp-1228891_symmetrized.cif';
 
-filename_2 = ['E:\practice\crystallography\cif\cif\@cif\',...
-    'AlGaAs2_mp-1228891_conventional_standard.cif'];
-
-filename_3 = ['E:\practice\crystallography\cif\cif\@cif\',...
-    'AlGaAs2_mp-1228891_primitive.cif'];
-
-filename_4 = ['E:\practice\crystallography\cif\cif\@cif\',...
-    'AlGaAs2_mp-1228891_symmetrized.cif'];
-
-filename_5 = ['E:\practice\crystallography\cif\cif\@cif\',...
-    'Langbeinite (ortho).cif'];
+filename_5 = 'tests\cif_op\Si_mp-149_computed.cif';
+filename_6 = 'tests\cif_op\Si_mp-149_conventional_standard.cif';
+filename_7 = 'tests\cif_op\Si_mp-149_primitive.cif';
+filename_8 = 'tests\cif_op\Si_mp-149_symmetrized.cif';
 
 %% main:
 crysInfo = LoadCif(filename_4);
@@ -44,9 +39,9 @@ initAtomSiteMat = ExtractAtomSiteFromCrysInfo(crysInfo);
 fullAtomSiteMat = AddEquivAtomSites(initAtomSiteMat);
 
 radius = 20;
-hkl = [1, 1, 1];
+uvw = [1, 1, 1];
 
-atomCoordMat = CreateNanoCluster_hkl(fullAtomSiteMat, cellLengths, cellAngles, hkl, radius);
+atomCoordMat = CreateNanoCluster_uvw(fullAtomSiteMat, cellLengths, cellAngles, uvw, radius);
 
 figure;
 scatter(atomCoordMat(3, :), atomCoordMat(4, :), 10, 'filled');

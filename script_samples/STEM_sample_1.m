@@ -1,5 +1,5 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (C) 2019 - 2020  Francis Black Lee and Li Xian
+%   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
 
 %   This program is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
@@ -16,14 +16,14 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% ADF-STEM sample 3: SrTiO3 100
+% ADF-STEM sample 1: SrTiO3 100
 clc;
 close all;
 clear all;
 %% specimen preparation:
 lattConst = [3.9051, 3.9051, 0]; % [a b]
 sliceDist = [1.9525, 1.9525]; % distance between each slice
-cellNum = [5, 5]; % expand the unit cell by Expan_Nx = 3 and Expan_Ny = 2, adaptive
+expanNum = [5, 5]; % expand the unit cell by Expan_Nx = 3 and Expan_Ny = 2, adaptive
 % Laters: Each column for an atom
 sliceA = [38,   8;...
           1,    1;...
@@ -35,8 +35,8 @@ sliceB = [22,   8,      8;...
           0.5,  0,      0.5];
 
 %% sampling:
-Lx = cellNum(1) * lattConst(1);
-Ly = cellNum(2) * lattConst(2);
+Lx = expanNum(1) * lattConst(1);
+Ly = expanNum(2) * lattConst(2);
 Nx = 512;
 Ny = 512;
 dx = Lx / Nx;
@@ -58,24 +58,24 @@ params.detector = zeros(Ny, Nx, detectorNum);
 params.detector(:, :, 1) = AnnularDetector_X(90, 170, wavLen, Lx, Ly, Nx, Ny);
 params.detector(:, :, 2) = AnnularDetector_X(11, 22, wavLen, Lx, Ly, Nx, Ny);
 %% Transmission functions:
-projPotA = MultiProjPot_conv_X(sliceA, cellNum, lattConst, Lx, Ly, Nx, Ny, 1e-5);
+projPotA = MultiProjPot_conv_X(sliceA, expanNum, lattConst, Lx, Ly, Nx, Ny, 1e-5);
 % figure;
 % imagesc(projPotA);
 % colormap('gray'); axis square;
 % title('Proj.Pot. A');
 
-projPotB = MultiProjPot_conv_X(sliceB, cellNum, lattConst, Lx, Ly, Nx, Ny, 1e-5);
+projPotB = MultiProjPot_conv_X(sliceB, expanNum, lattConst, Lx, Ly, Nx, Ny, 1e-5);
 % figure;
 % imagesc(projPotB);
 % colormap('gray'); axis square;
 % title('Proj.Pot. B');
 tic;
-TF_A = exp(1i * interCoeff * projPotA / 1000);
-TF_B = exp(1i * interCoeff * projPotB / 1000);
-TF_A = BandwidthLimit(TF_A, Lx, Ly, Nx, Ny, 0.67);
-TF_B = BandwidthLimit(TF_B, Lx, Ly, Nx, Ny, 0.67);
-transFuncs(:, :, 1) = TF_A;
-transFuncs(:, :, 2) = TF_B;
+tfA = exp(1i * interCoeff * projPotA / 1000);
+tfB = exp(1i * interCoeff * projPotB / 1000);
+tfA = BandwidthLimit(tfA, Lx, Ly, Nx, Ny, 0.67);
+tfB = BandwidthLimit(tfB, Lx, Ly, Nx, Ny, 0.67);
+transFuncs(:, :, 1) = tfA;
+transFuncs(:, :, 2) = tfB;
 %% Imaging section:
 stackNum = 20;
 cbedOption = 0;

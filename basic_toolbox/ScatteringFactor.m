@@ -1,3 +1,9 @@
+function [sf] = ScatteringFactor(atomType, q)
+%Calcuate scattering factors with respect to element type and scattering 
+%angle.
+%   AtomType: type of the atom (atomic number);
+%   q: scattering angle;
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
 
@@ -16,23 +22,27 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [sf] = ScatteringFactor(AtomType, q)
-%Calcuate scattering factors with respect to element type and scattering 
-%angle.
-%   AtomType: type of the atom (atomic number);
-%   q: scattering angle;
 
-Scatt_Fac = load('Scattering_Factors.txt');
+scattParam = load('Scattering_Factors.txt');
 
-StartIndex = 3 * (AtomType - 1) + 1;
-A = [Scatt_Fac(StartIndex, 1), Scatt_Fac(StartIndex, 3), Scatt_Fac(StartIndex + 1, 1)];
-B = [Scatt_Fac(StartIndex, 2), Scatt_Fac(StartIndex, 4), Scatt_Fac(StartIndex + 1, 2)];
-C = [Scatt_Fac(StartIndex + 1, 3), Scatt_Fac(StartIndex + 2, 1), Scatt_Fac(StartIndex + 2, 3)];
-D = [Scatt_Fac(StartIndex + 1, 4), Scatt_Fac(StartIndex + 2, 2), Scatt_Fac(StartIndex + 2, 4)];
+startIndex = 3 * (atomType - 1) + 1;
+paramA = [scattParam(startIndex, 1),...
+    scattParam(startIndex, 3),...
+    scattParam(startIndex + 1, 1)];
+paramB = [scattParam(startIndex, 2),...
+    scattParam(startIndex, 4),...
+    scattParam(startIndex + 1, 2)];
+paramC = [scattParam(startIndex + 1, 3),...
+    scattParam(startIndex + 2, 1),...
+    scattParam(startIndex + 2, 3)];
+paramD = [scattParam(startIndex + 1, 4),...
+    scattParam(startIndex + 2, 2),...
+    scattParam(startIndex + 2, 4)];
 
 sf = 0;
 for i = 1 : 3
-    sf = sf + A(i)./(q.^2 + B(i)) + C(i)*exp(-D(i)*q.^2);
+    sf = sf + paramA(i) ./ (q.^2 + paramB(i)) + paramC(i) *...
+        exp(-paramD(i) * q.^2);
 end
 end
 

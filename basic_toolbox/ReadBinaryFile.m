@@ -1,3 +1,7 @@
+function [data] = ReadBinaryFile(filename, size)
+%ReadBinaryFile reads matrix from the destination binary file.
+%   Detailed explanation goes here
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
 
@@ -16,9 +20,6 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [data] = ReadBinaryFile(filename, size)
-%UNTITLED2 Summary of this function goes here
-%   Detailed explanation goes here
 
 fileID = fopen(filename);
 data = fread(fileID, size, 'double');

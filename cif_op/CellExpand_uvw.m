@@ -1,3 +1,19 @@
+function [atomCoordMat] = CellExpand_uvw(atomSiteMat, cellLengths,...
+    cellAngles, uvw, sideLength)
+%CellExpand_uvw() rotates the unit cell to the given orientation, duplicate
+%the unit cell and rehapes the cell.
+% Input:
+%   atomSiteMat -- atomic site matrix;
+%   cellLengths -- element 1 for cell length a, 2 for cell length b and 3
+%       for cell length c;
+%   cellAngles -- element 1 for cell angle alpha (between bases a and c);
+%       2 for cell angle beta (between bases b and c) and
+%       3 for cell angle gamma (between bases a and b);
+%   uvw -- Orientation indices;
+%   sideLength -- the size of the square sample you want;
+% Output:
+%   atomCoordMat -- atomic coordinate matrix (cartesian);
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
 
@@ -16,30 +32,15 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [atomCoordMat] = CellExpand_hkl(atomSiteMat, cellLengths,...
-    cellAngles, hkl, sideLength)
-%CellExpand_hkl() rotates the unit cell to the given orientation, duplicate
-%the unit cell and rehapes the cell.
-% Input:
-%   atomSiteMat -- atomic site matrix;
-%   cellLengths -- element 1 for cell length a, 2 for cell length b and 3
-%       for cell length c;
-%   cellAngles -- element 1 for cell angle alpha (between bases a and c);
-%       2 for cell angle beta (between bases b and c) and
-%       3 for cell angle gamma (between bases a and b);
-%   hkl -- Miller indices;
-%   sideLength -- the size of the square sample you want;
-% Output:
-%   atomCoordMat -- atomic coordinate matrix (cartesian);
 
-initConvMat = ConversionMatrix_hkl(cellLengths, cellAngles, hkl);
-viewDirection = hkl(1) * initConvMat(:, 1) +...
-        hkl(2) * initConvMat(:, 2) +...
-        hkl(3) * initConvMat(:, 3);
+initConvMat = ConversionMatrix_uvw(cellLengths, cellAngles, uvw);
+viewDirection = uvw(1) * initConvMat(:, 1) +...
+        uvw(2) * initConvMat(:, 2) +...
+        uvw(3) * initConvMat(:, 3);
 Lz = norm(viewDirection);
 
 radius = sqrt(2 * sideLength^2 + Lz^2) / 2;
-atomCoordMat = CreateNanoCluster_hkl(atomSiteMat, cellLengths, cellAngles, hkl, radius);
+atomCoordMat = CreateNanoCluster_uvw(atomSiteMat, cellLengths, cellAngles, uvw, radius);
 
 tolerance = 1e-8;
 atomCoordMat(:, (atomCoordMat(5, :) > Lz / 2 + tolerance) |...

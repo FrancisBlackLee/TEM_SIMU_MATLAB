@@ -1,3 +1,17 @@
+function [projPot] = MultiProjPot_imtl_X(atomTypeCoords, Lx, Ly, Nx, Ny)
+%MultiProjPot_imtl_X.m calculates the projected potential of multiple types
+%of atoms, this function iteratively calls MonoProjPot_imtl_X.m to
+%calculate the component for each atomic type.
+%   atomTypeCoord -- matrix that contains the specimen information, where
+%       the first row denotes the atomic types, the second row denotes the
+%       elemental proportion, and the third to the fifth row denotes the
+%       atomic cartesian coordinates. Syntax: [type; prop; X; Y; Z];
+%       Since all the atoms included in this matrix are all on one slice,
+%       the fifth row is not required strictly;
+%   Lx, Ly -- sampling side lengths;
+%   Nx, Ny -- sampling number;
+% Note: X denotes an experimental version!
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
 
@@ -16,19 +30,6 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [projPot] = MultiProjPot_imtl_X(atomTypeCoords, Lx, Ly, Nx, Ny)
-%MultiProjPot_imtl_X.m calculates the projected potential of multiple types
-%of atoms, this function iteratively calls MonoProjPot_imtl_X.m to
-%calculate the component for each atomic type.
-%   atomTypeCoord -- matrix that contains the specimen information, where
-%       the first row denotes the atomic types, the second row denotes the
-%       elemental proportion, and the third to the fifth row denotes the
-%       atomic cartesian coordinates. Syntax: [type; prop; X; Y; Z];
-%       Since all the atoms included in this matrix are all on one slice,
-%       the fifth row is not required strictly;
-%   Lx, Ly -- sampling side lengths;
-%   Nx, Ny -- sampling number;
-% Note: X denotes an experimental version!
 
 % sort atomTypeCoord in an ascending order by atomic type:
 [sortedType, typeOrder] = sort(atomTypeCoords(1, : ));

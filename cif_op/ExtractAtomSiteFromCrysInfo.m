@@ -1,3 +1,13 @@
+function [atomSiteMat] = ExtractAtomSiteFromCrysInfo(crysInfo)
+%ExtractAtomSiteFromCrysInfo() extracts atom sites (after symmetry
+%operation) from the crysInfo struct output by LoadCif().
+% Input:
+%   crysInfo -- crysInfo struct output by LoadCif();
+% Output:
+%   atomSiteMat -- [atomType; occupancy; fractX; fractY; fractZ];
+% NOTE:
+%   fractional coords, fractX, fractY, fractZ, are not cartesian;
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
 
@@ -16,15 +26,6 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [atomSiteMat] = ExtractAtomSiteFromCrysInfo(crysInfo)
-%ExtractAtomSiteFromCrysInfo() extracts atom sites (after symmetry
-%operation) from the crysInfo struct output by LoadCif().
-% Input:
-%   crysInfo -- crysInfo struct output by LoadCif();
-% Output:
-%   atomSiteMat -- [atomType; occupancy; fractX; fractY; fractZ];
-% NOTE:
-%   fractional coords, fractX, fractY, fractZ, are not cartesian;
 
 % find symmetry operations
 symEquivOpIdx = find(strcmp('_symmetry_equiv_pos_as_xyz', crysInfo.loopProperty(:, 1)));

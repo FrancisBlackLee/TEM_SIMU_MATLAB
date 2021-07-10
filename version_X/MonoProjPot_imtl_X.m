@@ -1,3 +1,15 @@
+function [projPot] = MonoProjPot_imtl_X(atomType, eleProp, xyCoords,...
+    Lx, Ly, Nx, Ny)
+%MonoProjPot_imtl_X.m calculates the projected potential for one type of
+%atom based on functions ProjectedPotential and imtranslate.
+%   atomType -- atomic type;
+%   eleProp -- elemental proportion;
+%   xyCoords -- x and y Cartesian coordinates, format: [x1, ..., xN; y1,
+%       ..., yN];
+%   Lx, Ly -- sampling side lengths;
+%   Nx, Ny -- sampling number;
+% Note: X denotes an experimental version!
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
 
@@ -16,17 +28,6 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [projPot] = MonoProjPot_imtl_X(atomType, eleProp, xyCoords,...
-    Lx, Ly, Nx, Ny)
-%MonoProjPot_imtl_X.m calculates the projected potential for one type of
-%atom based on functions ProjectedPotential and imtranslate.
-%   atomType -- atomic type;
-%   eleProp -- elemental proportion;
-%   xyCoords -- x and y Cartesian coordinates, format: [x1, ..., xN; y1,
-%       ..., yN];
-%   Lx, Ly -- sampling side lengths;
-%   Nx, Ny -- sampling number;
-% Note: X denotes an experimental version!
 
 atomNum = size(xyCoords, 2);
 singleProjPot = ProjectedPotential(Lx, Ly, Nx, Ny, atomType, 0, 0);

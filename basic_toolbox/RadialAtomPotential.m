@@ -1,3 +1,9 @@
+function [radialPotential] = RadialAtomPotential(atomType, radiusCoords)
+%RadialAtomPotential.m calculates the radial electrostatic potential.
+%   atomType -- atomic type, Z;
+%   radiusCoords -- radial coordinates;
+%   radialPotential -- radial electrostatic potential;
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
 
@@ -16,20 +22,15 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [radialPotential] = RadialAtomPotential(atomType, radiusCoords)
-%RadialAtomPotential.m calculates the radial electrostatic potential.
-%   atomType -- atomic type, Z;
-%   radiusCoords -- radial coordinates;
-%   radialPotential -- radial electrostatic potential;
 
 a = 0.529; % Bohr radius in angstrom
 e = 14.4; % elemental charge in volt - angstrom
-scattFac = load('Scattering_Factors.txt');
+scattParam = load('Scattering_Factors.txt');
 startIndex = 3 * (atomType - 1) + 1;
-A = [scattFac(startIndex, 1), scattFac(startIndex, 3), scattFac(startIndex + 1, 1)];
-B = [scattFac(startIndex, 2), scattFac(startIndex, 4), scattFac(startIndex + 1, 2)];
-C = [scattFac(startIndex + 1, 3), scattFac(startIndex + 2, 1), scattFac(startIndex + 2, 3)];
-D = [scattFac(startIndex + 1, 4), scattFac(startIndex + 2, 2), scattFac(startIndex + 2, 4)];
+A = [scattParam(startIndex, 1), scattParam(startIndex, 3), scattParam(startIndex + 1, 1)];
+B = [scattParam(startIndex, 2), scattParam(startIndex, 4), scattParam(startIndex + 1, 2)];
+C = [scattParam(startIndex + 1, 3), scattParam(startIndex + 2, 1), scattParam(startIndex + 2, 3)];
+D = [scattParam(startIndex + 1, 4), scattParam(startIndex + 2, 2), scattParam(startIndex + 2, 4)];
 
 radialPotential = zeros(size(radiusCoords));
 for i = 1 : 3

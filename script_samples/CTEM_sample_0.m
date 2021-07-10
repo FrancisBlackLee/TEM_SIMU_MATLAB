@@ -16,91 +16,68 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% BF-CTEM sample: silicon [110]
+% BF-CTEM sample: GaAs [110]
 clc;
 close all;
 clear all;
-%% Lattice generation: silicon [110]
-LattConst = [3.8396, 5.4300, 0]; % [a b]
-LayerDist = [1.9198, 1.9198]; % distance between each slice
-CellNum = 10 * [3, 2]; % expand the unit cell by Expan_Nx = 3 and Expan_Ny = 2, adaptive
-DistError = 1e-2;
-% Laters: Each column for an atom
-LayerA = [14, 14; 0, 0.5; 0, 0.75];
-LayerB = [14, 14; 0, 0.5; 0.25, 0.5];
+%% Lattice generation: GaAs [110]
+lattConst = [3.995, 5.65, 0]; % [a b]
+sliceDist = [1.998, 1.998]; % distance between each slice
+expanNum = [6, 4]; % expand the unit cell by Expan_Nx = 3 and Expan_Ny = 2, adaptive
+% slices: Each column stands for an atom
+sliceA = [31, 33; 0, 0.5; 0, 0.75];
+sliceB = [33, 31; 0, 0.5; 0.25, 0.5];
 %% basic settings
 % sampling:
-Lx = CellNum(1) * LattConst(1);
-Ly = CellNum(2) * LattConst(2);
-Nx = 1024;
-Ny = 1024;
+Lx = expanNum(1) * lattConst(1);
+Ly = expanNum(2) * lattConst(2);
+Nx = 512;
+Ny = 512;
 dx = Lx / Nx;
 dy = Ly / Ny;
-x = -Lx / 2 : dx : Lx / 2 - dx;
-y = -Ly / 2 : dy : Ly / 2 - dy;
-[X, Y] = meshgrid(x, y);
-fx = -1 / (2 * dx) : 1 / Lx : 1 / (2 * dx) - 1 / Lx;
-fy = -1 / (2 * dy) : 1 / Ly : 1 / (2 * dy) - 1 / Ly;
-[Fx, Fy] = meshgrid(fx, fy);
+x = InitAxis(Lx, Nx);
+y = InitAxis(Ly, Ny);
+
 % STEM settings:
-Params.KeV = 200;
-InterCoeff = InteractionCoefficient(Params.KeV);
-WaveLength = 12.3986 / sqrt((2 * 511.0 + Params.KeV) * Params.KeV);  %wavelength
-WaveNumber = 2 * pi / WaveLength;     %wavenumber
+params.KeV = 200;
+interCoeff = InteractionCoefficient(params.KeV);
+wavLen = HighEnergyWavLen_X(params.KeV);
+params.amax = 10.67;
+params.Cs = 1.3;
+params.df = 700;
 
 %% Transmission functions
-% Layer A:
-Proj_PotA = MultiProjPot_conv_0(LayerA, CellNum, LattConst, Lx, Ly, Nx, Ny);
-% Layer B:
-Proj_PotB = MultiProjPot_conv_0(LayerB, CellNum, LattConst, Lx, Ly, Nx, Ny);
-% % test
-% figure;
-% imagesc(x, y, Proj_PotA);
-% colormap('gray');
-% figure;
-% imagesc(x, y, Proj_PotB);
-% colormap('gray');
-
-TF_A = exp(1i * InterCoeff * Proj_PotA / 1000);
-TF_B = exp(1i * InterCoeff * Proj_PotB / 1000);
-TF_A = BandwidthLimit(TF_A, Lx, Ly, Nx, Ny, 0.67);
-TF_B = BandwidthLimit(TF_B, Lx, Ly, Nx, Ny, 0.67);
-TransFuncs(:, :, 1) = TF_A;
-TransFuncs(:, :, 2) = TF_B;
-
-%% Multislice
-IncidentWave = ones(Ny, Nx);
-TransWave = multislice(IncidentWave, WaveLength, Lx, Ly, TransFuncs, LayerDist, 100);
-
-%% Imaging
-Params.amax = 20;
-Params.Cs = 0;
-
-Params.df = 1180;
-
-ReciTransWave = fft2(fftshift(TransWave));
-ObjLens = fftshift(AberrationFunction(Params, Lx, Ly, Nx, Ny));
-ReciTFWave = ReciTransWave.*ObjLens;
-TFWave=ifftshift(ifft2(ReciTFWave));
-Image = abs(TFWave.^2);
+% slice A projected potential:
+projPotA = MultiProjPot_conv_0(sliceA, expanNum, lattConst, Lx, Ly, Nx, Ny);
+% slice B projected potential:
+projPotB = MultiProjPot_conv_0(sliceB, expanNum, lattConst, Lx, Ly, Nx, Ny);
+% test
 figure;
-imagesc(x, y, Image);
+imagesc(x, y, projPotA);
+colormap('gray');
+figure;
+imagesc(x, y, projPotB);
+colormap('gray');
+
+tfA = exp(1i * interCoeff * projPotA / 1000);
+tfB = exp(1i * interCoeff * projPotB / 1000);
+tfA = BandwidthLimit(tfA, Lx, Ly, Nx, Ny, 0.67);
+tfB = BandwidthLimit(tfB, Lx, Ly, Nx, Ny, 0.67);
+transFuncs(:, :, 1) = tfA;
+transFuncs(:, :, 2) = tfB;
+
+%% BF-CTEM
+wave = ones(Ny, Nx);
+stackNum = 50;
+wave = multislice(wave, wavLen, Lx, Ly, transFuncs, sliceDist, stackNum);
+wave = fft2(fftshift(wave));
+otf = fftshift(AberrationFunction(params, Lx, Ly, Nx, Ny));
+wave = wave .* otf;
+wave = ifftshift(ifft2(wave));
+waveI = abs(wave.^2);
+figure;
+imagesc(x, y, waveI);
 colormap('gray');
 axis square;
-title(['df = ', num2str(Params.df), 'Angs.']);
-
-% s = 11;
-% for i = 1 : 20
-%     Params.df = i * 5 + s * 100;
-% 
-%     ReciTransWave = fft2(fftshift(TransWave));
-%     ObjLens = fftshift(AberrationFunction(Params, Lx, Ly, Nx, Ny));
-%     ReciTFWave = ReciTransWave.*ObjLens;
-%     TFWave=ifftshift(ifft2(ReciTFWave));
-%     Image = abs(TFWave.^2);
-%     figure;
-%     imagesc(x, y, Image);
-%     colormap('gray');
-%     axis square;
-%     title(['df = ', num2str(Params.df), 'Angs.']);
-% end
+xlabel('$ x (\AA) $', 'interpreter', 'latex');
+ylabel('$ y (\AA) $', 'interpreter', 'latex');

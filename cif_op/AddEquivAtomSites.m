@@ -1,3 +1,15 @@
+function [newAtomSiteMat] = AddEquivAtomSites(atomSiteMat)
+%AddEquivAtomSites() adds equivalent atom sites on the cell boundaries.
+% Input:
+%   atomSiteMat -- atomic site matrix to which equivalent atoms are added,
+%       format: [type; occupancy; fractX; fractY; fractZ];
+% Output:
+%   newAtomSiteMat -- atomic site matrix to which equivalent atoms are
+%       already added, format: [type; occupancy; fractX; fractY; fractZ];
+%
+% NOTE:
+%   The input cell is best to be a unit cell.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
 
@@ -16,17 +28,6 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [newAtomSiteMat] = AddEquivAtomSites(atomSiteMat)
-%AddEquivAtomSites() adds equivalent atom sites on the cell boundaries.
-% Input:
-%   atomSiteMat -- atomic site matrix to which equivalent atoms are added,
-%       format: [type; occupancy; fractX; fractY; fractZ];
-% Output:
-%   newAtomSiteMat -- atomic site matrix to which equivalent atoms are
-%       already added, format: [type; occupancy; fractX; fractY; fractZ];
-%
-% NOTE:
-%   The input cell is best to be a unit cell.
 
 initAtomNum = size(atomSiteMat, 2);
 

@@ -1,3 +1,12 @@
+function [rotCrystalMatrix] = CrystalMatrixRotZ(crystalMatrix, theta)
+%CrystalMatrixRotZ() rotates the crystal matrix about z axis by theta in
+%radian.
+% Input:
+%   crystalMatrix -- crystal matrix, format: [type; proportion; X; Y; Z];
+%   theta -- rotation angle in radian;
+% Output:
+%   rotCrystalMatrix -- rotated crystal matrix;
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
 
@@ -16,14 +25,6 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [rotCrystalMatrix] = CrystalMatrixRotZ(crystalMatrix, theta)
-%CrystalMatrixRotZ() rotates the crystal matrix about z axis by theta in
-%radian.
-% Input:
-%   crystalMatrix -- crystal matrix, format: [type; proportion; X; Y; Z];
-%   theta -- rotation angle in radian;
-% Output:
-%   rotCrystalMatrix -- rotated crystal matrix;
 
 rotMat = [1, 0, 0, 0, 0;
     0, 1, 0, 0, 0;

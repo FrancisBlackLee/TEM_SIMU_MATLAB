@@ -1,5 +1,16 @@
+function [diffPatt] = NanoDiffAppSelectedAreaDiff(keV, projPotMat,...
+    sliceDist, pixelSize, dimPixelNum)
+%NanoDiffAppSelectedAreaDiff() computes the selected area diffraction
+%pattern as an external API for NanoDiff app.
+% Input:
+%   keV -- electron beam energy;
+%   projPotMat -- projected potential matrix;
+%   sliceDist -- slice distance list;
+% Output:
+%   diffPatt -- diffraction pattern;
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (C) 2019 - 2020  Francis Black Lee and Li Xian
+%   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
 
 %   This program is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
@@ -16,16 +27,6 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [diffPatt] = NanoDiffAppSelectedAreaDiff(keV, projPotMat,...
-    sliceDist, pixelSize, dimPixelNum)
-%NanoDiffAppSelectedAreaDiff() computes the selected area diffraction
-%pattern as an external API for NanoDiff app.
-% Input:
-%   keV -- electron beam energy;
-%   projPotMat -- projected potential matrix;
-%   sliceDist -- slice distance list;
-% Output:
-%   diffPatt -- diffraction pattern;
 
 sideLength = pixelSize * dimPixelNum;
 interCoeff = InteractionCoefficient(keV);

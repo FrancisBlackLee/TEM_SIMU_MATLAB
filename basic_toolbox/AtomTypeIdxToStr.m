@@ -1,3 +1,11 @@
+function [atomTypeStr] = AtomTypeIdxToStr(atomTypeIdx)
+%AtomTypeIdxToStr() convert the index-format atom type to the string-format
+%atom type, index starting from 1.
+% Input:
+%   atomTypeIdx -- index-format atom type;
+% Output:
+%   atomTypeStr -- string-format atom type;
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
 
@@ -16,13 +24,6 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [atomTypeStr] = AtomTypeIdxToStr(atomTypeIdx)
-%AtomTypeIdxToStr() convert the index-format atom type to the string-format
-%atom type, index starting from 1.
-% Input:
-%   atomTypeIdx -- index-format atom type;
-% Output:
-%   atomTypeStr -- string-format atom type;
 
 atomTypeStrList = {'H', 'He', 'Li', 'Be', 'B', 'C', 'N', 'O', 'F', 'Ne',...
     'Na', 'Mg', 'Al', 'Si', 'P', 'S', 'Cl', 'Ar', 'K', 'Ca', 'Sc', 'Ti',...

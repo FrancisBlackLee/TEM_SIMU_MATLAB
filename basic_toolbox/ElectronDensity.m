@@ -1,3 +1,9 @@
+function [electronDensity] = ElectronDensity(atomType, rCoords)
+%ElectronDensity.m calculates the radial atomic electron density.
+%   atomType -- atomic type, Z;
+%   rCoords -- radial coordinates;
+%   electronDensity -- electron density;
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
 
@@ -16,11 +22,6 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [electronDensity] = ElectronDensity(atomType, rCoords)
-%ElectronDensity.m calculates the radial atomic electron density.
-%   atomType -- atomic type, Z;
-%   rCoords -- radial coordinates;
-%   electronDensity -- electron density;
 
 a0 = 0.529; % Bohr radius in angstrom
 scattParam = load('VanDyckScattParam.txt');

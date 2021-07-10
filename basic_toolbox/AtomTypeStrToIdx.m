@@ -1,3 +1,11 @@
+function [atomTypeIdx] = AtomTypeStrToIdx(atomTypeStr)
+%AtomTypeStrToIdx() convert the string-format atom type to the index-format
+%atom type, index starting from 1.
+% Input:
+%   atomTypeStr -- string-format atom type;
+% Output:
+%   atomTypeIdx -- index-format atom type;
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
 
@@ -16,13 +24,6 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [atomTypeIdx] = AtomTypeStrToIdx(atomTypeStr)
-%AtomTypeStrToIdx() convert the string-format atom type to the index-format
-%atom type, index starting from 1.
-% Input:
-%   atomTypeStr -- string-format atom type;
-% Output:
-%   atomTypeIdx -- index-format atom type;
 
 upperStr = upper(atomTypeStr);
 switch upperStr

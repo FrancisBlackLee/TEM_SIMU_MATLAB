@@ -1,3 +1,9 @@
+function [projPot] = RadialProjectedPotential(atomType, radius)
+%RadialProjectedPotential.m calculates the radial projected atomic potential.
+%   atomType -- atomic type, Z;
+%   radius -- polar radial coordinates;
+%   projPot -- radial projected potential;
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
 
@@ -16,25 +22,20 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [projPot] = RadialProjectedPotential(atomType, rho)
-%RadialProjectedPotential.m calculates the radial projected atomic potential.
-%   atomType -- atomic type, Z;
-%   rho -- radial coordinates;
-%   projPot -- radial projected potential;
 
 a = 0.529; % Bohr radius in angstrom
 e = 14.4; % elemental charge in volt - angstrom
-scattFac = load('Scattering_Factors.txt');
+scattParam = load('Scattering_Factors.txt');
 startIndex = 3 * (atomType - 1) + 1;
-A = [scattFac(startIndex, 1), scattFac(startIndex, 3), scattFac(startIndex + 1, 1)];
-B = [scattFac(startIndex, 2), scattFac(startIndex, 4), scattFac(startIndex + 1, 2)];
-C = [scattFac(startIndex + 1, 3), scattFac(startIndex + 2, 1), scattFac(startIndex + 2, 3)];
-D = [scattFac(startIndex + 1, 4), scattFac(startIndex + 2, 2), scattFac(startIndex + 2, 4)];
+A = [scattParam(startIndex, 1), scattParam(startIndex, 3), scattParam(startIndex + 1, 1)];
+B = [scattParam(startIndex, 2), scattParam(startIndex, 4), scattParam(startIndex + 1, 2)];
+C = [scattParam(startIndex + 1, 3), scattParam(startIndex + 2, 1), scattParam(startIndex + 2, 3)];
+D = [scattParam(startIndex + 1, 4), scattParam(startIndex + 2, 2), scattParam(startIndex + 2, 4)];
 
-projPot = zeros(size(rho));
+projPot = zeros(size(radius));
 for i = 1:3
-    projPot = projPot + 4 * pi^2 * A(i) * besselk(0, 2 * pi * rho * sqrt(B(i)))...
-               + 2 * pi^2 * C(i) / D(i) * exp(-pi^2 * rho.^2 / D(i));
+    projPot = projPot + 4 * pi^2 * A(i) * besselk(0, 2 * pi * radius * sqrt(B(i)))...
+               + 2 * pi^2 * C(i) / D(i) * exp(-pi^2 * radius.^2 / D(i));
 end
 
 projPot = a * e * projPot;

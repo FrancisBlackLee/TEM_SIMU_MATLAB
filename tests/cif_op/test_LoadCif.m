@@ -31,14 +31,14 @@ filename_6 = 'tests\cif_op\Si_mp-149_conventional_standard.cif';
 filename_7 = 'tests\cif_op\Si_mp-149_primitive.cif';
 filename_8 = 'tests\cif_op\Si_mp-149_symmetrized.cif';
 
-crysInfo = LoadCif(filename_8);
+crysInfo = LoadCif(filename_1);
 
 [cellLengths, cellAngles] = ExtractCellConstFromCrysInfo(crysInfo);
 atomSiteMat = ExtractAtomSiteFromCrysInfo(crysInfo);
 fullAtomSiteMat = AddEquivAtomSites(atomSiteMat);
 
-hkl = [1, 0, 0];
-convMat = ConversionMatrix_hkl(cellLengths, cellAngles, hkl);
+uvw = [1, 0, 0];
+convMat = ConversionMatrix_uvw(cellLengths, cellAngles, uvw);
 atomCartCoord = convMat * fullAtomSiteMat(3 : 5, :);
 
 PlotCell2D(convMat, fullAtomSiteMat);

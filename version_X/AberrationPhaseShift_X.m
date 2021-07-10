@@ -1,21 +1,3 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
-
-%   This program is free software: you can redistribute it and/or modify
-%   it under the terms of the GNU General Public License as published by
-%   the Free Software Foundation, either version 3 of the License, or
-%   any later version.
-
-%   This program is distributed in the hope that it will be useful,
-%   but WITHOUT ANY WARRANTY; without even the implied warranty of
-%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-%   GNU General Public License for more details.
-
-%   You should have received a copy of the GNU General Public License
-%   along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-%   Email: warner323@outlook.com
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [phaseShift] = AberrationPhaseShift_X(aberration, wavLen, Lx, Ly, Nx, Ny)
 %AberrationPhaseShift_X() converts aberration items to phase shift.
 % Input:
@@ -49,6 +31,25 @@ function [phaseShift] = AberrationPhaseShift_X(aberration, wavLen, Lx, Ly, Nx, N
 %   Lx, Ly, Nx, Ny -- sampling parameters;
 %   Version note: X denotes an experimental version. For more details,
 %       please refer to Sec. 2.8 of Advanced Computig Electron Microscopy.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
+
+%   This program is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   any later version.
+
+%   This program is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+
+%   You should have received a copy of the GNU General Public License
+%   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+%   Email: warner323@outlook.com
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 aberr{1} = [aberration.C1, aberration.A1];
 aberr{2} = [aberration.B2, aberration.A2];

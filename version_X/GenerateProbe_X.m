@@ -1,3 +1,14 @@
+function [probe] = GenerateProbe_X(otf, xp, yp, Lx, Ly, Nx, Ny)
+%GenerateProbe_X.m generates an electron probe.
+%   OTF -- prepared objective transfer function in reciprocal space, note
+%       that ObjTransFunc_X.m does not generate the OTF with an aperture,
+%       thus the input OTF must have been multiplied by an aperture in
+%       advance;
+%   Lx, Ly, Nx, Ny -- sampling parameters, L denotes side length and N the
+%       sampling number in real space;
+%   xp, yp -- probe position in real space;
+% Note: X denotes an experimental version!
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
 
@@ -16,26 +27,16 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [probe] = GenerateProbe_X(OTF, xp, yp, Lx, Ly, Nx, Ny)
-%GenerateProbe_X.m generates an electron probe.
-%   OTF -- prepared objective transfer function in reciprocal space, note
-%       that ObjTransFunc_X.m does not generate the OTF with an aperture,
-%       thus the input OTF must have been multiplied by an aperture in
-%       advance;
-%   Lx, Ly, Nx, Ny -- sampling parameters, L denotes side length and N the
-%       sampling number in real space;
-%   xp, yp -- probe position in real space;
-% Note: X denotes an experimental version!
 
 dx = Lx / Nx;
 dy = Ly / Ny;
 fx = -1 / (2 * dx) : 1 / Lx : 1 / (2 * dx) - 1 / Lx;
 fy = -1 / (2 * dy) : 1 / Ly : 1 / (2 * dy) - 1 / Ly;
 [FX, FY] = meshgrid(fx, fy);
-probe = ifftshift(ifft2(fftshift(OTF .* exp(-1i * 2 * pi * (FX * xp + FY * yp)))));
+probe = ifftshift(ifft2(fftshift(otf .* exp(-1i * 2 * pi * (FX * xp + FY * yp)))));
 
-NormCoeff = sqrt(sum(sum(abs(probe.^2))) * dx * dy);
-probe = probe / NormCoeff;
+normCoeff = sqrt(sum(abs(probe.^2), 'all') * dx * dy);
+probe = probe / normCoeff;
 
 end
 

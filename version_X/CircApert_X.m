@@ -1,3 +1,11 @@
+function [aperture] = CircApert_X(Lx, Ly, Nx, Ny, wavLen, numApert)
+%CircApert_X.m generates a circular aperture in reciprocal space.
+%   Lx, Ly, Nx, Ny -- sampling parameters, L denotes side length and N the
+%       sampling number in real space;
+%   wavLen -- wavelength;
+%   numApert -- numerical aperture in mrad;
+% Note: X denotes an experimental version!
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
 
@@ -16,22 +24,13 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [Aperture] = CircApert_X(Lx, Ly, Nx, Ny, WavLen, NA)
-%CircApert_X.m generates a circular aperture in reciprocal space.
-%   Lx, Ly, Nx, Ny -- sampling parameters, L denotes side length and N the
-%       sampling number in real space;
-%   WavLen -- wavelength;
-%   NA -- numerical aperture in mrad;
-% Note: X denotes an experimental version!
 
-dx = Lx / Nx;
-dy = Ly / Ny;
-fx = -1 / (2 * dx) : 1 / Lx : 1 / (2 * dx) - 1 / Lx;
-fy = -1 / (2 * dy) : 1 / Ly : 1 / (2 * dy) - 1 / Ly;
+fx = InitFreqAxis(Lx, Nx);
+fy = InitFreqAxis(Ly, Ny);
 [FX, FY] = meshgrid(fx, fy);
-FreqSqu = FX.^2 + FY.^2;
+freqSqu = FX.^2 + FY.^2;
 
-Aperture = (FreqSqu < (NA * 1e-3 / WavLen)^2);
+aperture = (freqSqu < (numApert * 1e-3 / wavLen)^2);
 
 end
 

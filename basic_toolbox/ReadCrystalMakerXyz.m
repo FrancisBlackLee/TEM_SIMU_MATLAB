@@ -1,3 +1,12 @@
+function [typeList, xyzList] = ReadCrystalMakerXyz(filename)
+%ReadCrystalMakerXyz() reads crystal coordinate data from xyz file export
+%from CrystalMaker.
+% Input:
+%   filename -- filename of the xyz file;
+% Output:
+%   typeList -- list of the atomic types, 1 by atomNum array;
+%   xyzList -- list of the atomic xyz coordinates, 3 by atomNum matrix;
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
 
@@ -16,14 +25,6 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [typeList, xyzList] = ReadCrystalMakerXyz(filename)
-%ReadCrystalMakerXyz() reads crystal coordinate data from xyz file export
-%from CrystalMaker.
-% Input:
-%   filename -- filename of the xyz file;
-% Output:
-%   typeList -- list of the atomic types, 1 by atomNum array;
-%   xyzList -- list of the atomic xyz coordinates, 3 by atomNum matrix;
 
 filePtr = fopen(filename, 'r');
 if filePtr == -1

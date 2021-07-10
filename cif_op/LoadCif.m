@@ -1,3 +1,7 @@
+function [crysInfo] = LoadCif(filename)
+% LoadCif() loads a cif file and reads the basic information from the cif
+% file for other functions of TEM_SIMU_MATLAB.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
 
@@ -16,9 +20,6 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [crysInfo] = LoadCif(filename)
-% LoadCif() loads a cif file and reads the basic information from the cif
-% file for other functions of TEM_SIMU_MATLAB.
 
 % NOTE:
 %   str starts with 'data' is the simple description of the cif file;

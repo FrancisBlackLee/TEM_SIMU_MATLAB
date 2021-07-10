@@ -1,3 +1,10 @@
+function [detector] = AnnularDetector_X(lowAngle, highAngle, wavLen, Lx, Ly, Nx, Ny)
+%AnularDetector_X.m generates the detector for ADF-STEM mode.
+%   lowAngle, highAngle -- describe the shape of the detector in mrad;
+%   wavLen -- wavelength of the electron beam;
+%   Lx, Ly, Nx, Ny -- sampling parameters;
+% Note: X denotes an experimental version!
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
 
@@ -16,20 +23,12 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [detector] = AnnularDetector_X(LowAngle, HighAngle, WavLen, Lx, Ly, Nx, Ny)
-%AnularDetector_X.m generates the detector for ADF-STEM mode.
-%   LowAngle, HighAngle -- describe the shape of the detector in mrad;
-%   WavLen -- wavelength of the electron beam;
-%   Lx, Ly, Nx, Ny -- sampling parameters;
-% Note: X denotes an experimental version!
 
-dx = Lx / Nx;
-dy = Ly / Ny;
-fx = -1 / (2 * dx) : 1 / Lx : 1 / (2 * dx) - 1 / Lx;
-fy = -1 / (2 * dy) : 1 / Ly : 1 / (2 * dy) - 1 / Ly;
+fx = InitFreqAxis(Lx, Nx);
+fy = InitFreqAxis(Ly, Ny);
 [FX, FY] = meshgrid(fx, fy);
-FreqSqu = FX.^2 + FY.^2;
-detector = ((FreqSqu < (HighAngle * 1e-3 / WavLen)^2) & (FreqSqu > (LowAngle * 1e-3 / WavLen)^2));
+freqSqu = FX.^2 + FY.^2;
+detector = ((freqSqu < (highAngle * 1e-3 / wavLen)^2) & (freqSqu > (lowAngle * 1e-3 / wavLen)^2));
 
 end
 

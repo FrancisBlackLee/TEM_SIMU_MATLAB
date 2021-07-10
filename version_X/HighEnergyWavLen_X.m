@@ -1,3 +1,8 @@
+function [wavLen] = HighEnergyWavLen_X(KeV)
+%HighEnergyWavLen_X.m calculates high-energy electron beam wavelength.
+%   KeV -- beam energy in KeV;
+% Note: X denotes an experimental version!
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
 
@@ -16,12 +21,8 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [WavLen] = HighEnergyWavLen_X(KeV)
-%HighEnergyWavLen_X.m calculates high-energy electron beam wavelength.
-%   KeV -- beam energy in KeV;
-% Note: X denotes an experimental version!
 
-WavLen = 12.3986 ./ sqrt((2 * 511.0 + KeV) .* KeV);
+wavLen = 12.3986 ./ sqrt((2 * 511.0 + KeV) .* KeV);
 
 end
 

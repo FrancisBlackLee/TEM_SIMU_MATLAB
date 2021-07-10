@@ -1,3 +1,13 @@
+function [strCellArray, lineType, canDelete] = CifLineParser(textLine, lastLoopObj)
+%CifLineParser() is the parser for the text obtained using CIF line scan.
+% Input:
+%   textLine -- CIF text line;
+% Output:
+%   strCellArray -- string cell array obtained from the text line;
+%   lineType -- type of the text line classified inside the function;
+%   canDelete - whether this line can be deleted, e.g., a comment line, a
+%       loop commad, 'true' for 'can delete', 'false' for 'cannot delete';
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
 
@@ -16,15 +26,6 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [strCellArray, lineType, canDelete] = CifLineParser(textLine, lastLoopObj)
-%CifLineParser() is the parser for the text obtained using CIF line scan.
-% Input:
-%   textLine -- CIF text line;
-% Output:
-%   strCellArray -- string cell array obtained from the text line;
-%   lineType -- type of the text line classified inside the function;
-%   canDelete - whether this line can be deleted, e.g., a comment line, a
-%       loop commad, 'true' for 'can delete', 'false' for 'cannot delete';
 
 tightTextLine = TightenCifTextLine(textLine);
 % disp(tightTextLine);

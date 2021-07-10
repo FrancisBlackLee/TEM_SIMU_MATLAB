@@ -1,3 +1,14 @@
+function [u] = ThermoDisplace_0(massNum, debyeTemp, temperature)
+%ThermoDisplace_0.m calculates the standard deviation of
+%thermo-displacement using Einstein model.
+%   Input:
+%       massNum -- mass number, i.e. for carbon is 12.01;
+%       debyeTemp -- Debye temperature (in Kelvin);
+%       temperature -- simulation temperature;
+%   Output:
+%       u -- standard deviation of the thermo-displacement (in
+%       Angstrom);
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
 
@@ -16,18 +27,8 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [MeanDisplace] = ThermoDisplace_0(MassNum, DebyeTemp, Temp)
-%ThermoDisplace_0.m calculates the standard deviation of
-%thermo-displacement using Einstein model.
-%   Input:
-%       MassNum -- mass number, i.e. for carbon is 12.01;
-%       DebyeTemp -- Debye temperature (in Kelvin);
-%       Temp -- simulation temperature;
-%   Output:
-%       MeanDisplace -- standard deviation of the thermo-displacement (in
-%       Angstrom);
 
-MeanDisplace = sqrt(144.38 * Temp ./ (MassNum .* DebyeTemp.^2));
+u = sqrt(144.38 * temperature ./ (massNum .* debyeTemp.^2));
 
 end
 

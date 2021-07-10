@@ -1,3 +1,12 @@
+function [rotMat] = RotationOperator(direction)
+%RotationOperator() computes the martix form of the rotation operator given
+%the view or projection direction.
+% Input:
+%   direction -- view or projection direction, vector with 3 elements;
+% Output:
+%   rotMat -- rotation operator matrix for cartesian coordinates:
+%       usage: [xp; yp; zp] = rotMat * [x; y; z];
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
 
@@ -16,14 +25,6 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [rotMat] = RotationOperator(direction)
-%RotationOperator() computes the martix form of the rotation operator given
-%the view or projection direction.
-% Input:
-%   direction -- view or projection direction, vector with 3 elements;
-% Output:
-%   rotMat -- rotation operator matrix for cartesian coordinates:
-%       usage: [xp; yp; zp] = rotMat * [x; y; z];
 
 newVecZ = reshape(direction, 1, []);
 newVecX = [0, newVecZ(3), -newVecZ(2)];

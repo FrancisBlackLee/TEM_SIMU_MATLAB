@@ -1,3 +1,16 @@
+function [slice, sliceDist] = CrystalSlicing_3(crysMat, distError, zMax, YN, plotColor)
+%CrystalSlicing.m slices a given crystal described by the atomic numbers
+%and atomic coordinates.
+%   crysMat -- Crystal matrix, where the first row denotes the atomic types, the
+%       second row denotes the fractional concentrations and the third to
+%       the fifth rows denote the atomic coordinates, whether fractional or
+%       orthogonal;
+%   distError -- the largest error distance to judge whether atoms of
+%       different heights be rearranged to one slice;
+%   YN -- whether to show each slice: 1 --yes, 0 --no.
+%   NOTE: this version was derived from the previous experimental version,
+%   designed for LPCMO slicing.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2020  Francis Black Lee and Li Xian
 
@@ -16,76 +29,64 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [slice, SliceDist] = CrystalSlicing_3(L, DistError, Zmax, YN, PlotColor)
-%CrystalSlicing.m slices a given crystal described by the atomic numbers
-%and atomic coordinates.
-%   L -- Crystal matrix, where the first row denotes the atomic types, the
-%       second row denotes the fractional concentrations and the third to
-%       the fifth rows denote the atomic coordinates, whether fractional or
-%       orthogonal;
-%   DistError -- the largest error distance to judge whether atoms of
-%       different heights be rearranged to one slice;
-%   YN -- whether to show each slice: 1 --yes, 0 --no.
-%   NOTE: this version was derived from the previous experimental version,
-%   designed for LPCMO slicing.
 
-AtomNum = size(L, 2);
-[Z, Order] = sort(L(5,:));
-Lp = L(:,Order);
-PlotColor = PlotColor(Order);
-SliceInfo = 1;
+atomNum = size(crysMat, 2);
+[coordZ, zOrder] = sort(crysMat(5,:));
+sortCrysMat = crysMat(:,zOrder);
+plotColor = plotColor(zOrder);
+sliceInfo = 1;
 n = 1;
-slice{n} = Lp( : , 1);
-Slice_Z = Z(1);
-for i = 2:length(Z)
-    if abs(Z(i)-Slice_Z) >= DistError
-        SliceInfo = [SliceInfo 1];
+slice{n} = sortCrysMat( : , 1);
+sliceZ = coordZ(1);
+for i = 2:length(coordZ)
+    if abs(coordZ(i)-sliceZ) >= distError
+        sliceInfo = [sliceInfo 1];
         n = n + 1;
-        slice{n} = Lp( : , i);
-        Slice_Z = Z(i);
+        slice{n} = sortCrysMat( : , i);
+        sliceZ = coordZ(i);
     else
-        SliceInfo(n) = SliceInfo(n) + 1;
-        Lp(5, i) = Slice_Z;
-        slice{n} = [slice{n}, Lp( : , i)];
+        sliceInfo(n) = sliceInfo(n) + 1;
+        sortCrysMat(5, i) = sliceZ;
+        slice{n} = [slice{n}, sortCrysMat( : , i)];
     end
 end
-SliceDist = zeros(size(SliceInfo));
-n = SliceInfo(1);
-for i = 1 : length(SliceInfo) - 1
-    SliceDist(i) = Lp(5, n + 1) - Lp(5, n);
-    n = n + SliceInfo(i + 1);
+sliceDist = zeros(size(sliceInfo));
+n = sliceInfo(1);
+for i = 1 : length(sliceInfo) - 1
+    sliceDist(i) = sortCrysMat(5, n + 1) - sortCrysMat(5, n);
+    n = n + sliceInfo(i + 1);
 end
-if Zmax - sum(SliceDist(1 : i)) >= DistError
-    SliceDist(i + 1) = Zmax - sum(SliceDist(1 : i));
+if zMax - sum(sliceDist(1 : i)) >= distError
+    sliceDist(i + 1) = zMax - sum(sliceDist(1 : i));
 else
-    SliceDist(i) = SliceDist(i) + Zmax - sum(SliceDist(1 : i));
-    slice{i+1}(5, : ) = Z(1);
-    Lp(5, AtomNum - SliceInfo(i + 1) + 1 : AtomNum) = Lp(5, 1);
-    Lp = [Lp( : , AtomNum - SliceInfo(i + 1) + 1 : AtomNum), Lp( : , 1 : AtomNum - SliceInfo(i + 1))];
-    PlotColor = [PlotColor(AtomNum - SliceInfo(i + 1) + 1 : AtomNum), PlotColor(1 : AtomNum - SliceInfo(i + 1))];
+    sliceDist(i) = sliceDist(i) + zMax - sum(sliceDist(1 : i));
+    slice{i+1}(5, : ) = coordZ(1);
+    sortCrysMat(5, atomNum - sliceInfo(i + 1) + 1 : atomNum) = sortCrysMat(5, 1);
+    sortCrysMat = [sortCrysMat( : , atomNum - sliceInfo(i + 1) + 1 : atomNum), sortCrysMat( : , 1 : atomNum - sliceInfo(i + 1))];
+    plotColor = [plotColor(atomNum - sliceInfo(i + 1) + 1 : atomNum), plotColor(1 : atomNum - sliceInfo(i + 1))];
     slice{1} = [slice{1}, slice{i+1}];
     slice(i + 1) = [];
-    SliceDist(i + 1) = [];
-    SliceInfo(1) = SliceInfo(1) + SliceInfo(i + 1);
-    SliceInfo(i + 1) = [];
+    sliceDist(i + 1) = [];
+    sliceInfo(1) = sliceInfo(1) + sliceInfo(i + 1);
+    sliceInfo(i + 1) = [];
 end
 % Show the slices
 if YN == 1
     n = 1;
-    for i = 1:length(SliceInfo)
+    for i = 1:length(sliceInfo)
         figure;
         hold on;
-        for j = n:n+SliceInfo(i)-1
-            if Lp(1,j)~=0
+        for j = n:n+sliceInfo(i)-1
+            if sortCrysMat(1,j)~=0
                 % No more than 8 types of color
                 Colors = ['r', 'g', 'b', 'y', 'm', 'c', 'w', 'k'];
-                scatter(Lp(3, j), Lp(4, j), 'o', Colors(PlotColor(j)));
+                scatter(sortCrysMat(3, j), sortCrysMat(4, j), 'o', Colors(plotColor(j)));
             end
         end
-        axis([min(Lp(3,:)) max(Lp(3,:)) min(Lp(4,:)) max(Lp(4,:))]);
+        axis([min(sortCrysMat(3,:)) max(sortCrysMat(3,:)) min(sortCrysMat(4,:)) max(sortCrysMat(4,:))]);
         axis equal;
-        title(['z= ' num2str(Z(n))]);
-        n=n+SliceInfo(i);
+        title(['z= ' num2str(coordZ(n))]);
+        n=n+sliceInfo(i);
     end
 end
 

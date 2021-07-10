@@ -1,3 +1,14 @@
+function [ProjPot] = MonoProjPot_conv_X(AtomType, EleProp, ScaleCoord, CellNum, LattConst, Lx, Ly, Nx, Ny)
+%MonoProjPot_conv_0.m calculates the projected potential for one type of
+%atom.
+%   EleProp -- elemental proportion;
+%   ScaleCoord -- scaled planar coordinates, syntax: [ScaleX1,..., ScaleXN;
+%       ScaleY1, ScaleYN];
+%   CellNum -- number of unit cells to be included, sytax: [CellNumX, CellNumY];
+%   LattConst -- lattice constants, syntax: [a, b];
+%   Lx, Ly, Nx, Ny -- sampling parameters;
+% Note: X denotes an experimental version!
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
 
@@ -16,16 +27,6 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [ProjPot] = MonoProjPot_conv_X(AtomType, EleProp, ScaleCoord, CellNum, LattConst, Lx, Ly, Nx, Ny)
-%MonoProjPot_conv_0.m calculates the projected potential for one type of
-%atom.
-%   EleProp -- elemental proportion;
-%   ScaleCoord -- scaled planar coordinates, syntax: [ScaleX1,..., ScaleXN;
-%       ScaleY1, ScaleYN];
-%   CellNum -- number of unit cells to be included, sytax: [CellNumX, CellNumY];
-%   LattConst -- lattice constants, syntax: [a, b];
-%   Lx, Ly, Nx, Ny -- sampling parameters;
-% Note: X denotes an experimental version!
 
 AtomNum = size(ScaleCoord, 2);
 SingPot_fft = fft2(fftshift(ProjectedPotential(Lx, Ly, Nx, Ny, AtomType, 0, 0)));

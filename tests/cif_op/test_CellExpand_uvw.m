@@ -16,7 +16,7 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% test_CellExpand_hkl.m
+% test_CellExpand_uvw.m
 clc;
 clear;
 close all;
@@ -39,14 +39,14 @@ initAtomSiteMat = ExtractAtomSiteFromCrysInfo(crysInfo);
 fullAtomSiteMat = AddEquivAtomSites(initAtomSiteMat);
 
 sideLength = 50;
-hkl = [1, 1, 0];
+uvw = [1, 1, 0];
 
-convMat = ConversionMatrix_hkl(cellLengths, cellAngles, hkl);
-viewDirection = hkl(1) * convMat(:, 1) +...
-        hkl(2) * convMat(:, 2) +...
-        hkl(3) * convMat(:, 3);
+convMat = ConversionMatrix_uvw(cellLengths, cellAngles, uvw);
+viewDirection = uvw(1) * convMat(:, 1) +...
+        uvw(2) * convMat(:, 2) +...
+        uvw(3) * convMat(:, 3);
 
-atomCoordMat = CellExpand_hkl(fullAtomSiteMat, cellLengths, cellAngles, hkl, sideLength);
+atomCoordMat = CellExpand_uvw(fullAtomSiteMat, cellLengths, cellAngles, uvw, sideLength);
 
 deleteIndices = find((atomCoordMat(3, :) > sideLength / 2) |...
     (atomCoordMat(3, :) < -sideLength / 2) |...

@@ -1,3 +1,12 @@
+function [ Lrp, SliceInfo ] = CrystalSlicing( L, t, q )
+% Function CrystalSlicing slices a crystal along a certain direction
+% represented by a vector t and return the results in a matrix called
+% SliceInfo.
+% There are also another output containing the atoms' positions after
+% coordinate transformation.
+% In addition, by inputting q=1 or 0 to choose whether to plot each slice
+% or not.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2020  Francis Black Lee and Li Xian
 
@@ -16,14 +25,6 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [ Lrp, SliceInfo ] = CrystalSlicing( L, t, q )
-% Function CrystalSlicing slices a crystal along a certain direction
-% represented by a vector t and return the results in a matrix called
-% SliceInfo.
-% There are also another output containing the atoms' positions after
-% coordinate transformation.
-% In addition, by inputting q=1 or 0 to choose whether to plot each slice
-% or not.
 
 % Construct a orthonormal basis containing t
 A = [t(2),-t(1),0];

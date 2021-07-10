@@ -1,3 +1,9 @@
+function [otf] = AberrationFunction(params, Lx, Ly, Nx, Ny)
+%ABERRATIONFUNCTION.M calculates the transfer function of the objective
+%lens.
+%   params --TEM&STEM parameters;
+%   Lx, Ly, Nx, Ny -- sampling parameters;
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
 
@@ -16,26 +22,17 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [Aberr_TF] = AberrationFunction(Params,Lx,Ly,Nx,Ny)
-%ABERRATIONFUNCTION.M calculates the transfer function of the objective
-%lens.
-%   Params --TEM&STEM parameters
 
-dx = Lx / Nx;
-dy = Ly / Ny;
-Cs = Params.Cs * 1e7;
-df = Params.df;
-KeV = Params.KeV;
-AngleMax = Params.amax * 0.001;
-lambda = 12.3986 / sqrt((2 * 511.0 + KeV) * KeV);  %wavelength
-fx = -1 / (2 * dx) : 1 / Lx : 1 / (2 * dx) - 1 / Lx;
-fy = -1 / (2 * dy) : 1 / Ly : 1 / (2 * dy) - 1 / Ly;
+Cs = params.Cs * 1e7;
+df = params.df;
+wavLen = HighEnergyWavLen_X(params.KeV);
+fx = InitFreqAxis(Lx, Nx);
+fy = InitFreqAxis(Ly, Ny);
 [Fx, Fy] = meshgrid(fx, fy);
-FreqSquare = Fx.^2 + Fy.^2;
-Aperture = ones(size(Fx));
-Aperture(FreqSquare >= (sin(AngleMax) / lambda)^2) = 0;
-Chi = pi * lambda * FreqSquare .* (0.5 * Cs * lambda^2 * FreqSquare - df * ones(size(Fx)));
-Aberr_TF = exp(-1i * Chi) .* Aperture;
+freqSqr = Fx.^2 + Fy.^2;
+aperture = CircApert_X(Lx, Ly, Nx, Ny, wavLen, params.amax);
+otfPhase = pi * wavLen * freqSqr .* (0.5 * Cs * wavLen^2 * freqSqr - df);
+otf = exp(-1i * otfPhase) .* aperture;
 
 end
 

@@ -1,22 +1,5 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
-
-%   This program is free software: you can redistribute it and/or modify
-%   it under the terms of the GNU General Public License as published by
-%   the Free Software Foundation, either version 3 of the License, or
-%   any later version.
-
-%   This program is distributed in the hope that it will be useful,
-%   but WITHOUT ANY WARRANTY; without even the implied warranty of
-%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-%   GNU General Public License for more details.
-
-%   You should have received a copy of the GNU General Public License
-%   along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-%   Email: warner323@outlook.com
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [stemImg] = ADF_STEM_X(Lx, Ly, params, TransFuncs, SliceDist, StackNum, CBEDoption, CBEDdir)
+function [stemImg] = ADF_STEM_X(Lx, Ly, params, transFuncs, sliceDist,...
+    stackNum, cbedOption, cbedDir)
 %ADF_STEM_X.m is a specially designed multislice interface.
 %   Lx, Ly -- sampling sidelength in angstrom;
 %   params -- ADF-STEM parameter setting:
@@ -40,54 +23,74 @@ function [stemImg] = ADF_STEM_X(Lx, Ly, params, TransFuncs, SliceDist, StackNum,
 %       CBEDoption = 0: no; CBEDoption = 1: yes;
 %   CBEDdir -- an existed empty local folder to save the CBED data.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
+
+%   This program is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   any later version.
+
+%   This program is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+
+%   You should have received a copy of the GNU General Public License
+%   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+%   Email: warner323@outlook.com
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 if(nargin == 6)
-    CBEDoption = 0;
+    cbedOption = 0;
 else
-    if CBEDoption == 1
-        if ~isfolder(CBEDdir)
-            errorMessage = sprintf('Error: %s does not exist!\n', CBEDdir);
+    if cbedOption == 1
+        if ~isfolder(cbedDir)
+            errorMessage = sprintf('Error: %s does not exist!\n', cbedDir);
             uiwait(warndlg(errorMessage));
             return;
         end
     end
 end
-[Ny, Nx, SliceNum] = size(TransFuncs);
+[Ny, Nx, sliceNum] = size(transFuncs);
 dx = Lx / Nx;
 dy = Ly / Ny;
-WavLen = 12.3986 / sqrt((2 * 511.0 + params.KeV) * params.KeV);
+wavLen = 12.3986 / sqrt((2 * 511.0 + params.KeV) * params.KeV);
 % generate fftshifted Fresnel propagation kernels:
-shiftPropKer = zeros(Ny, Nx, SliceNum) + 1i * ones(Ny, Nx, SliceNum);
-for SliceIdx = 1 : SliceNum
-    shiftPropKer(:, :, SliceIdx) = fftshift(FresnelPropKernel_X(Lx, Ly, Nx, Ny, WavLen, SliceDist(SliceIdx)));
+shiftPropKer = zeros(Ny, Nx, sliceNum) + 1i * ones(Ny, Nx, sliceNum);
+for sliceIdx = 1 : sliceNum
+    shiftPropKer(:, :, sliceIdx) = fftshift(FresnelPropKernel_X(Lx, Ly,...
+        Nx, Ny, wavLen, sliceDist(sliceIdx)));
 end
 % generate objective transfer function with an aperture:
-OTF = params.aperture .* ObjTransFunc_X(params, Lx, Ly, Nx, Ny);
+otf = params.aperture .* ObjTransFunc_X(params, Lx, Ly, Nx, Ny);
 
 % fftshift all the transmission function in place:
-TransFuncs = fftshift(TransFuncs, 1);
-TransFuncs = fftshift(TransFuncs, 2);
+transFuncs = fftshift(transFuncs, 1);
+transFuncs = fftshift(transFuncs, 2);
 % start scanning:
 scanNx = length(params.scanx);
 scanNy = length(params.scany);
 stemImg = zeros(scanNy, scanNx);
-TotalCompTask = scanNy * scanNx;
+totalCompTask = scanNy * scanNx;
 process = waitbar(0, 'start scanning');
 for iy = 1 : scanNy
     for ix = 1 : scanNx
-        DoneRatio = ((iy - 1) * scanNx + ix - 1) / TotalCompTask;
-        waitbar(DoneRatio, process, [num2str(roundn(DoneRatio, -3) * 100), '%']);
-        TempWave = fftshift(GenerateProbe_X(OTF, params.scanx(ix), params.scany(iy), Lx, Ly, Nx, Ny));
-        for StackIdx = 1 : StackNum
-            for SliceIdx = 1 : SliceNum
-                TempWave = TempWave .* TransFuncs(:,:,SliceIdx);
-                TempWave = ifft2(shiftPropKer(:, :, SliceIdx) .* fft2(TempWave));
+        doneRatio = ((iy - 1) * scanNx + ix - 1) / totalCompTask;
+        waitbar(doneRatio, process, [num2str(roundn(doneRatio, -3) * 100), '%']);
+        tempWave = fftshift(GenerateProbe_X(otf, params.scanx(ix), params.scany(iy), Lx, Ly, Nx, Ny));
+        for stackIdx = 1 : stackNum
+            for sliceIdx = 1 : sliceNum
+                tempWave = tempWave .* transFuncs(:,:,sliceIdx);
+                tempWave = ifft2(shiftPropKer(:, :, sliceIdx) .* fft2(tempWave));
             end
         end
-        TempInten = abs((ifftshift(fft2(TempWave))*dx*dy).^2);
-        stemImg(iy, ix) = sum(sum(TempInten .* (params.detector)));
-        if CBEDoption == 1
-            CBEDname = strcat(CBEDdir, '\cbed_', num2str(iy), '_', num2str(ix), '.txt');
-            save(CBEDname, 'TempInten', '-ascii', '-double', '-tabs');
+        tempInten = abs((ifftshift(fft2(tempWave))*dx*dy).^2);
+        stemImg(iy, ix) = sum(sum(tempInten .* (params.detector)));
+        if cbedOption == 1
+            cbedName = strcat(cbedDir, '\cbed_', num2str(iy), '_', num2str(ix), '.txt');
+            save(cbedName, 'tempInten', '-ascii', '-double', '-tabs');
         end
     end
 end

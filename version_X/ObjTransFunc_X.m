@@ -1,3 +1,17 @@
+function [otf] = ObjTransFunc_X(params, Lx, Ly, Nx, Ny)
+%ObjTransFunc_X.m generates the objective transfer function in reciprocal
+%space, only including Cs3 and Cs5, for more aberrations please use
+%MultiAberrPhaseError_X.m.
+%   Lx, Ly, Nx, Ny -- sampling parameters, L denotes side length and N the
+%       sampling number in real space;
+%   params -- TEM & STEM parameters: KeV, df, Cs3 and Cs5, NA is not
+%       required, for the numerical aperture is generated outside:
+%       KeV: beam energy in KeV;
+%       df: defocus in angstrom (a negative defocus is used to eliminate
+%           the effect of the spherical aberration);
+%       Cs3, Cs5: 3rd and 5th order spherical aberration in millimeter;
+% Note: X denotes an experimental version!
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
 
@@ -16,37 +30,22 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [OTF] = ObjTransFunc_X(params, Lx, Ly, Nx, Ny)
-%ObjTransFunc_X.m generates the objective transfer function in reciprocal
-%space, only including Cs3 and Cs5, for more aberrations please use
-%MultiAberrPhaseError_X.m.
-%   Lx, Ly, Nx, Ny -- sampling parameters, L denotes side length and N the
-%       sampling number in real space;
-%   params -- TEM & STEM parameters: KeV, df, Cs3 and Cs5, NA is not
-%       required, for the numerical aperture is generated outside:
-%       KeV: beam energy in KeV;
-%       df: defocus in angstrom (a negative defocus is used to eliminate
-%           the effect of the spherical aberration);
-%       Cs3, Cs5: 3rd and 5th order spherical aberration in millimeter;
-% Note: X denotes an experimental version!
 
 KeV = params.KeV;
 Cs3 = params.Cs3 * 1e7;
 Cs5 = params.Cs5 * 1e7;
 df = params.df;
 
-WavLen = 12.3986 / sqrt((2 * 511.0 + KeV) * KeV);  %wavelength
+wavLen = HighEnergyWavLen_X(KeV);
 
-dx = Lx / Nx;
-dy = Ly / Ny;
-fx = -1 / (2 * dx) : 1 / Lx : 1 / (2 * dx) - 1 / Lx;
-fy = -1 / (2 * dy) : 1 / Ly : 1 / (2 * dy) - 1 / Ly;
+fx = InitFreqAxis(Lx, Nx);
+fy = InitFreqAxis(Ly, Ny);
 [FX, FY] = meshgrid(fx, fy);
-AngFreqSqu = (FX.^2 + FY.^2) * WavLen^2; % squared angular frequency
+angFreqSqu = (FX.^2 + FY.^2) * wavLen^2; % squared angular frequency
 
-PhaseError = 2*pi/WavLen * (0.5 * df * AngFreqSqu + 0.25 * Cs3 * AngFreqSqu.^2 ...
-                            + 1/6 * Cs5 * AngFreqSqu.^3);
-OTF = exp(-1i * PhaseError);
+otfPhase = 2*pi/wavLen * (0.5 * df * angFreqSqu + 0.25 * Cs3 * angFreqSqu.^2 ...
+                            + 1/6 * Cs5 * angFreqSqu.^3);
+otf = exp(-1i * otfPhase);
 
 end
 

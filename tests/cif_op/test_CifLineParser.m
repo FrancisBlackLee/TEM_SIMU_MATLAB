@@ -21,15 +21,23 @@ clc;
 clear;
 close all;
 %% main:
-filename = ['E:\practice\crystallography\cif\cif\@cif\',...
-    'AlGaAs2_mp-1228891_computed.cif'];
+filename_1 = 'tests\cif_op\AlGaAs2_mp-1228891_computed.cif';
+filename_2 = 'tests\cif_op\AlGaAs2_mp-1228891_conventional_standard.cif';
+filename_3 = 'tests\cif_op\AlGaAs2_mp-1228891_primitive.cif';
+filename_4 = 'tests\cif_op\AlGaAs2_mp-1228891_symmetrized.cif';
 
-fileID = fopen(filename, 'r');
+filename_5 = 'tests\cif_op\Si_mp-149_computed.cif';
+filename_6 = 'tests\cif_op\Si_mp-149_conventional_standard.cif';
+filename_7 = 'tests\cif_op\Si_mp-149_primitive.cif';
+filename_8 = 'tests\cif_op\Si_mp-149_symmetrized.cif';
+
+fileID = fopen(filename_1, 'r');
 
 textLine = fgetl(fileID);
+loopObj = 'None';
 while ischar(textLine)
     disp(textLine);
-    [strCellArray, lineType, canDelete] = CifLineParser(textLine);
+    [strCellArray, lineType, canDelete] = CifLineParser(textLine, loopObj);
     textLine = fgetl(fileID);
 end
 

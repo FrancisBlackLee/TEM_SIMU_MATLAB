@@ -1,3 +1,12 @@
+function [cellLength, cellAngle] = FindCifCellLengthAndAngle(filename)
+%FindCifCellLengthAndAngle() finds cell lengths and angles from the CIF
+%file directly.
+% Input:
+%   filename -- CIF filename;
+% Output:
+%   cellLengths -- [a, b, c];
+%   cellAngles -- [alpha, beta, gamma];
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
 
@@ -16,14 +25,6 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [cellLength, cellAngle] = FindCifCellLengthAndAngle(filename)
-%FindCifCellLengthAndAngle() finds cell lengths and angles from the CIF
-%file directly.
-% Input:
-%   filename -- CIF filename;
-% Output:
-%   cellLengths -- [a, b, c];
-%   cellAngles -- [alpha, beta, gamma];
 
 cellLength = zeros(1, 3);
 cellAngle = zeros(1, 3);

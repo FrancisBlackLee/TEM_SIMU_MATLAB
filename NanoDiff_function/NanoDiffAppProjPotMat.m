@@ -1,5 +1,18 @@
+function [projPotMat, sliceDist] = NanoDiffAppProjPotMat(crystalMatrix,...
+    pixelSize, dimPixelNum)
+%NanoDiffAppProjPotMat() computes the projected potential matrix as an
+%external API for NanoDiff app.
+% Input:
+%   crystalMatrix -- crystal matrix, format: [type; proportion; X; Y; Z];
+%   pixelSize -- sampling pixel size;
+%   dimPixelNum -- sampling pixel number per dimension;
+% Output:
+%   projPot -- projected potential matrix, size: dimPixelNum by dimPixelNum
+%       by sliceNum;
+%   sliceDist -- slice distance list;
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (C) 2019 - 2020  Francis Black Lee and Li Xian
+%   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
 
 %   This program is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
@@ -16,18 +29,6 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [projPotMat, sliceDist] = NanoDiffAppProjPotMat(crystalMatrix,...
-    pixelSize, dimPixelNum)
-%NanoDiffAppProjPotMat() computes the projected potential matrix as an
-%external API for NanoDiff app.
-% Input:
-%   crystalMatrix -- crystal matrix, format: [type; proportion; X; Y; Z];
-%   pixelSize -- sampling pixel size;
-%   dimPixelNum -- sampling pixel number per dimension;
-% Output:
-%   projPot -- projected potential matrix, size: dimPixelNum by dimPixelNum
-%       by sliceNum;
-%   sliceDist -- slice distance list;
 
 if ~isempty(crystalMatrix)
     maxSliceSpacing = 2.0;

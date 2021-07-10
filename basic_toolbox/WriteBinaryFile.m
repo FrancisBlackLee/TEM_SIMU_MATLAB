@@ -1,3 +1,8 @@
+function WriteBinaryFile(filename, data)
+%WriteBinaryFile writes a matrix as binary files to the destination place.
+%   filename -- Binary file name;
+%   data -- matrix to be saved.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
 
@@ -16,9 +21,6 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function WriteBinaryFile(filename, data)
-%UNTITLED Summary of this function goes here
-%   Detailed explanation goes here
 
 fileID = fopen(filename, 'w');
 fwrite(fileID, data, 'double');

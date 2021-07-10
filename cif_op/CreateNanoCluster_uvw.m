@@ -1,3 +1,19 @@
+function [atomCoordMat] = CreateNanoCluster_uvw(atomSiteMat, cellLengths,...
+    cellAngles, uvw, radius)
+%CreateNanoCluster_uvw() rotates the unit cell to the given orientation, 
+%duplicate the unit cell and rehapes the lattice to nano-cluster.
+% Input:
+%   atomSiteMat -- atomic site matrix;
+%   cellLengths -- element 1 for cell length a, 2 for cell length b and 3
+%       for cell length c;
+%   cellAngles -- element 1 for cell angle alpha (between bases a and c);
+%       2 for cell angle beta (between bases b and c) and
+%       3 for cell angle gamma (between bases a and b);
+%   uvw -- Orientation indices;
+%   radius -- radius of the nano-cluster;
+% Output:
+%   atomCoordMat -- atomic coordinate matrix (cartesian);
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
 
@@ -16,25 +32,10 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [atomCoordMat] = CreateNanoCluster_hkl(atomSiteMat, cellLengths,...
-    cellAngles, hkl, radius)
-%CreateNanoCluster_hkl() rotates the unit cell to the given orientation, 
-%duplicate the unit cell and rehapes the lattice to nano-cluster.
-% Input:
-%   atomSiteMat -- atomic site matrix;
-%   cellLengths -- element 1 for cell length a, 2 for cell length b and 3
-%       for cell length c;
-%   cellAngles -- element 1 for cell angle alpha (between bases a and c);
-%       2 for cell angle beta (between bases b and c) and
-%       3 for cell angle gamma (between bases a and b);
-%   hkl -- Miller indices;
-%   radius -- radius of the nano-cluster;
-% Output:
-%   atomCoordMat -- atomic coordinate matrix (cartesian);
 
-if any(mod(hkl, 1))
+if any(mod(uvw, 1))
     errID = 'myComponent:inputError';
-    msgtext = 'Miller indices must be integers.';
+    msgtext = 'Orientation indices must be integers.';
     ME = MException(errID, msgtext);
     throw(ME);
 elseif isempty(atomSiteMat)
@@ -52,9 +53,9 @@ elseif ~all(cellAngles)
     msgtext = 'Cell angles cannot contain zero.';
     ME = MException(errID, msgtext);
     throw(ME);
-elseif ~any(hkl)
+elseif ~any(uvw)
     errID = 'myComponent:inputError';
-    msgtext = 'Miller indices cannot be all zeros.';
+    msgtext = 'Orientation indices cannot be all zeros.';
     ME = MException(errID, msgtext);
     throw(ME);
 elseif ~(radius > 0)
@@ -63,7 +64,7 @@ elseif ~(radius > 0)
     ME = MException(errID, msgtext);
     throw(ME);
 else
-    convMat = ConversionMatrix_hkl(cellLengths, cellAngles, hkl);
+    convMat = ConversionMatrix_uvw(cellLengths, cellAngles, uvw);
     vecA = convMat(:, 1);
     vecB = convMat(:, 2);
     vecC = convMat(:, 3);

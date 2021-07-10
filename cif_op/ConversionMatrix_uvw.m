@@ -1,3 +1,16 @@
+function [convMat] = ConversionMatrix_uvw(cellLengths, cellAngles, uvw)
+%ConversionMatrix_uvw() computes the conversion matrix, given the cell
+%constants and corresponding miller indices (hkl).
+% Input:
+%   cellLengths -- element 1 for cell length a, 2 for cell length b and 3
+%       for cell length c;
+%   cellAngles -- element 1 for cell angle alpha (between bases a and c);
+%       2 for cell angle beta (between bases b and c) and
+%       3 for cell angle gamma (between bases a and b);
+%   uvw -- Orientation indices;
+% Output:
+%   convMat -- conversion matrix;
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
 
@@ -16,20 +29,8 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [convMat] = ConversionMatrix_hkl(cellLengths, cellAngles, hkl)
-%ConversionMatrix_hkl() computes the conversion matrix, given the cell
-%constants and corresponding miller indices (hkl).
-% Input:
-%   cellLengths -- element 1 for cell length a, 2 for cell length b and 3
-%       for cell length c;
-%   cellAngles -- element 1 for cell angle alpha (between bases a and c);
-%       2 for cell angle beta (between bases b and c) and
-%       3 for cell angle gamma (between bases a and b);
-%   hkl -- miller indices;
-% Output:
-%   convMat -- conversion matrix;
 
-if all(cellLengths) && all(cellAngles) && any(hkl)
+if all(cellLengths) && all(cellAngles) && any(uvw)
     a = cellLengths(1);
     b = cellLengths(2);
     c = cellLengths(3);
@@ -46,9 +47,9 @@ if all(cellLengths) && all(cellAngles) && any(hkl)
         0, b * sind(gamma), c2;
         0, 0, c3];
 
-    viewDirection = hkl(1) * initConvMat(:, 1) +...
-        hkl(2) * initConvMat(:, 2) +...
-        hkl(3) * initConvMat(:, 3);
+    viewDirection = uvw(1) * initConvMat(:, 1) +...
+        uvw(2) * initConvMat(:, 2) +...
+        uvw(3) * initConvMat(:, 3);
 
     rotMat = RotationOperator(viewDirection);
     convMat = rotMat * initConvMat;

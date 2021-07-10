@@ -1,3 +1,11 @@
+function scaleCoeff = AngleUnitToRadianScale(angleUnit)
+%AngleUnitToRadianScale() generates the scaling coefficient for converting
+%the angle unit to radian.
+% Input:
+%   angleUnit -- valid value: 'mrad', 'rad', 'degree';
+% Output:
+%   scaleCoeff -- scaling coeffcient, 0 for invalid input;
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
 
@@ -16,13 +24,6 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function scaleCoeff = AngleUnitToRadianScale(angleUnit)
-%AngleUnitToRadianScale() generates the scaling coefficient for converting
-%the angle unit to radian.
-% Input:
-%   angleUnit -- valid value: 'mrad', 'rad', 'degree';
-% Output:
-%   scaleCoeff -- scaling coeffcient, 0 for invalid input;
 
 switch angleUnit
     case 'mrad'

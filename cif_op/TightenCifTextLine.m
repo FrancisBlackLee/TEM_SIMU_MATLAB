@@ -1,3 +1,9 @@
+function [tightTextLine] = TightenCifTextLine(looseTextLine)
+%TightenCifTextLine() tightens the scanned text line from CIF file.
+% NOTE:
+%   This function serves to remove the leading and trailing spaces and
+%   spaces within single quote marks.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
 
@@ -16,11 +22,6 @@
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [tightTextLine] = TightenCifTextLine(looseTextLine)
-%TightenCifTextLine() tightens the scanned text line from CIF file.
-% NOTE:
-%   This function serves to remove the leading and trailing spaces and
-%   spaces within single quote marks.
 
 tightTextLine = looseTextLine;
 if ischar(tightTextLine)
