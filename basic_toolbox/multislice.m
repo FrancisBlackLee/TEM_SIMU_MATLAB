@@ -67,7 +67,7 @@ switch nargin
             end
         end
         filename = fullfile(saveDir, 'wave_data.mat');
-        save(filename, 'waveMat_3d', 'saveSliceSeries');
+        save(filename, 'waveMat_3d', 'saveSliceSeries', '-v7.3');
         exitWave = wave;
 end
 
