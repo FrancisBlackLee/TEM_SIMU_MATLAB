@@ -1,11 +1,13 @@
-function [ProjPot] = MonoProjPot_conv_X(AtomType, EleProp, ScaleCoord, CellNum, LattConst, Lx, Ly, Nx, Ny)
+function [projPot] = MonoProjPot_conv_X(atomType, eleProp, fracCoord,...
+    cellNum, lattConst, Lx, Ly, Nx, Ny)
 %MonoProjPot_conv_0.m calculates the projected potential for one type of
 %atom.
-%   EleProp -- elemental proportion;
-%   ScaleCoord -- scaled planar coordinates, syntax: [ScaleX1,..., ScaleXN;
-%       ScaleY1, ScaleYN];
-%   CellNum -- number of unit cells to be included, sytax: [CellNumX, CellNumY];
-%   LattConst -- lattice constants, syntax: [a, b];
+%   atomType -- atomic type, Z number;
+%   eleProp -- elemental proportion;
+%   fracCoord -- fractional XY coordinates, syntax: [fracX1,..., fracXN;
+%       fracY1, fracYN];
+%   cellNum -- number of unit cells to be included, sytax: [CellNumX, CellNumY];
+%   lattConst -- lattice constants, syntax: [a, b];
 %   Lx, Ly, Nx, Ny -- sampling parameters;
 % Note: X denotes an experimental version!
 
@@ -28,29 +30,36 @@ function [ProjPot] = MonoProjPot_conv_X(AtomType, EleProp, ScaleCoord, CellNum, 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-AtomNum = size(ScaleCoord, 2);
-SingPot_fft = fft2(fftshift(ProjectedPotential(Lx, Ly, Nx, Ny, AtomType, 0, 0)));
+atomNum = size(fracCoord, 2);
 % Sampling:
 dx = Lx / Nx;
 dy = Ly / Ny;
 fx = -1 / (2 * dx) : 1 / Lx : 1 / (2 * dx) - 1 / Lx;
 fy = -1 / (2 * dy) : 1 / Ly : 1 / (2 * dy) - 1 / Ly;
-[Fx, Fy] = meshgrid(fx, fy);
+[FX, FY] = meshgrid(fx, fy);
+FR = sqrt(FX.^2 + FY.^2);
+
+a = 0.529; % Bohr radius in angstrom
+e = 14.4; % elemental charge in volt - angstrom
+scaleCoeff = 2 * pi * e * a;
+
+projPotFFT = fftshift(scaleCoeff * ScatteringFactor(atomType, FR));
+
 % Build the convolution kernel:
-Kernel = 0;
-ScaleXshift = CellNum(1) / 2;
-ScaleYshift = CellNum(2) / 2;
-for AtomIdx = 1 : AtomNum
-    for Cellx_Idx = 0 : CellNum(1) - 1
-        CoordX = LattConst(1) * (ScaleCoord(1, AtomIdx) + Cellx_Idx - ScaleXshift);
-        for Celly_Idx = 0 : CellNum(2) - 1
-            CoordY = LattConst(2) * (ScaleCoord(2, AtomIdx) + Celly_Idx - ScaleYshift);
-            Kernel = Kernel + EleProp(AtomIdx) * exp(-1i * 2 * pi *(Fx * CoordX + Fy * CoordY));
+kernel = 0;
+scaleXshift = cellNum(1) / 2;
+scaleYshift = cellNum(2) / 2;
+for atomIdx = 1 : atomNum
+    for xCellIdx = 0 : cellNum(1) - 1
+        coordX = lattConst(1) * (fracCoord(1, atomIdx) + xCellIdx - scaleXshift);
+        for yCellIdx = 0 : cellNum(2) - 1
+            coordY = lattConst(2) * (fracCoord(2, atomIdx) + yCellIdx - scaleYshift);
+            kernel = kernel + eleProp(atomIdx) * exp(-1i * 2 * pi *(FX * coordX + FY * coordY));
         end
     end
 end
-Kernel = fftshift(Kernel);
-ProjPot = real(ifftshift(ifft2(Kernel .* SingPot_fft)));
+kernel = fftshift(kernel);
+projPot = real(ifftshift(ifft2(kernel .* projPotFFT))) / (dx * dy);
 
 end
 

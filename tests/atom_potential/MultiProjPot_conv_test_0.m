@@ -22,17 +22,21 @@
 % This script was run on my laptop, the old version, ProjectedPotential_0.m
 % , took 586.617s; and the new version, MultiProjPot_conv_0.m took 43.050s.
 clc;
+clear;
 close all;
-clear all;
 %% Prepare the sample:
-LattConst = [4, 6, 0]; % [a, b] in Angstrom
-M = 5;
-CellNum = M * [3, 2];
-ScaleTypeCoord = [6, 0, 1, 0; 14, 0, 0.5, 0; 14, 0.5, 1, 0;...
-        22, 0.5, 0.5, 0; 30, 0.25, 0.75, 0; 30, 0.75, 0.25, 0]';
+lattConst = [4, 6, 0]; % [a, b] in Angstrom
+M = 2;
+expanNum = M * [3, 2];
+crysMat = [22,  0.5,  0,    1,    0;...
+           14,  1,  0,    0.5,  0;...
+           50,  0.9,  0.5,  1,    0;...
+           14,  1,  0.5,  0.5,  0;...
+           14,  1,  0.25, 0.75, 0;...
+           14,  1,  0.75, 0.25, 0]';
 %% Sampling settings:
-Lx = CellNum(1) * LattConst(1);
-Ly = CellNum(2) * LattConst(2);
+Lx = expanNum(1) * lattConst(1);
+Ly = expanNum(2) * lattConst(2);
 Nx = 512;
 Ny = 512;
 dx = Lx / Nx;
@@ -41,23 +45,23 @@ x = -Lx / 2 : dx : Lx / 2 - dx;
 y = -Ly / 2 : dy : Ly / 2 - dy;
 %% Generate the projected potential in the old way:
 % Expand the lattice:
-Slice = SquareLattExpan_0(ScaleTypeCoord, LattConst, CellNum);
-ProjPotOld = ProjectedPotential_0(Lx, Ly, Nx, Ny, Slice);
+slices = SquareLattExpanX(crysMat, lattConst, expanNum, 1.0e-5);
+projPotOld = ProjectedPotential_1(Lx, Ly, Nx, Ny, slices);
 % Show the result:
 figure;
 subplot(1, 2, 1);
-imagesc(x, y, ProjPotOld);
-colormap('gray'); axis square;
+imagesc(x, y, projPotOld);
+colorbar; axis square;
 title('old');
 subplot(1, 2, 2);
-plot(x, ProjPotOld(Ny / 2 + 1, : ));
+plot(x, projPotOld(Ny / 2 + 1, : ));
 %% Generate the projected potential in the new way;
-ProjPotNew = MultiProjPot_conv_0(ScaleTypeCoord, CellNum, LattConst, Lx, Ly, Nx, Ny);
+projPotNew = MultiProjPot_conv_X(crysMat, expanNum, lattConst, Lx, Ly, Nx, Ny);
 % Show the result:
 figure;
 subplot(1, 2, 1);
-imagesc(x, y, ProjPotNew);
-colormap('gray'); axis square;
+imagesc(x, y, projPotNew);
+colorbar; axis square;
 title('new');
 subplot(1, 2, 2);
-plot(x, ProjPotNew(Ny / 2 + 1, : ));
+plot(x, projPotNew(Ny / 2 + 1, :));

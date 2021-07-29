@@ -32,6 +32,10 @@ function [projPot] = MultiProjPot_conv_X(fracTypeCoord, expanNum, lattConst,...
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+if nargin == 7
+    rmvDistError = 1.0e-8;
+end
+
 % Remove the periodically repeated atoms:
 fracTypeCoord = RmvSlcDplAtom_0(fracTypeCoord, rmvDistError);
 % sort ScaleTypeCoord in an ascending order by atomic type:

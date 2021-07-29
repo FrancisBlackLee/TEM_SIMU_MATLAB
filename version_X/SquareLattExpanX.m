@@ -3,14 +3,13 @@ function [sliceOut] = SquareLattExpanX(sliceIn, lattConst, expanNum, distError, 
 %CellNum [Nx, Ny, Nz] and output the coordinates. Notice that the input SliceIn
 %is the proportional coordinates of atoms in a unit cell or basic square
 %lattice.
-%   SliceIn -- fractional atomic coordinates (scaled to 0~1) and atomic 
+%   sliceIn -- fractional atomic coordinates (scaled to 0~1) and atomic 
 %       types [T1, ..., TN; P1, ..., PN; x1,..., xN; y1,..., yN; z1,..., zN],
 %       where T denotes atomic type, represented by the atomic numbers, P
 %       denotes the elemental proportion and like before, x, y, z denote
 %       the atomic coordinates;
-%   LattConst -- planar lattice constants [a, b];
-%   SliceDist -- distances between each two slices [D1,..., DN];
-%   CellNum -- expansion numbers by which the SliceIn is expanded [Nx, Ny, Nz];
+%   lattConst -- planar lattice constants [a, b];
+%   expanNum -- expansion numbers by which the SliceIn is expanded [Nx, Ny, Nz];
 %   NOTE: X denotes an experimental version!
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -33,36 +32,61 @@ function [sliceOut] = SquareLattExpanX(sliceIn, lattConst, expanNum, distError, 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if nargin == 4
-    % Transpose the matrix to improve speed
-    sliceOut = sliceIn';
-    coordShift = expanNum / 2 + 1; % center the lattice
-    % Expand along x
-    sliceBase = sliceOut;
-    for i = 1: expanNum(1) + 1
-        sliceOut = [sliceOut; [sliceBase(:, 1), sliceBase(:, 2), sliceBase(:, 3) + i, sliceBase(:, 4), sliceBase(:, 5)]];
+    if length(expanNum) == 2
+        % Transpose the matrix to improve speed
+        sliceOut = sliceIn';
+        coordShift = expanNum / 2 + 1; % center the lattice
+        % Expand along x
+        sliceBase = sliceOut;
+        for i = 1: expanNum(1) + 1
+            sliceOut = [sliceOut; [sliceBase(:, 1), sliceBase(:, 2), sliceBase(:, 3) + i, sliceBase(:, 4), sliceBase(:, 5)]];
+        end
+        % Expand along y
+        sliceBase = sliceOut;
+        for i = 1: expanNum(2) + 1
+            sliceOut = [sliceOut; [sliceBase(:, 1), sliceBase(:, 2), sliceBase(:, 3), sliceBase(:, 4) + i, sliceBase(:, 5)]];
+        end
+        sliceOut(:, 3) = sliceOut(:, 3) - coordShift(1);
+        sliceOut(:, 4) = sliceOut(:, 4) - coordShift(2);
+        [row, column] = find((sliceOut(:, 3) <= expanNum(1) / 2 + distError) & (sliceOut(:, 3) >= -expanNum(1) / 2 - distError) ...
+                           & (sliceOut(:, 4) <= expanNum(2) / 2 + distError) & (sliceOut(:, 4) >= -expanNum(2) / 2 - distError));
+        sliceOut = sliceOut(row, :);
+        sliceOut = uniquetol(sliceOut, distError, 'ByRows', true);
+        sliceOut(:, 3) = lattConst(1) * sliceOut(:, 3);
+        sliceOut(:, 4) = lattConst(2) * sliceOut(:, 4);
+        sliceOut = sliceOut';
+    else
+        % Transpose the matrix to improve speed
+        sliceOut = sliceIn';
+        coordShift = expanNum / 2 + 1; % center the lattice
+        % Expand along x
+        sliceBase = sliceOut;
+        for i = 1: expanNum(1) + 1
+            sliceOut = [sliceOut; [sliceBase(:, 1), sliceBase(:, 2), sliceBase(:, 3) + i, sliceBase(:, 4), sliceBase(:, 5)]];
+        end
+        % Expand along y
+        sliceBase = sliceOut;
+        for i = 1: expanNum(2) + 1
+            sliceOut = [sliceOut; [sliceBase(:, 1), sliceBase(:, 2), sliceBase(:, 3), sliceBase(:, 4) + i, sliceBase(:, 5)]];
+        end
+        % Expand along z
+        sliceBase = sliceOut;
+        for i = 1: expanNum(3) + 1
+            sliceOut = [sliceOut; [sliceBase(:, 1), sliceBase(:, 2), sliceBase(:, 3), sliceBase(:, 4), sliceBase(:, 5) + i]];
+        end
+        sliceOut(:, 3) = sliceOut(:, 3) - coordShift(1);
+        sliceOut(:, 4) = sliceOut(:, 4) - coordShift(2);
+        sliceOut(:, 5) = sliceOut(:, 5) - coordShift(3);
+        [row, column] = find((sliceOut(:, 3) <= expanNum(1) / 2 + distError) & (sliceOut(:, 3) >= -expanNum(1) / 2 - distError) ...
+                           & (sliceOut(:, 4) <= expanNum(2) / 2 + distError) & (sliceOut(:, 4) >= -expanNum(2) / 2 - distError) ...
+                           & (sliceOut(:, 5) <= expanNum(3) / 2 + distError) & (sliceOut(:, 5) >= -expanNum(3) / 2 - distError));
+        sliceOut = sliceOut(row, :);
+        sliceOut = uniquetol(sliceOut, distError, 'ByRows', true);
+        sliceOut(:, 3) = lattConst(1) * sliceOut(:, 3);
+        sliceOut(:, 4) = lattConst(2) * sliceOut(:, 4);
+        sliceOut(:, 5) = lattConst(3) * sliceOut(:, 5);
+        sliceOut = sliceOut';
     end
-    % Expand along y
-    sliceBase = sliceOut;
-    for i = 1: expanNum(2) + 1
-        sliceOut = [sliceOut; [sliceBase(:, 1), sliceBase(:, 2), sliceBase(:, 3), sliceBase(:, 4) + i, sliceBase(:, 5)]];
-    end
-    % Expand along z
-    sliceBase = sliceOut;
-    for i = 1: expanNum(3) + 1
-        sliceOut = [sliceOut; [sliceBase(:, 1), sliceBase(:, 2), sliceBase(:, 3), sliceBase(:, 4), sliceBase(:, 5) + i]];
-    end
-    sliceOut(:, 3) = sliceOut(:, 3) - coordShift(1);
-    sliceOut(:, 4) = sliceOut(:, 4) - coordShift(2);
-    sliceOut(:, 5) = sliceOut(:, 5) - coordShift(3);
-    [row, column] = find((sliceOut(:, 3) <= expanNum(1) / 2 + distError) & (sliceOut(:, 3) >= -expanNum(1) / 2 - distError) ...
-                       & (sliceOut(:, 4) <= expanNum(2) / 2 + distError) & (sliceOut(:, 4) >= -expanNum(2) / 2 - distError) ...
-                       & (sliceOut(:, 5) <= expanNum(3) / 2 + distError) & (sliceOut(:, 5) >= -expanNum(3) / 2 - distError));
-    sliceOut = sliceOut(row, :);
-    sliceOut = uniquetol(sliceOut, distError, 'ByRows', true);
-    sliceOut(:, 3) = lattConst(1) * sliceOut(:, 3);
-    sliceOut(:, 4) = lattConst(2) * sliceOut(:, 4);
-    sliceOut(:, 5) = lattConst(3) * sliceOut(:, 5);
-    sliceOut = sliceOut';
 else
     % Combine the SliceIn, MassNum and DebyeTemp:
     sliceIn = [sliceIn; massNum; debyeTemp];

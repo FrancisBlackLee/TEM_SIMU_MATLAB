@@ -2,11 +2,10 @@ function projPot = ProjectedPotential_1(Lx, Ly, Nx, Ny, crysMat)
 %ProjectedPotential.m calculates the projected potential of a series of
 %atoms on a slice.
 %   Lx, Ly, Nx, Ny -- sampling parameters;
-%   AtomCoordType -- [T1, ..., TN; P1, ..., PN; x1, ..., xN; y1, ..., yN; z1, ..., zN];
+%   crysMat -- [T1, ..., TN; P1, ..., PN; x1, ..., xN; y1, ..., yN; z1, ..., zN];
 %       where T denotes the atomic types represented by the atomic numbers
 %       ranging from 1 to 103; P denotes the proportion of the elemnetal
-%       concentration; third to fifth row are the atomic coordinates,
-%       whether fractional or orthogonal;
+%       concentration; third to fifth row are the atomic coordinates;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
