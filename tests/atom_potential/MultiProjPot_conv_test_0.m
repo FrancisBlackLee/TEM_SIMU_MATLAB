@@ -25,12 +25,12 @@ clc;
 clear;
 close all;
 %% Prepare the sample:
-lattConst = [4, 6, 0]; % [a, b] in Angstrom
-M = 2;
+lattConst = [3.84, 5.43, 0]; % [a, b] in Angstrom
+M = 1;
 expanNum = M * [3, 2];
-crysMat = [22,  0.5,  0,    1,    0;...
+crysMat = [14,  1,  0,    1,    0;...
            14,  1,  0,    0.5,  0;...
-           50,  0.9,  0.5,  1,    0;...
+           14,  1,  0.5,  1,    0;...
            14,  1,  0.5,  0.5,  0;...
            14,  1,  0.25, 0.75, 0;...
            14,  1,  0.75, 0.25, 0]';
@@ -56,12 +56,21 @@ title('old');
 subplot(1, 2, 2);
 plot(x, projPotOld(Ny / 2 + 1, : ));
 %% Generate the projected potential in the new way;
-projPotNew = MultiProjPot_conv_X(crysMat, expanNum, lattConst, Lx, Ly, Nx, Ny);
+projPotNewRs = MultiProjPot_conv_X(crysMat, expanNum, lattConst, Lx, Ly, Nx, Ny, 1.0e-8, 'rs');
+projPotNewSf = MultiProjPot_conv_X(crysMat, expanNum, lattConst, Lx, Ly, Nx, Ny, 1.0e-8, 'sf');
 % Show the result:
 figure;
 subplot(1, 2, 1);
-imagesc(x, y, projPotNew);
+imagesc(x, y, projPotNewRs);
 colorbar; axis square;
-title('new');
+title('new (rs)');
 subplot(1, 2, 2);
-plot(x, projPotNew(Ny / 2 + 1, :));
+plot(x, projPotNewRs(Ny / 2 + 1, :));
+
+figure;
+subplot(1, 2, 1);
+imagesc(x, y, projPotNewRs);
+colorbar; axis square;
+title('new (sf)');
+subplot(1, 2, 2);
+plot(x, projPotNewSf(Ny / 2 + 1, :));

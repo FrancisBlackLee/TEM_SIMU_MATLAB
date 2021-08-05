@@ -1,5 +1,5 @@
 function [projPot] = MultiProjPot_conv_X(fracTypeCoord, expanNum, lattConst,...
-    Lx, Ly, Nx, Ny, rmvDistError)
+    Lx, Ly, Nx, Ny, rmvDistError, method)
 %MultiProjPot_conv_0.m calculates the projected potential of one slice
 %using convolution if this slice contains more than one type of atoms.
 %   fracTypeCoord -- matrix that contains the lattice information, where
@@ -34,6 +34,9 @@ function [projPot] = MultiProjPot_conv_X(fracTypeCoord, expanNum, lattConst,...
 
 if nargin == 7
     rmvDistError = 1.0e-8;
+    method = 'sf';
+elseif nargin == 8
+    method = 'sf';
 end
 
 % Remove the periodically repeated atoms:
@@ -49,17 +52,17 @@ if length(sortedType) > 1
             projPot = projPot + MonoProjPot_conv_X(sortedType(lastType),...
                 fracTypeCoord(2, lastType : atomIdx-1),...
                 fracTypeCoord(3 : 4 , lastType : atomIdx-1),...
-                expanNum, lattConst, Lx, Ly, Nx, Ny);
+                expanNum, lattConst, Lx, Ly, Nx, Ny, method);
             lastType = atomIdx;
         end
     end
     projPot = projPot + MonoProjPot_conv_X(sortedType(lastType),...
         fracTypeCoord(2, lastType : atomIdx),...
         fracTypeCoord(3 : 4 , lastType : atomIdx), expanNum, lattConst,...
-        Lx, Ly, Nx, Ny);
+        Lx, Ly, Nx, Ny, method);
 else
     projPot = MonoProjPot_conv_X(sortedType, fracTypeCoord(2, : ),...
-        fracTypeCoord(3 : 4, : ), expanNum, lattConst, Lx, Ly, Nx, Ny);
+        fracTypeCoord(3 : 4, : ), expanNum, lattConst, Lx, Ly, Nx, Ny, method);
 end
 
 end

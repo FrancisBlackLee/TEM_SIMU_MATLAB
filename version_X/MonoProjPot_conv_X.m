@@ -1,5 +1,5 @@
 function [projPot] = MonoProjPot_conv_X(atomType, eleProp, fracCoord,...
-    cellNum, lattConst, Lx, Ly, Nx, Ny)
+    cellNum, lattConst, Lx, Ly, Nx, Ny, method)
 %MonoProjPot_conv_0.m calculates the projected potential for one type of
 %atom.
 %   atomType -- atomic type, Z number;
@@ -30,20 +30,34 @@ function [projPot] = MonoProjPot_conv_X(atomType, eleProp, fracCoord,...
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+if nargin == 9
+    method = 'sf';
+end
+
 atomNum = size(fracCoord, 2);
 % Sampling:
 dx = Lx / Nx;
 dy = Ly / Ny;
-fx = -1 / (2 * dx) : 1 / Lx : 1 / (2 * dx) - 1 / Lx;
-fy = -1 / (2 * dy) : 1 / Ly : 1 / (2 * dy) - 1 / Ly;
+fx = InitFreqAxis(Lx, Nx);
+fy = InitFreqAxis(Ly, Ny);
 [FX, FY] = meshgrid(fx, fy);
-FR = sqrt(FX.^2 + FY.^2);
 
-a = 0.529; % Bohr radius in angstrom
-e = 14.4; % elemental charge in volt - angstrom
-scaleCoeff = 2 * pi * e * a;
+if strcmp(method, 'rs')
+    projPotFFT = fft2(fftshift(ProjectedPotential(Lx, Ly, Nx, Ny, atomType, 0, 0)));
+elseif strcmp(method, 'sf')
+    FR = sqrt(FX.^2 + FY.^2);
 
-projPotFFT = fftshift(scaleCoeff * ScatteringFactor(atomType, FR));
+    a = 0.529; % Bohr radius in angstrom
+    e = 14.4; % elemental charge in volt - angstrom
+    scaleCoeff = 2 * pi * e * a;
+
+    projPotFFT = fftshift(scaleCoeff * ScatteringFactor(atomType, FR));
+else
+    errID = 'myComponent:inputError';
+    msgtext = 'Invaid parameter of method!';
+    ME = MException(errID, msgtext);
+    throw(ME);
+end
 
 % Build the convolution kernel:
 kernel = 0;
@@ -59,7 +73,11 @@ for atomIdx = 1 : atomNum
     end
 end
 kernel = fftshift(kernel);
-projPot = real(ifftshift(ifft2(kernel .* projPotFFT))) / (dx * dy);
+projPot = real(ifftshift(ifft2(kernel .* projPotFFT)));
+
+if strcmp(method, 'sf')
+    projPot = projPot / (dx * dy);
+end
 
 end
 

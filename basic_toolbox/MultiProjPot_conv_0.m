@@ -1,5 +1,5 @@
 function [projPot] = MultiProjPot_conv_0(fracTypeCoord, expanNum, lattConst,...
-    Lx, Ly, Nx, Ny)
+    Lx, Ly, Nx, Ny, method)
 %MultiProjPot_conv_0.m calculates the projected potential of one slice
 %using convolution if this slice contains more than one type of atoms.
 %   fracTypeCoord -- matrix that contains the lattice information, where
@@ -9,13 +9,6 @@ function [projPot] = MultiProjPot_conv_0(fracTypeCoord, expanNum, lattConst,...
 %   expanNum -- expansion of the unit cell, syntax: [numX, numY];
 %   lattConst -- lattice constants, syntax: [a, b];
 %   Lx, Ly, Nx, Ny -- sampling parameters;
-
-%   P.S.: I have come up with another way to further speed this process
-%       when massive atoms are to be calculated, anyway, there are still
-%       some bugs. When the bugs are fixed, the released version will be
-%       named as MonoProjPot_conv_1.m and provide the same interface as
-%       MonoProjPot_conv_0.m does, so it can be called in this function by
-%       directly change the version number.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
@@ -36,6 +29,10 @@ function [projPot] = MultiProjPot_conv_0(fracTypeCoord, expanNum, lattConst,...
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+if nargin == 7
+    method = 'sf';
+end
+
 % sort ScaleTypeCoord in an ascending order by atomic type:
 [sortedType, typeOrder] = sort(fracTypeCoord(1, : ));
 fracTypeCoord = fracTypeCoord( : , typeOrder);
@@ -46,16 +43,16 @@ if length(sortedType) > 1
         if sortedType(atomIdx)~=sortedType(lastType)
             projPot = projPot + MonoProjPot_conv_0(sortedType(lastType), ...
                 fracTypeCoord(2 : 3 , lastType : atomIdx-1), expanNum,...
-                lattConst, Lx, Ly, Nx, Ny);
+                lattConst, Lx, Ly, Nx, Ny, method);
             lastType = atomIdx;
         end
     end
     projPot = projPot + MonoProjPot_conv_0(sortedType(lastType), ...
             fracTypeCoord(2 : 3 , lastType : atomIdx), expanNum, lattConst,...
-            Lx, Ly, Nx, Ny);
+            Lx, Ly, Nx, Ny, method);
 else
     projPot = MonoProjPot_conv_0(sortedType, fracTypeCoord(2 : 3, : ),...
-        expanNum, lattConst, Lx, Ly, Nx, Ny);
+        expanNum, lattConst, Lx, Ly, Nx, Ny, method);
 end
 
 end
