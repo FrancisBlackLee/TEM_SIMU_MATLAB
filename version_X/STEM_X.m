@@ -1,12 +1,14 @@
-function [stemImg] = STEM_X(Lx, Ly, params, transFuncs, sliceDist, stackNum, cbedOption, cbedDir)
+function [stemImg] = STEM_X(Lx, Ly, params, aberrType, transFuncs,...
+    sliceDist, stackNum, cbedOption, cbedDir)
 %ADF_STEM_X.m is a specially designed multislice interface.
 %   Lx, Ly -- sampling sidelength in angstrom;
 %   params -- ADF-STEM parameter setting:
 %       params.KeV -- beam energy in KeV;
-%       params.Cs3 -- 3rd order spherical aberration in mm;
-%       params.Cs5 -- 5th order spherical aberration in mm;
-%       params.df -- defocus in angstrom (a negative defocus to eliminate
-%           the effect of spherical aberrations, different from old versions);
+%       params.Cs3 (optional) -- 3rd order spherical aberration in mm;
+%       params.Cs5 (optional) -- 5th order spherical aberration in mm;
+%       params.df (optional) -- defocus in angstrom (a negative defocus to 
+%           eliminate the effect of spherical aberrations, different from 
+%           old versions);
 %       params.aperture -- numerical aperture;
 %       params.scanx -- coordinate array for x directional scanning;
 %       params.scany -- coordinate array for y directional scanning;
@@ -41,7 +43,10 @@ function [stemImg] = STEM_X(Lx, Ly, params, transFuncs, sliceDist, stackNum, cbe
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-if(nargin == 6)
+if nargin == 6
+    cbedOption = 0;
+    aberrType = 'reduced';
+elseif nargin == 7
     cbedOption = 0;
 else
     if cbedOption == 1
@@ -63,7 +68,16 @@ for sliceIdx = 1 : sliceNum
         Nx, Ny, wavLen, sliceDist(sliceIdx)));
 end
 % generate objective transfer function with an aperture:
-otf = params.aperture .* ObjTransFunc_X(params, Lx, Ly, Nx, Ny);
+if strcmp(aberrType, 'reduced')
+    otf = params.aperture .* ObjTransFunc_X(params, Lx, Ly, Nx, Ny);
+elseif strcmp(aberrType, 'full')
+    otfPhase = AberrationPhaseShift_X(params.aberration, wavLen, Lx, Ly, Nx, Ny);
+    otf = params.aperture .* exp(-1i * otfPhase);
+else
+    errorMessage = sprintf('Invalid aberration type!\n');
+    uiwait(warndlg(errorMessage));
+    return;
+end
 
 % fftshift all the transmission function in place:
 transFuncs = fftshift(transFuncs, 1);
@@ -87,16 +101,17 @@ for iy = 1 : scanNy
                 tempWave = ifft2(shiftPropKer(:, :, sliceIdx) .* fft2(tempWave));
             end
         end
-        tempInten = abs((ifftshift(fft2(tempWave))*dx*dy).^2);
+        tmpCbed = abs((ifftshift(fft2(tempWave))*dx*dy).^2);
         
         for detectorIdx = 1 : detectorNum
-            stemImg(iy, ix, detectorIdx) = sum(tempInten .*...
+            stemImg(iy, ix, detectorIdx) = sum(tmpCbed .*...
                 params.detector(:, :, detectorIdx), 'all');
         end
         
         if cbedOption == 1
-            cbedName = strcat(cbedDir, '\cbed_', num2str(iy), '_', num2str(ix), '.txt');
-            save(cbedName, 'tempInten', '-ascii', '-double', '-tabs');
+            cbedName = ['cbed_y', num2str(iy), '_x', num2str(ix), '.bin'];
+            cbedName = fullfile(cbedDir, cbedName);
+            WriteBinaryFile(cbedName, tmpCbed);
         end
     end
 end
