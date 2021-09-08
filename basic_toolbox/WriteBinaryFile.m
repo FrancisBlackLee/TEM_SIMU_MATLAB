@@ -1,7 +1,10 @@
-function WriteBinaryFile(filename, data)
+function WriteBinaryFile(filename, data, preferrence, varargin)
 %WriteBinaryFile writes a matrix as binary files to the destination place.
 %   filename -- Binary file name;
 %   data -- matrix to be saved.
+%   preferrence -- writing by column (default) or row;
+%   varargin -- specific parameters to define the writing mode (default:
+%       double);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
@@ -23,7 +26,24 @@ function WriteBinaryFile(filename, data)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 fileID = fopen(filename, 'w');
-fwrite(fileID, data, 'double');
+if nargin == 2
+    fwrite(fileID, data, 'double');
+elseif nargin > 2
+    if strcmp(preferrence, 'column')
+        % do nothing
+    elseif strcmp(preferrence, 'row')
+        data = data';
+    else
+        disp('Error: invalid input of preferrence!');
+        return;
+    end
+    
+    if nargin == 3
+        fwrite(fileID, data, 'double');
+    else
+        fwrite(fileID, data, varargin{:});
+    end
+end
 fclose(fileID);
 
 end

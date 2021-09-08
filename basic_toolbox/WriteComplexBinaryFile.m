@@ -1,9 +1,13 @@
-function [data] = ReadBinaryFile(filename, dataSize, preferrence, varargin)
-%ReadBinaryFile reads matrix from the destination binary file.
+function WriteComplexBinaryFile(filename, data, preferrence, varargin)
+%WriteComplexBinaryFile.m write a complex matrix as a binary file, in which
+%the real components start from the first element with stride = 2, and the
+%imaginary components start from the second element with stride = 2, in
+%accord with the protocol of vtemlab. Note: only 2-dimension matrices are
+%valid input.
 %   filename -- Binary file name;
-%   dataSize -- data size;
+%   data -- complex matrix to be saved.
 %   preferrence -- writing by column (default) or row;
-%   varargin -- specific parameters to define the reading mode (default:
+%   varargin -- specific parameters to define the writing mode (default:
 %       double);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -25,29 +29,28 @@ function [data] = ReadBinaryFile(filename, dataSize, preferrence, varargin)
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fileID = fopen(filename);
+[Ny, Nx] = size(data);
+tmpData = zeros(Ny, 2 * Nx);
+tmpData(:, 1 : 2 : 2 * Nx - 1) = real(data);
+tmpData(:, 2 : 2 : 2 * Nx) = imag(data);
+
+fileID = fopen(filename, 'w');
 if nargin == 2
-    data = fread(fileID, dataSize, 'double');
+    fwrite(fileID, tmpData, 'double');
 elseif nargin > 2
-    Ny = dataSize(1);
-    Nx = dataSize(2);
     if strcmp(preferrence, 'column')
         % do nothing
     elseif strcmp(preferrence, 'row')
-        dataSize = [Nx, Ny];
+        tmpData = tmpData';
     else
         disp('Error: invalid input of preferrence!');
         return;
     end
     
     if nargin == 3
-        data = fread(fileID, dataSize, 'double');
+        fwrite(fileID, tmpData, 'double');
     else
-        data = fread(fileID, dataSize, varargin{:});
-    end
-    
-    if strcmp(preferrence, 'row')
-        data = data';
+        fwrite(fileID, tmpData, varargin{:});
     end
 end
 fclose(fileID);

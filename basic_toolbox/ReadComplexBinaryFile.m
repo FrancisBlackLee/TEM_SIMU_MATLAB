@@ -1,5 +1,9 @@
-function [data] = ReadBinaryFile(filename, dataSize, preferrence, varargin)
-%ReadBinaryFile reads matrix from the destination binary file.
+function [data] = ReadComplexBinaryFile(filename, dataSize, preferrence, varargin)
+%ReadComplexBinaryFile.m read a complex matrix from a binary file, in which
+%the real components start from the first element with stride = 2, and the
+%imaginary components start from the second element with stride = 2, in
+%accord with the protocol of vtemlab. Note: only 2-dimension matrices are
+%valid, the output data is converted to matlab complex matrix.
 %   filename -- Binary file name;
 %   dataSize -- data size;
 %   preferrence -- writing by column (default) or row;
@@ -25,32 +29,36 @@ function [data] = ReadBinaryFile(filename, dataSize, preferrence, varargin)
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+Ny = dataSize(1);
+Nx = dataSize(2);
+tmpDataSize = [Ny, 2 * Nx];
+
 fileID = fopen(filename);
 if nargin == 2
-    data = fread(fileID, dataSize, 'double');
+    tmpData = fread(fileID, tmpDataSize, 'double');
 elseif nargin > 2
-    Ny = dataSize(1);
-    Nx = dataSize(2);
     if strcmp(preferrence, 'column')
         % do nothing
     elseif strcmp(preferrence, 'row')
-        dataSize = [Nx, Ny];
+        tmpDataSize = [2 * Nx, Ny];
     else
         disp('Error: invalid input of preferrence!');
         return;
     end
     
     if nargin == 3
-        data = fread(fileID, dataSize, 'double');
+        tmpData = fread(fileID, tmpDataSize, 'double');
     else
-        data = fread(fileID, dataSize, varargin{:});
+        tmpData = fread(fileID, tmpDataSize, varargin{:});
     end
     
     if strcmp(preferrence, 'row')
-        data = data';
+        tmpData = tmpData';
     end
 end
 fclose(fileID);
+
+data = tmpData(:, 1 : 2 : 2 * Nx - 1) + 1i * tmpData(:, 2 : 2 : 2 * Nx);
 
 end
 
