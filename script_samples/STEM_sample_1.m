@@ -79,7 +79,7 @@ transFuncs(:, :, 2) = tfB;
 %% Imaging section:
 stackNum = 20;
 cbedOption = 0;
-stemImg = STEM_X(Lx, Ly, params, 'reduced', transFuncs, sliceDist, stackNum,...
+stemImg = STEM_X(Lx, Ly, params, transFuncs, sliceDist, stackNum, 'reduced',...
     cbedOption);
 toc;
 

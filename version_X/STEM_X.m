@@ -1,28 +1,38 @@
-function [stemImg] = STEM_X(Lx, Ly, params, aberrType, transFuncs,...
-    sliceDist, stackNum, cbedOption, cbedDir)
-%ADF_STEM_X.m is a specially designed multislice interface.
+function [stemImg] = STEM_X(Lx, Ly, params, transFuncs, sliceDist,...
+    stackNum, aberrType, cbedOption, cbedDir, preferrence, varargin)
+%STEM_X.m is a specially designed multislice interface for STEM simulation.
 %   Lx, Ly -- sampling sidelength in angstrom;
-%   params -- ADF-STEM parameter setting:
+%   params -- STEM parameter setting:
 %       params.KeV -- beam energy in KeV;
 %       params.Cs3 (optional) -- 3rd order spherical aberration in mm;
 %       params.Cs5 (optional) -- 5th order spherical aberration in mm;
 %       params.df (optional) -- defocus in angstrom (a negative defocus to 
 %           eliminate the effect of spherical aberrations, different from 
 %           old versions);
+%       params.aberration (optional) -- a more complete set of aberration
+%           up to 5th order, it should be initialized with 
+%           InitObjectiveLensAberrations_X() and then modified;
 %       params.aperture -- numerical aperture;
 %       params.scanx -- coordinate array for x directional scanning;
 %       params.scany -- coordinate array for y directional scanning;
 %       params.detector -- this detector is an Ny by Nx by detectorNum 
 %           logical matrix, which do not have to be annular;
-%   TransFuncs -- transmission functions stored in a 3D matrix, keep it
+%   transFuncs -- transmission functions stored in a 3D matrix, keep it
 %       small to avoid memory overflow;
-%   SliceDist -- distance from one slice to the next slice;
-%   StackNum -- number of repeations of the input TransFuncs in z
+%   sliceDist -- distance from one slice to the next slice;
+%   stackNum -- number of repeations of the input TransFuncs in z
 %       direction;
-%   CBEDoption -- whether to save the CBED data to an existed empty local
+%   aberrType -- aberration type: 'reduced' (C3, C5, df) or 'full' (up to
+%       5th order aberrations and their real-space angles (must be
+%       specified when cbedOption is specified, otherwise the function will
+%       exit with an error);
+%   cbedOption -- whether to save the CBED data to an existed empty local
 %       folder (default value is 0, when this is not input):
 %       CBEDoption = 0: no; CBEDoption = 1: yes;
-%   CBEDdir -- an existed empty local folder to save the CBED data.
+%   cbedDir -- an existed empty local folder to save the CBED data.
+%   preferrence -- 'column'/'row': writing by column (default) or row;
+%   varargin -- specific parameters to define the writing mode (default:
+%       double);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
@@ -46,12 +56,39 @@ function [stemImg] = STEM_X(Lx, Ly, params, aberrType, transFuncs,...
 if nargin == 6
     cbedOption = 0;
     aberrType = 'reduced';
+    preferrence = 'column';
 elseif nargin == 7
     cbedOption = 0;
-else
+    preferrence = 'column';
+elseif nargin == 8
+    % when cbedOption == 1 and no input cbedDir, create a temporary one
     if cbedOption == 1
+        cbedDir = 'tmp_cbed';
+        status = mkdir(cbedDir);
+        if status == 0
+            errorMessage = 'Error: creating cbed directory failed!';
+            uiwait(warndlg(errorMessage));
+            return;
+        end
+    end
+    preferrence = 'column';
+elseif nargin == 9
+    if (cbedOption == 1) && (~(strcmp(cbedDir, 'column') || strcmp(cbedDir, 'row')))
         if ~isfolder(cbedDir)
             errorMessage = sprintf('Error: %s does not exist!\n', cbedDir);
+            uiwait(warndlg(errorMessage));
+            return;
+        end
+    elseif  (cbedOption == 1) && (strcmp(cbedDir, 'column') || strcmp(cbedDir, 'row'))
+        % output the cbed patterns without specifying the output directory
+        % and with specified binary writing preferrence, create a temporary
+        % folder as the output directory and assign the value of the 9th
+        % argument to preferrence
+        preferrence = cbedDir;
+        cbedDir = 'tmp_cbed';
+        status = mkdir(cbedDir);
+        if status == 0
+            errorMessage = 'Error: creating cbed directory failed!';
             uiwait(warndlg(errorMessage));
             return;
         end
@@ -62,7 +99,7 @@ dx = Lx / Nx;
 dy = Ly / Ny;
 wavLen = HighEnergyWavLen_X(params.KeV);
 % generate fftshifted Fresnel propagation kernels:
-shiftPropKer = zeros(Ny, Nx, sliceNum) + 1i * ones(Ny, Nx, sliceNum);
+shiftPropKer = 1i * ones(Ny, Nx, sliceNum);
 for sliceIdx = 1 : sliceNum
     shiftPropKer(:, :, sliceIdx) = fftshift(FresnelPropKernel_X(Lx, Ly,...
         Nx, Ny, wavLen, sliceDist(sliceIdx)));
@@ -94,8 +131,9 @@ for iy = 1 : scanNy
     for ix = 1 : scanNx
         doneRatio = ((iy - 1) * scanNx + ix - 1) / totalCompTask;
         waitbar(doneRatio, process, [num2str(roundn(doneRatio, -3) * 100), '%']);
-        tempWave = fftshift(GenerateProbe_X(otf, params.scanx(ix), params.scany(iy), Lx, Ly, Nx, Ny));
-        for StackIdx = 1 : stackNum
+        tempWave = fftshift(GenerateProbe_X(otf, params.scanx(ix), params.scany(iy),...
+            Lx, Ly, Nx, Ny));
+        for stackIdx = 1 : stackNum
             for sliceIdx = 1 : sliceNum
                 tempWave = tempWave .* transFuncs(:,:,sliceIdx);
                 tempWave = ifft2(shiftPropKer(:, :, sliceIdx) .* fft2(tempWave));
@@ -111,7 +149,7 @@ for iy = 1 : scanNy
         if cbedOption == 1
             cbedName = ['cbed_y', num2str(iy), '_x', num2str(ix), '.bin'];
             cbedName = fullfile(cbedDir, cbedName);
-            WriteBinaryFile(cbedName, tmpCbed);
+            WriteBinaryFile(cbedName, tmpCbed, preferrence, varargin{:});
         end
     end
 end
