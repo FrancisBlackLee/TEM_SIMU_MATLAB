@@ -87,8 +87,6 @@ elseif nargin == 9
 end
 
 [Ny, Nx, sliceNum] = size(transFuncs);
-dx = Lx / Nx;
-dy = Ly / Ny;
 wavLen = HighEnergyWavLen_X(params.KeV);
 % generate fftshifted Fresnel propagation kernels:
 shiftPropKer = 1i * ones(Ny, Nx, sliceNum);
