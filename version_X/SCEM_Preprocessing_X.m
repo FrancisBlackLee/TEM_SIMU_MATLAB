@@ -95,12 +95,15 @@ for sliceIdx = 1 : sliceNum
         Nx, Ny, wavLen, sliceDist(sliceIdx)));
 end
 
+% fftshift all the transmission functions in place
+transFuncs = fftshift(transFuncs, 1);
+transFuncs = fftshift(transFuncs, 2);
 
 dfNum = length(params.dfSeries);
 scanNx = length(params.scanx);
 scanNy = length(params.scany);
 
-taskNum = dfNum * scanNx * scanNy;
+taskNum = dfNum * scanNy;
 wbHandle = waitbar(0, 'scanning...');
 % Initialize otf
 otf = 1i * ones(Ny, Nx);
@@ -117,7 +120,7 @@ for dfIdx = 1 : dfNum
     for yIdx = 1 : scanNy
         doneRatio = ((dfIdx - 1) * scanNy + yIdx - 1) / taskNum;
         wbMessage = sprintf('df: %d / %d, line: %d / %d completed',...
-            dfIdx, dfNum, yIdx, scanNy);
+            dfIdx - 1, dfNum, yIdx - 1, scanNy);
         waitbar(doneRatio, wbHandle, wbMessage);
         for xIdx = 1 : scanNx
             wave = fftshift(GenerateProbe_X(otf, params.scanx(xIdx),...
