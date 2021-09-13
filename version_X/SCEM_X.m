@@ -1,8 +1,7 @@
-function SCEM_Preprocessing_X(Lx, Ly, params, transFuncs, sliceDists,...
-    stackNum, destDir, aberrType, preferrence, varargin)
-%SCEM_Preprocessing_X.m simulates the beam-specimen interaction using
-%multislice method under scanning confocal mode, and outputs the wave
-%function at each scanning point to the destination directory.
+function SCEM_X(Lx, Ly, params, transFuncs, sliceDists, stackNum, destDir,...
+    aberrType)
+%SCEM_X.m simulates scanning confocal electron microscopy, in which the
+%beam-specimen interaction is simulated using multislice method.
 %   Lx, Ly -- sampling sidelength in angstrom;
 %   params -- STEM parameter setting:
 %       params.KeV -- beam energy in KeV;
@@ -14,7 +13,13 @@ function SCEM_Preprocessing_X(Lx, Ly, params, transFuncs, sliceDists,...
 %       params.aberration (optional) -- a more complete set of aberration
 %           up to 5th order, it should be initialized with 
 %           InitObjectiveLensAberrations_X() and then modified;
-%       params.aperture -- numerical aperture;
+%       params.upperAperture -- the aperture at the position of the upper
+%           objective lens;
+%       params.lowerAperture -- the aperture at the position of the lower
+%           objective lens;
+%       params.pinholeRadii -- the radii of real-space pinholes, which are
+%           positioned below the lower objective aperture, the physical
+%           unit of radii should coincide with that of Lx and Ly;
 %       params.scanx -- coordinate array for x directional scanning;
 %       params.scany -- coordinate array for y directional scanning;
 %       params.dfSeries -- objective defocus range for SCEM imaging (in
@@ -28,12 +33,7 @@ function SCEM_Preprocessing_X(Lx, Ly, params, transFuncs, sliceDists,...
 %       while scanning the probe with various defocus;
 %   aberrType -- aberration type: 'reduced' (C3, C5, df) or 'full' (up to
 %       5th order aberrations and their real-space angles;
-%   preferrence -- 'column'/'row': writing by column (default) or row, note
-%       that the aberrType must be specified before preferrence is
-%       specified;
-%   varargin -- specific parameters to define the writing mode (default:
-%       double), note that the preferrence must be specified before
-%       varargin are specified;
+% Note: data will be saved as *.mat files.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
@@ -61,29 +61,16 @@ if nargin == 6
         return;
     end
     aberrType = 'reduced';
-    preferrence = 'column';
 elseif nargin == 7
     if(~DirectoryExist)
         return;
     end
     aberrType = 'reduced';
-    preferrence = 'column';
 elseif nargin == 8
     if(~DirectoryExist)
         return;
     end
     if(~ValidAberrationType)
-        return;
-    end
-    preferrence = 'column';
-elseif nargin == 9
-    if(~DirectoryExist)
-        return;
-    end
-    if(~ValidAberrationType)
-        return;
-    end
-    if(~ValidPreferrence)
         return;
     end
 end
@@ -102,16 +89,29 @@ transFuncs = fftshift(transFuncs, 1);
 transFuncs = fftshift(transFuncs, 2);
 
 dfNum = length(params.dfSeries);
+pinholeNum = length(params.pinholeRadii);
 scanNx = length(params.scanx);
 scanNy = length(params.scany);
 
-taskNum = dfNum * scanNy;
+taskNum = dfNum * scanNy * scanNx;
 wbHandle = waitbar(0, 'scanning...');
 % Initialize otf
 otf = 1i * ones(Ny, Nx);
+
+% fftshift params.lowerAperture for less computation cost
+params.lowerAperture = fftshift(params.lowerAperture);
+
+% generate mesh for real-space coordinates for determining pinholes:
+xAxis = InitAxis(Lx, Nx);
+yAxis = InitAxis(Ly, Ny);
+[xMesh, yMesh] = meshgrid(xAxis, yAxis);
+rMesh = sqrt(xMesh.^2 + yMesh.^2);
+% fftshift rMesh to further reduce computation cost:
+rMesh = fftshift(rMesh);
+
 for dfIdx = 1 : dfNum
     df = params.dfSeries(dfIdx);
-    dfFolder = ['df=', num2str(df, '%.4f'), 'Angs'];
+    dfFolder = sprintf('df=%.4fAngs', df);
     dfFolder = fullfile(destDir, dfFolder);
     if(~CreateNewFolder(dfFolder))
         return;
@@ -119,12 +119,18 @@ for dfIdx = 1 : dfNum
     
     UpdateOTF;
     
+    % create a 3D matrix to saved images for various pinhole radii, hope it
+    % won't trigger memory overflow:)
+    scemImg = zeros(scanNy, scanNx, pinholeNum);
     for yIdx = 1 : scanNy
-        doneRatio = ((dfIdx - 1) * scanNy + yIdx - 1) / taskNum;
-        wbMessage = sprintf('df: %d / %d, line: %d / %d completed',...
-            dfIdx - 1, dfNum, yIdx - 1, scanNy);
-        waitbar(doneRatio, wbHandle, wbMessage);
         for xIdx = 1 : scanNx
+            % update process
+            doneRatio = ((dfIdx - 1) * scanNy * scanNx +...
+                (yIdx - 1) * scanNx + xIdx - 1) / taskNum;
+            wbMessage = sprintf('process %.1f%%, df: %d / %d, line: %d / %d completed',...
+                100 * doneRatio, dfIdx - 1, dfNum, yIdx - 1, scanNy);
+            waitbar(doneRatio, wbHandle, wbMessage);
+            
             wave = fftshift(GenerateProbe_X(otf, params.scanx(xIdx),...
                 params.scany(yIdx), Lx, Ly, Nx, Ny));
             for stackIdx = 1 : stackNum
@@ -134,13 +140,23 @@ for dfIdx = 1 : dfNum
                 end
             end
             
-            wave = ifftshift(wave);
-            % save wave function to dfFolder
-            filename = ['wave_y', num2str(yIdx), '_x', num2str(xIdx), '.bin'];
-            filename = fullfile(dfFolder, filename);
-            WriteComplexBinaryFile(filename, wave, preferrence, varargin{:});
+            % real space to reciprocal space:
+            wave = fft2(wave);
+            wave = params.lowerAperture .* wave;
+            % reciprocal space to real space:
+            wave = ifft2(wave);
+            waveI = abs(wave.^2);
+            
+            for pinholeIdx = 1 : pinholeNum
+                pinhole = (rMesh < params.pinholeRadii(pinholeIdx));
+                scemImg(yIdx, xIdx, pinholeIdx) = sum(waveI .* pinhole, 'all');
+            end
         end
     end
+    
+    filename = 'scem_images.mat';
+    filename = fullfile(dfFolder, filename);
+    save(filename, 'scemImg');
 end
 
 delete(wbHandle);
@@ -173,25 +189,16 @@ delete(wbHandle);
             r = 0;
         end
     end
-
-    function r = ValidPreferrence
-        r = 1;
-        if ~(strcmp(preferrence, 'column') || strcmp(preferrence, 'row'))
-            errorMessage = 'Error: invalid input of preferrence!';
-            uiwait(warndlg(errorMessage));
-            r = 0;
-        end
-    end
     
     function UpdateOTF
         if strcmp(aberrType, 'reduced')
             params.df = df;
-            otf = params.aperture .* ObjTransFunc_X(params, Lx, Ly, Nx, Ny);
+            otf = params.upperAperture .* ObjTransFunc_X(params, Lx, Ly, Nx, Ny);
         elseif strcmp(aberrType, 'full')
             params.aberration.C1 = df;
             otfPhase = AberrationPhaseShift_X(params.aberration,...
                 wavLen, Lx, Ly, Nx, Ny);
-            otf = params.aperture .* exp(-1i * otfPhase);
+            otf = params.upperAperture .* exp(-1i * otfPhase);
         end
     end
 

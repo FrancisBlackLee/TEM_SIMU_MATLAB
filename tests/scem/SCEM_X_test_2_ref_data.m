@@ -1,4 +1,4 @@
-% SCEM_Preprocessing_X_test_1_ref_data.m
+% SCEM_X_test_2_ref_data.m
 % Using SrTiO3 100
 clc;
 clear;
@@ -24,18 +24,36 @@ Nx = 1024;
 Ny = 1024;
 dx = Lx / Nx;
 dy = Ly / Ny;
+
+% generate mesh for real-space coordinates for determining pinholes:
+xAxis = InitAxis(Lx, Nx);
+yAxis = InitAxis(Ly, Ny);
+[xMesh, yMesh] = meshgrid(xAxis, yAxis);
+rMesh = sqrt(xMesh.^2 + yMesh.^2);
+
 %% STEM settings:
 params.KeV = 300;
 interCoeff = InteractionCoefficient(params.KeV);
 wavLen = HighEnergyWavLen_X(params.KeV);
-innerAngle = 21;
-outerAngle = 24.5;
-params.aperture = AnnularAperture_X(Lx, Ly, Nx, Ny, wavLen, innerAngle, outerAngle);
+
+% annular upper aperture
+upperInnerAngle = 21;
+upperOuterAngle = 24.5;
+params.upperAperture = AnnularAperture_X(Lx, Ly, Nx, Ny, wavLen,...
+    upperInnerAngle, upperOuterAngle);
+
+% circular lower aperture
+lowerOuterAngle = 20.5;
+params.lowerAperture = CircApert_X(Lx, Ly, Nx, Ny, wavLen, lowerOuterAngle);
+
+params.pinholeRadii = linspace(dx, Lx / 2, 5);
+pinholeNum = length(params.pinholeRadii);
+
 % Initialize aberrations
 params.Cs3 = 0;
 params.Cs5 = 0;
 params.df = 0;
-params.dfSeries = -100 : 20 : 100;
+params.dfSeries = -50 : 20 : 50;
 dfNum = length(params.dfSeries);
 params.scanx = linspace(0, 3.9051, 10);
 scanNx = length(params.scanx);
@@ -55,7 +73,7 @@ transFuncs(:, :, 1) = tfA;
 transFuncs(:, :, 2) = tfB;
 
 %% Generate referrence data:
-destDir = 'E:\practice\TEM_SIMU_MATLAB_testdata\scem_ref_1';
+destDir = 'E:\practice\TEM_SIMU_MATLAB_testdata\scem_ref_2';
 taskNum = dfNum * scanNy;
 wbHandle = waitbar(0, 'scanning...');
 for dfIdx = 1 : dfNum
@@ -67,8 +85,9 @@ for dfIdx = 1 : dfNum
     end
     
     params.df = params.dfSeries(dfIdx);
-    otf = params.aperture .* ObjTransFunc_X(params, Lx, Ly, Nx, Ny);
+    otf = params.upperAperture .* ObjTransFunc_X(params, Lx, Ly, Nx, Ny);
     
+    scemImg = zeros(scanNy, scanNx, pinholeNum);
     for yIdx = 1 : scanNy
         doneRatio = ((dfIdx - 1) * scanNy + yIdx - 1) / taskNum;
         wbMessage = sprintf('df: %d / %d, line: %d / %d completed',...
@@ -79,12 +98,22 @@ for dfIdx = 1 : dfNum
                 params.scany(yIdx), Lx, Ly, Nx, Ny);
             wave = multislice_X(wave, params.KeV, Lx, Ly, transFuncs,...
                 sliceDist, stackNum);
+            wave = ifftshift(fft2(fftshift(wave)));
+            wave = params.lowerAperture .* wave;
+            wave = ifftshift(ifft2(fftshift(wave)));
             
-            filename = sprintf('ref_y%d_x%d.bin', yIdx, xIdx);
-            filename = fullfile(dfDir, filename);
-            WriteComplexBinaryFile(filename, wave, 'column');
+            waveI = abs(wave.^2);
+            
+            for pinholeIdx = 1 : pinholeNum
+                pinhole = (rMesh < params.pinholeRadii(pinholeIdx));
+                scemImg(yIdx, xIdx, pinholeIdx) = sum(waveI .* pinhole, 'all');
+            end
         end
     end
+    
+    filename = 'scem_images.mat';
+    filename = fullfile(dfDir, filename);
+    save(filename, 'scemImg');
 end
 
 delete(wbHandle);

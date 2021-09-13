@@ -1,11 +1,11 @@
-% SCEM_Preprocessing_X_test_1_test_data.m
+% SCEM_X_test_2_test_data.m
 % Using SrTiO3 100
 clc;
 clear;
 close all;
 %% specimen preparation:
 lattConst = [3.9051, 3.9051, 0]; % [a b]
-sliceDist = [1.9525, 1.9525]; % distance between each slice
+sliceDists = [1.9525, 1.9525]; % distance between each slice
 expanNum = 15 * [1, 1];
 % Laters: Each column for an atom
 sliceA = [38,   8;...
@@ -24,19 +24,29 @@ Nx = 1024;
 Ny = 1024;
 dx = Lx / Nx;
 dy = Ly / Ny;
+
 %% STEM settings:
 params.KeV = 300;
 interCoeff = InteractionCoefficient(params.KeV);
 wavLen = HighEnergyWavLen_X(params.KeV);
-innerAngle = 21;
-outerAngle = 24.5;
-params.aperture = AnnularAperture_X(Lx, Ly, Nx, Ny, wavLen, innerAngle, outerAngle);
+
+% annular upper aperture
+upperInnerAngle = 21;
+upperOuterAngle = 24.5;
+params.upperAperture = AnnularAperture_X(Lx, Ly, Nx, Ny, wavLen,...
+    upperInnerAngle, upperOuterAngle);
+
+% circular lower aperture
+lowerOuterAngle = 20.5;
+params.lowerAperture = CircApert_X(Lx, Ly, Nx, Ny, wavLen, lowerOuterAngle);
+
+params.pinholeRadii = linspace(dx, Lx / 2, 5);
+
 % Initialize aberrations
 params.Cs3 = 0;
 params.Cs5 = 0;
 params.df = 0;
-params.dfSeries = -100 : 20 : 100;
-dfNum = length(params.dfSeries);
+params.dfSeries = -50 : 20 : 50;
 params.scanx = linspace(0, 3.9051, 10);
 scanNx = length(params.scanx);
 params.scany = linspace(0, 3.9051, 10);
@@ -55,6 +65,5 @@ transFuncs(:, :, 1) = tfA;
 transFuncs(:, :, 2) = tfB;
 
 %% Generate referrence data:
-destDir = 'E:\practice\TEM_SIMU_MATLAB_testdata\scem_test_1';
-SCEM_Preprocessing_X(Lx, Ly, params, transFuncs, sliceDist, stackNum,...
-    destDir, 'reduced', 'column');
+destDir = 'E:\practice\TEM_SIMU_MATLAB_testdata\scem_test_2';
+SCEM_X(Lx, Ly, params, transFuncs, sliceDists, stackNum, destDir, 'reduced');

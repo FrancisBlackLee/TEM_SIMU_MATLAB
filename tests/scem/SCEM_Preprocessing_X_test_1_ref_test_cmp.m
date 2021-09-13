@@ -3,8 +3,8 @@ clc;
 clear;
 close all;
 %% main
-refDir = 'E:\practice\TEM_SIMU_MATLAB_testdata\scem_ref';
-testDir = 'E:\practice\TEM_SIMU_MATLAB_testdata\scem_test';
+refDir = 'E:\practice\TEM_SIMU_MATLAB_testdata\scem_ref_1';
+testDir = 'E:\practice\TEM_SIMU_MATLAB_testdata\scem_test_1';
 
 Nx = 1024;
 Ny = 1024;
