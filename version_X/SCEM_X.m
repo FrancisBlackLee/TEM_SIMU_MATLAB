@@ -57,22 +57,14 @@ function SCEM_X(Lx, Ly, params, transFuncs, sliceDists, stackNum, destDir,...
 if nargin == 6
     % create a new folder to save the results when destDir is not specified
     destDir = 'tmp_scem_wave';
-    if(~CreateNewFolder(destDir))
-        return;
-    end
+    CreateNewFolder(destDir);
     aberrType = 'reduced';
 elseif nargin == 7
-    if(~DirectoryExist)
-        return;
-    end
+    DirectoryExist;
     aberrType = 'reduced';
 elseif nargin == 8
-    if(~DirectoryExist)
-        return;
-    end
-    if(~ValidAberrationType)
-        return;
-    end
+    DirectoryExist;
+    ValidAberrationType;
 end
 
 [Ny, Nx, sliceNum] = size(transFuncs);
@@ -113,9 +105,7 @@ for dfIdx = 1 : dfNum
     df = params.dfSeries(dfIdx);
     dfFolder = sprintf('df=%.4fAngs', df);
     dfFolder = fullfile(destDir, dfFolder);
-    if(~CreateNewFolder(dfFolder))
-        return;
-    end
+    CreateNewFolder(dfFolder);
     
     UpdateOTF;
     
@@ -162,31 +152,22 @@ end
 delete(wbHandle);
 
 % nested functions:
-    function r = CreateNewFolder(folderName)
-        r = 1;
+    function CreateNewFolder(folderName)
         status = mkdir(folderName);
         if status == 0
-            errorMessage = sprintf('Error: creating %s failed', folderName);
-            uiwait(warndlg(errorMessage));
-            r = 0;
+            error('Error: creating %s failed', folderName);
         end
     end
 
-    function r = DirectoryExist
-        r = 1;
+    function DirectoryExist
         if ~isfolder(destDir)
-            errorMessage = sprintf('Error: %s does not exist!\n', destDir);
-            uiwait(warndlg(errorMessage));
-            r = 0;
+            error('Error: %s does not exist!\n', destDir);
         end
     end
 
-    function r = ValidAberrationType
-        r = 1;
+    function ValidAberrationType
         if ~(strcmp(aberrType, 'reduced') || strcmp(aberrType, 'full'))
-            errorMessage = 'Error: invalid input of aberration type!';
-            uiwait(warndlg(errorMessage));
-            r = 0;
+            error('Error: invalid input of aberration type!');
         end
     end
     

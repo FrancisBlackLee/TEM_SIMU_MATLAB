@@ -66,18 +66,14 @@ elseif nargin == 8
         cbedDir = 'tmp_cbed';
         status = mkdir(cbedDir);
         if status == 0
-            errorMessage = 'Error: creating cbed directory failed!';
-            uiwait(warndlg(errorMessage));
-            return;
+            error('Error: creating cbed directory failed!');
         end
     end
     preferrence = 'column';
 elseif nargin == 9
     if (cbedOption == 1) && (~(strcmp(cbedDir, 'column') || strcmp(cbedDir, 'row')))
         if ~isfolder(cbedDir)
-            errorMessage = sprintf('Error: %s does not exist!\n', cbedDir);
-            uiwait(warndlg(errorMessage));
-            return;
+            error('Error: %s does not exist!\n', cbedDir);
         end
     elseif  (cbedOption == 1) && (strcmp(cbedDir, 'column') || strcmp(cbedDir, 'row'))
         % output the cbed patterns without specifying the output directory
@@ -88,9 +84,7 @@ elseif nargin == 9
         cbedDir = 'tmp_cbed';
         status = mkdir(cbedDir);
         if status == 0
-            errorMessage = 'Error: creating cbed directory failed!';
-            uiwait(warndlg(errorMessage));
-            return;
+            error('Error: creating cbed directory failed!');
         end
     end
 end
@@ -111,9 +105,7 @@ elseif strcmp(aberrType, 'full')
     otfPhase = AberrationPhaseShift_X(params.aberration, wavLen, Lx, Ly, Nx, Ny);
     otf = params.aperture .* exp(-1i * otfPhase);
 else
-    errorMessage = sprintf('Invalid aberration type!\n');
-    uiwait(warndlg(errorMessage));
-    return;
+    error('Invalid aberration type!\n');
 end
 
 % fftshift all the transmission function in place:
