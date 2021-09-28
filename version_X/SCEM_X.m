@@ -97,9 +97,6 @@ params.lowerAperture = fftshift(params.lowerAperture);
 xAxis = InitAxis(Lx, Nx);
 yAxis = InitAxis(Ly, Ny);
 [xMesh, yMesh] = meshgrid(xAxis, yAxis);
-rMesh = sqrt(xMesh.^2 + yMesh.^2);
-% fftshift rMesh to further reduce computation cost:
-rMesh = fftshift(rMesh);
 
 for dfIdx = 1 : dfNum
     df = params.dfSeries(dfIdx);
@@ -136,6 +133,30 @@ for dfIdx = 1 : dfNum
             % reciprocal space to real space:
             wave = ifft2(wave);
             waveI = abs(wave.^2);
+            
+            % calculate relative position of the pinhole center to the
+            % probe center: relative x
+            relativeXMesh = xMesh - params.scanx(xIdx);
+            % alter to satisfy periodic boundary condition
+            alterIndices = find(relativeXMesh < -Lx / 2.0);
+            relativeXMesh(alterIndices) = relativeXMesh(alterIndices) + Lx;
+            
+            alterIndices = find(relativeXMesh > Lx / 2.0);
+            relativeXMesh(alterIndices) = relativeXMesh(alterIndices) - Lx;
+            
+            % relative y
+            relativeYMesh = yMesh - params.scany(yIdx);
+            % alter to satisfy periodic boundary condition
+            alterIndices = find(relativeYMesh < -Ly / 2.0);
+            relativeYMesh(alterIndices) = relativeYMesh(alterIndices) + Ly;
+            
+            alterIndices = find(relativeYMesh > Ly / 2.0);
+            relativeYMesh(alterIndices) = relativeYMesh(alterIndices) - Ly;
+            
+            % relative distance
+            rMesh = sqrt(relativeXMesh.^2 + relativeYMesh.^2);
+            % fftshift rMesh to further reduce computation cost:
+            rMesh = fftshift(rMesh);
             
             for pinholeIdx = 1 : pinholeNum
                 pinhole = (rMesh < params.pinholeRadii(pinholeIdx));
