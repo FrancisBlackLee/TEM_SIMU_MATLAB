@@ -29,7 +29,6 @@ dy = Ly / Ny;
 xAxis = InitAxis(Lx, Nx);
 yAxis = InitAxis(Ly, Ny);
 [xMesh, yMesh] = meshgrid(xAxis, yAxis);
-rMesh = sqrt(xMesh.^2 + yMesh.^2);
 
 %% STEM settings:
 params.KeV = 300;
@@ -62,6 +61,7 @@ scanNy = length(params.scany);
 
 %% Transmission functions:
 stackNum = 20;
+specimenThickness = stackNum * sum(sliceDist);
 projPotA = MultiProjPot_conv_X(sliceA, expanNum, lattConst, Lx, Ly, Nx, Ny, 1e-5);
 projPotB = MultiProjPot_conv_X(sliceB, expanNum, lattConst, Lx, Ly, Nx, Ny, 1e-5);
 
@@ -85,6 +85,8 @@ for dfIdx = 1 : dfNum
     end
     
     params.df = params.dfSeries(dfIdx);
+    secondPropDist = -params.df - specimenThickness;
+    secondPropKernel = FresnelPropKernel_X(Lx, Ly, Nx, Ny, wavLen, secondPropDist);
     otf = params.upperAperture .* ObjTransFunc_X(params, Lx, Ly, Nx, Ny);
     
     scemImg = zeros(scanNy, scanNx, pinholeNum);
@@ -99,10 +101,33 @@ for dfIdx = 1 : dfNum
             wave = multislice_X(wave, params.KeV, Lx, Ly, transFuncs,...
                 sliceDist, stackNum);
             wave = ifftshift(fft2(fftshift(wave)));
+            wave = secondPropKernel .* wave;
             wave = params.lowerAperture .* wave;
             wave = ifftshift(ifft2(fftshift(wave)));
             
             waveI = abs(wave.^2);
+            
+            % calculate relative position of the pinhole center to the
+            % probe center: relative x
+            relativeXMesh = xMesh - params.scanx(xIdx);
+            % alter to satisfy periodic boundary condition
+            alterIndices = find(relativeXMesh < -Lx / 2.0);
+            relativeXMesh(alterIndices) = relativeXMesh(alterIndices) + Lx;
+
+            alterIndices = find(relativeXMesh > Lx / 2.0);
+            relativeXMesh(alterIndices) = relativeXMesh(alterIndices) - Lx;
+
+            % relative y
+            relativeYMesh = yMesh - params.scany(yIdx);
+            % alter to satisfy periodic boundary condition
+            alterIndices = find(relativeYMesh < -Ly / 2.0);
+            relativeYMesh(alterIndices) = relativeYMesh(alterIndices) + Ly;
+
+            alterIndices = find(relativeYMesh > Ly / 2.0);
+            relativeYMesh(alterIndices) = relativeYMesh(alterIndices) - Ly;
+
+            % relative distance
+            rMesh = sqrt(relativeXMesh.^2 + relativeYMesh.^2);
             
             for pinholeIdx = 1 : pinholeNum
                 pinhole = (rMesh < params.pinholeRadii(pinholeIdx));

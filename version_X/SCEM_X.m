@@ -94,7 +94,7 @@ end
 [Ny, Nx, sliceNum] = size(transFuncs);
 wavLen = HighEnergyWavLen_X(params.KeV);
 % generate fftshifted Fresnel propagation kernels:
-sampleThickness = sum(sliceDists);
+sampleThickness = stackNum * sum(sliceDists);
 shiftPropKer = 1i * ones(Ny, Nx, sliceNum);
 for sliceIdx = 1 : sliceNum
     shiftPropKer(:, :, sliceIdx) = fftshift(FresnelPropKernel_X(Lx, Ly,...
