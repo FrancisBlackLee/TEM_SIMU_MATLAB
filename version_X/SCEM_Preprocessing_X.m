@@ -1,5 +1,5 @@
 function SCEM_Preprocessing_X(Lx, Ly, params, transFuncs, sliceDists,...
-    stackNum, destDir, aberrType, preferrence, varargin)
+    stackNum, destDir, aberrType, preference, varargin)
 %SCEM_Preprocessing_X.m simulates the beam-specimen interaction using
 %multislice method under scanning confocal mode, and outputs the wave
 %function at each scanning point to the destination directory.
@@ -56,36 +56,22 @@ function SCEM_Preprocessing_X(Lx, Ly, params, transFuncs, sliceDists,...
 
 if nargin == 6
     % create a new folder to save the results when destDir is not specified
-    destDir = 'tmp_scem_wave';
-    if(~CreateNewFolder(destDir))
-        return;
-    end
+    destDir = 'tmp_scem_results';
+    CreateNewFolder(destDir);
     aberrType = 'reduced';
-    preferrence = 'column';
+    preference = 'column';
 elseif nargin == 7
-    if(~DirectoryExist)
-        return;
-    end
+    DirectoryExist;
     aberrType = 'reduced';
-    preferrence = 'column';
+    preference = 'column';
 elseif nargin == 8
-    if(~DirectoryExist)
-        return;
-    end
-    if(~ValidAberrationType)
-        return;
-    end
-    preferrence = 'column';
-elseif nargin == 9
-    if(~DirectoryExist)
-        return;
-    end
-    if(~ValidAberrationType)
-        return;
-    end
-    if(~ValidPreferrence)
-        return;
-    end
+    DirectoryExist;
+    ValidAberrationType;
+    preference = 'column';
+elseif nargin >= 9
+    DirectoryExist;
+    ValidAberrationType;
+    ValidPreferrence;
 end
 
 [Ny, Nx, sliceNum] = size(transFuncs);
@@ -138,7 +124,7 @@ for dfIdx = 1 : dfNum
             % save wave function to dfFolder
             filename = ['wave_y', num2str(yIdx), '_x', num2str(xIdx), '.bin'];
             filename = fullfile(dfFolder, filename);
-            WriteComplexBinaryFile(filename, wave, preferrence, varargin{:});
+            WriteComplexBinaryFile(filename, wave, preference, varargin{:});
         end
     end
 end
@@ -146,40 +132,28 @@ end
 delete(wbHandle);
 
 % nested functions:
-    function r = CreateNewFolder(folderName)
-        r = 1;
+    function CreateNewFolder(folderName)
         status = mkdir(folderName);
         if status == 0
-            errorMessage = sprintf('Error: creating %s failed', folderName);
-            uiwait(warndlg(errorMessage));
-            r = 0;
+            error('Error: creating %s failed', folderName);
         end
     end
 
-    function r = DirectoryExist
-        r = 1;
+    function DirectoryExist
         if ~isfolder(destDir)
-            errorMessage = sprintf('Error: %s does not exist!\n', destDir);
-            uiwait(warndlg(errorMessage));
-            r = 0;
+            error('Error: %s does not exist!\n', destDir);
         end
     end
 
-    function r = ValidAberrationType
-        r = 1;
+    function ValidAberrationType
         if ~(strcmp(aberrType, 'reduced') || strcmp(aberrType, 'full'))
-            errorMessage = 'Error: invalid input of aberration type!';
-            uiwait(warndlg(errorMessage));
-            r = 0;
+            error('Error: invalid input of aberration type!');
         end
     end
 
-    function r = ValidPreferrence
-        r = 1;
-        if ~(strcmp(preferrence, 'column') || strcmp(preferrence, 'row'))
-            errorMessage = 'Error: invalid input of preferrence!';
-            uiwait(warndlg(errorMessage));
-            r = 0;
+    function ValidPreferrence
+        if ~(strcmp(preference, 'column') || strcmp(preference, 'row'))
+            error('Error: invalid input of preferrence!');
         end
     end
     

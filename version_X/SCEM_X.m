@@ -1,5 +1,5 @@
 function SCEM_X(Lx, Ly, params, transFuncs, sliceDists, stackNum, destDir,...
-    aberrType)
+    aberrType, camera, preference, varargin)
 %SCEM_X.m simulates scanning confocal electron microscopy, in which the
 %beam-specimen interaction is simulated using multislice method.
 %   Lx, Ly -- sampling sidelength in angstrom;
@@ -33,7 +33,16 @@ function SCEM_X(Lx, Ly, params, transFuncs, sliceDists, stackNum, destDir,...
 %       while scanning the probe with various defocus;
 %   aberrType -- aberration type: 'reduced' (C3, C5, df) or 'full' (up to
 %       5th order aberrations and their real-space angles;
-% Note: data will be saved as *.mat files.
+%   camera -- optional: insert camera or not, syntax: 'camera' or 'none'
+%       (default);
+%   preference -- 'column'/'row': writing by column (default) or row, note
+%       that the aberrType must be specified and the camera should be set 
+%       as 'camera' before preference is specified;
+%   varargin -- specific parameters to define the writing mode (default:
+%       double), note that the preferrence must be specified before
+%       varargin are specified;
+% Note: scem image data will be saved as *.mat files; camera recordings
+%   will be saved as binary files in newly created folders.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
@@ -56,20 +65,36 @@ function SCEM_X(Lx, Ly, params, transFuncs, sliceDists, stackNum, destDir,...
 
 if nargin == 6
     % create a new folder to save the results when destDir is not specified
-    destDir = 'tmp_scem_wave';
+    destDir = 'tmp_scem_results';
     CreateNewFolder(destDir);
     aberrType = 'reduced';
+    camera = 'none';
 elseif nargin == 7
     DirectoryExist;
     aberrType = 'reduced';
+    camera = 'none';
 elseif nargin == 8
     DirectoryExist;
     ValidAberrationType;
+    camera = 'none';
+elseif nargin == 9
+    DirectoryExist;
+    ValidAberrationType;
+    ValidCamera;
+    if strcmp(camera, 'camera')
+        preference = 'column';
+    end
+elseif nargin >= 10
+    DirectoryExist;
+    ValidAberrationType;
+    ValidCamera;
+    ValidPreferrence;
 end
 
 [Ny, Nx, sliceNum] = size(transFuncs);
 wavLen = HighEnergyWavLen_X(params.KeV);
 % generate fftshifted Fresnel propagation kernels:
+sampleThickness = sum(sliceDists);
 shiftPropKer = 1i * ones(Ny, Nx, sliceNum);
 for sliceIdx = 1 : sliceNum
     shiftPropKer(:, :, sliceIdx) = fftshift(FresnelPropKernel_X(Lx, Ly,...
@@ -81,7 +106,14 @@ transFuncs = fftshift(transFuncs, 1);
 transFuncs = fftshift(transFuncs, 2);
 
 dfNum = length(params.dfSeries);
-pinholeNum = length(params.pinholeRadii);
+if strcmp(camera, 'none')
+    pinholeNum = length(params.pinholeRadii);
+    % generate mesh for real-space coordinates for determining pinholes:
+    xAxis = InitAxis(Lx, Nx);
+    yAxis = InitAxis(Ly, Ny);
+    [xMesh, yMesh] = meshgrid(xAxis, yAxis);
+end
+
 scanNx = length(params.scanx);
 scanNy = length(params.scany);
 
@@ -93,11 +125,6 @@ otf = 1i * ones(Ny, Nx);
 % fftshift params.lowerAperture for less computation cost
 params.lowerAperture = fftshift(params.lowerAperture);
 
-% generate mesh for real-space coordinates for determining pinholes:
-xAxis = InitAxis(Lx, Nx);
-yAxis = InitAxis(Ly, Ny);
-[xMesh, yMesh] = meshgrid(xAxis, yAxis);
-
 for dfIdx = 1 : dfNum
     df = params.dfSeries(dfIdx);
     dfFolder = sprintf('df=%.4fAngs', df);
@@ -108,7 +135,9 @@ for dfIdx = 1 : dfNum
     
     % create a 3D matrix to saved images for various pinhole radii, hope it
     % won't trigger memory overflow:)
-    scemImg = zeros(scanNy, scanNx, pinholeNum);
+    if strcmp(camera, 'none')
+        scemImg = zeros(scanNy, scanNx, pinholeNum);
+    end
     for yIdx = 1 : scanNy
         for xIdx = 1 : scanNx
             % update process
@@ -127,47 +156,61 @@ for dfIdx = 1 : dfNum
                 end
             end
             
+            secondPropDist = -df - sampleThickness;
+            shiftedSecondPropKer = fftshift(FresnelPropKernel_X(Lx, Ly, Nx, Ny,...
+                wavLen, secondPropDist));
+            
             % real space to reciprocal space:
             wave = fft2(wave);
+            wave = shiftedSecondPropKer .* wave;
             wave = params.lowerAperture .* wave;
             % reciprocal space to real space:
             wave = ifft2(wave);
             waveI = abs(wave.^2);
             
-            % calculate relative position of the pinhole center to the
-            % probe center: relative x
-            relativeXMesh = xMesh - params.scanx(xIdx);
-            % alter to satisfy periodic boundary condition
-            alterIndices = find(relativeXMesh < -Lx / 2.0);
-            relativeXMesh(alterIndices) = relativeXMesh(alterIndices) + Lx;
-            
-            alterIndices = find(relativeXMesh > Lx / 2.0);
-            relativeXMesh(alterIndices) = relativeXMesh(alterIndices) - Lx;
-            
-            % relative y
-            relativeYMesh = yMesh - params.scany(yIdx);
-            % alter to satisfy periodic boundary condition
-            alterIndices = find(relativeYMesh < -Ly / 2.0);
-            relativeYMesh(alterIndices) = relativeYMesh(alterIndices) + Ly;
-            
-            alterIndices = find(relativeYMesh > Ly / 2.0);
-            relativeYMesh(alterIndices) = relativeYMesh(alterIndices) - Ly;
-            
-            % relative distance
-            rMesh = sqrt(relativeXMesh.^2 + relativeYMesh.^2);
-            % fftshift rMesh to further reduce computation cost:
-            rMesh = fftshift(rMesh);
-            
-            for pinholeIdx = 1 : pinholeNum
-                pinhole = (rMesh < params.pinholeRadii(pinholeIdx));
-                scemImg(yIdx, xIdx, pinholeIdx) = sum(waveI .* pinhole, 'all');
+            if strcmp(camera, 'none')
+                % calculate relative position of the pinhole center to the
+                % probe center: relative x
+                relativeXMesh = xMesh - params.scanx(xIdx);
+                % alter to satisfy periodic boundary condition
+                alterIndices = find(relativeXMesh < -Lx / 2.0);
+                relativeXMesh(alterIndices) = relativeXMesh(alterIndices) + Lx;
+
+                alterIndices = find(relativeXMesh > Lx / 2.0);
+                relativeXMesh(alterIndices) = relativeXMesh(alterIndices) - Lx;
+
+                % relative y
+                relativeYMesh = yMesh - params.scany(yIdx);
+                % alter to satisfy periodic boundary condition
+                alterIndices = find(relativeYMesh < -Ly / 2.0);
+                relativeYMesh(alterIndices) = relativeYMesh(alterIndices) + Ly;
+
+                alterIndices = find(relativeYMesh > Ly / 2.0);
+                relativeYMesh(alterIndices) = relativeYMesh(alterIndices) - Ly;
+
+                % relative distance
+                rMesh = sqrt(relativeXMesh.^2 + relativeYMesh.^2);
+                % fftshift rMesh to further reduce computation cost:
+                rMesh = fftshift(rMesh);
+
+                for pinholeIdx = 1 : pinholeNum
+                    pinhole = (rMesh < params.pinholeRadii(pinholeIdx));
+                    scemImg(yIdx, xIdx, pinholeIdx) = sum(waveI .* pinhole, 'all');
+                end
+            elseif strcmp(camera, 'camera')
+                filename = ['intensity_y', num2str(yIdx), '_x', num2str(xIdx), '.bin'];
+                filename = fullfile(dfFolder, filename);
+                waveI = ifftshift(waveI);
+                WriteBinaryFile(filename, waveI, preference, varargin{:});
             end
         end
     end
     
-    filename = 'scem_images.mat';
-    filename = fullfile(dfFolder, filename);
-    save(filename, 'scemImg');
+    if strcmp(camera, 'none')
+        filename = 'scem_images.mat';
+        filename = fullfile(dfFolder, filename);
+        save(filename, 'scemImg');
+    end
 end
 
 delete(wbHandle);
@@ -191,6 +234,19 @@ delete(wbHandle);
             error('Error: invalid input of aberration type!');
         end
     end
+
+    function ValidCamera
+        if ~(strcmp(camera, 'none') || strcmp(camera, 'camera'))
+            error('Error: invalid input of camera option!');
+        end
+    end
+
+    function ValidPreferrence
+        if ~(strcmp(preference, 'column') || strcmp(preference, 'row'))
+            error('Error: invalid input of preferrence!');
+        end
+    end
+
     
     function UpdateOTF
         if strcmp(aberrType, 'reduced')
