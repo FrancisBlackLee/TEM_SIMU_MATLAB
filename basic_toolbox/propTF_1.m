@@ -1,4 +1,4 @@
-function [ u2 ] = propTF_1( u1, Lx, Ly , lambda, z )
+function [ u2 ] = propTF_1( u1, Lx, Ly, lambda, z, bwlProp )
 %propagation - transfer function approach
 %   assumes same x and y side lengths and uniform sampling
 %   u1 - source plane field
@@ -20,6 +20,10 @@ H = exp(-1i * pi * lambda * z * (FX.^2 + FY.^2));      %trans func
 H = fftshift(H);                             %shift trans func
 U1 = fft2(fftshift(u1));                     %shift, fft src field
 U2 = H .* U1;                                  %multiply
+if nargin == 6
+    FR = fftshift(sqrt(FX.^2 + FY.^2));
+    U2 = U2 .* (FR <= bwlProp / (2 * max(dx, dy)));
+end
 u2 = ifftshift(ifft2(U2));                   %inv fft, center obs field
 
 end

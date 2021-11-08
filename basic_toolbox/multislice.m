@@ -33,6 +33,8 @@ function [exitWave] = multislice(incidentWave, wavLen, Lx, Ly,...
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+bwlProp = 2.0/3.0;
+
 switch nargin
     case 7
         wave = incidentWave;
@@ -40,9 +42,10 @@ switch nargin
         for stackIdx = 1: stackNum
             for sliceIdxInStack = 1: sliceNum
                 wave = wave .* transFuncs(:, :, sliceIdxInStack);
-                wave = propTF_1(wave, Lx, Ly, wavLen, sliceDist(sliceIdxInStack));
+                wave = propTF_1(wave, Lx, Ly, wavLen, sliceDist(sliceIdxInStack), bwlProp);
             end
         end
+        wave = wave .* transFuncs(:, :, 1);
         exitWave = wave;
     otherwise
         mkDirStat = mkdir(saveDir);
@@ -55,7 +58,7 @@ switch nargin
         for stackIdx = 1: stackNum
             for sliceIdxInStack = 1: sliceNum
                 wave = wave .* transFuncs(:, :, sliceIdxInStack);
-                wave = propTF_1(wave, Lx, Ly, wavLen, sliceDist(sliceIdxInStack));
+                wave = propTF_1(wave, Lx, Ly, wavLen, sliceDist(sliceIdxInStack), bwlProp);
                 
                 sliceIdx = (stackIdx - 1) * sliceNum + sliceIdxInStack;
                 if saveSliceIdx <= saveSliceNum
