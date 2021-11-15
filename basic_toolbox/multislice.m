@@ -1,18 +1,28 @@
-function [exitWave] = multislice(incidentWave, wavLen, Lx, Ly,...
-    transFuncs, sliceDist, stackNum, saveDir, saveSliceSeries)
+function [varargout] = multislice(incidentWave, wavLen, Lx, Ly,...
+    transFuncs, sliceDist, stackNum, saveSliceSeries, saveDir)
 %MULTISLICE.M performs the multislice procedure. See E. J. Kirkland
 %Advanced Computing in Electron Microscopy.
+% Input:
 %   IncidentWave;
 %   Lx, Ly -- sampling parameters;
 %   TransFuncs -- transmission functions;
 %   LayerDist -- distance from one layer to the next layer;
 %   StackNum -- number of stackings;
-%   SaveDir -- the directory where you want these wave functions to be
-%       saved;
 %   SaveSliceSeries -- Slice indices upon which the wave functions are to
 %       be saved, i.e. [1, 2, 6, 8, 12, 34], note that the array should be
 %       in an increasing order and it maximum element should be no greater
 %       than N + 1, where N = StackNum * LayerNum;
+%   SaveDir -- the directory where you want these wave functions to be
+%       saved;
+%
+% Output:
+%   [wave] = multislice(...) -- (1) output the exit wave if SaveSliceSeries
+%       is not specified; (2) concatenate the selected wave functions to
+%       the exit wave function if SaveSliceSeries is specified but saving
+%       data to saveDir fails or saveDir is not specified;
+%   [wave, selectWaves] -- output the exit wave and the selected wave
+%       functions if SaveSliceSeries is specified.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
@@ -46,9 +56,20 @@ switch nargin
             end
         end
         wave = wave .* transFuncs(:, :, 1);
-        exitWave = wave;
+        varargout{1} = wave;
     otherwise
-        mkDirStat = mkdir(saveDir);
+        if nargin == 8
+            saveWaveMat = 0;
+        elseif nargin == 9
+            saveWaveMat = 1;
+            mkDirStat = mkdir(saveDir);
+            if (mkDirStat == 0) && (~isfolder(saveDir))
+                saveWaveMat = 0;
+                warning(['Creating output folder failed!',...
+                    ' Selected slice wave functions are concatenated to the output argument']);
+            end
+        end
+        
         saveSliceIdx = 1;
         saveSliceNum = length(saveSliceSeries);
         wave = incidentWave;
@@ -69,9 +90,22 @@ switch nargin
                 end
             end
         end
-        filename = fullfile(saveDir, 'wave_data.mat');
-        save(filename, 'waveMat_3d', 'saveSliceSeries', '-v7.3');
-        exitWave = wave;
+        
+        if saveWaveMat == 1
+            filename = fullfile(saveDir, 'wave_data.mat');
+            save(filename, 'waveMat_3d', 'saveSliceSeries', '-v7.3');
+        end
+        
+        if nargout == 1
+            if saveWaveMat == 1
+                varargout{1} = wave;
+            else
+                varargout{1} = cat(3, wave, waveMat_3d);
+            end
+        elseif nargout == 2
+            varargout{1} = wave;
+            varargout{2} = waveMat_3d;
+        end
 end
 
 end
