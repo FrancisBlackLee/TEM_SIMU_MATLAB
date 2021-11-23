@@ -37,6 +37,10 @@ function [slice, sliceDist, extraSlice] = CrystalSlicing_X(stdLatt, ...
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+warning(['CrystalSlicing_X will be deprecated by 2021/12/1, please resort ',...
+    'to the substitutes, which shall be released by 2021/12/1. ',...
+    '-- Project maintainer.']);
+
 atomNum = size(stdLatt, 2);
 if nargin == 6
     plotColor = ones(1, atomNum);
