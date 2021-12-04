@@ -1,4 +1,4 @@
-function [stemImg] = STEM_X(Lx, Ly, params, transFuncs, sliceDist,...
+function [varargout] = STEM_X(Lx, Ly, params, transFuncs, sliceDists,...
     stackNum, aberrType, cbedOption, cbedDir, preferrence, varargin)
 %STEM_X.m is a specially designed multislice interface for STEM simulation.
 %   Lx, Ly -- sampling sidelength in angstrom;
@@ -15,11 +15,13 @@ function [stemImg] = STEM_X(Lx, Ly, params, transFuncs, sliceDist,...
 %       params.aperture -- numerical aperture;
 %       params.scanx -- coordinate array for x directional scanning;
 %       params.scany -- coordinate array for y directional scanning;
-%       params.detector -- this detector is an Ny by Nx by detectorNum 
+%       params.detector -- integral detector, an Ny by Nx by detectorNum 
 %           logical matrix, which do not have to be annular;
+%       params.depths (optional) -- transmission depths for outputing 
+%           stemImgs and pacbeds;
 %   transFuncs -- transmission functions stored in a 3D matrix, keep it
 %       small to avoid memory overflow;
-%   sliceDist -- distance from one slice to the next slice;
+%   sliceDists -- distance from one slice to the next slice;
 %   stackNum -- number of repeations of the input TransFuncs in z
 %       direction;
 %   aberrType -- aberration type: 'reduced' (C3, C5, df) or 'full' (up to
@@ -96,7 +98,7 @@ wavLen = HighEnergyWavLen_X(params.KeV);
 shiftPropKer = 1i * ones(Ny, Nx, sliceNum);
 for sliceIdx = 1 : sliceNum
     shiftPropKer(:, :, sliceIdx) = fftshift(FresnelPropKernel_X(Lx, Ly,...
-        Nx, Ny, wavLen, sliceDist(sliceIdx)));
+        Nx, Ny, wavLen, sliceDists(sliceIdx)));
 end
 % generate objective transfer function with an aperture:
 if strcmp(aberrType, 'reduced')
@@ -115,7 +117,13 @@ transFuncs = fftshift(transFuncs, 2);
 scanNx = length(params.scanx);
 scanNy = length(params.scany);
 detectorNum = size(params.detector, 3);
-stemImg = zeros(scanNy, scanNx, detectorNum);
+stemImgs = zeros(scanNy, scanNx, detectorNum);
+
+if isfield(params, 'depths')
+    depthNum = length(params.depths);
+    pacbeds = zeros(Ny, Nx, depthNum);
+    sliceIndices = DepthsToSliceIndices(sliceDists, stackNum, params.depths);
+end
 
 totalCompTask = scanNy * scanNx;
 process = waitbar(0, 'start scanning');
@@ -125,16 +133,28 @@ for iy = 1 : scanNy
         waitbar(doneRatio, process, [num2str(roundn(doneRatio, -3) * 100), '%']);
         tempWave = fftshift(GenerateProbe_X(otf, params.scanx(ix), params.scany(iy),...
             Lx, Ly, Nx, Ny));
+        
+        sliceCount = 0;
+        pacbedIdx = 1;
         for stackIdx = 1 : stackNum
             for sliceIdx = 1 : sliceNum
                 tempWave = tempWave .* transFuncs(:,:,sliceIdx);
                 tempWave = ifft2(shiftPropKer(:, :, sliceIdx) .* fft2(tempWave));
+                
+                if isfield(params, 'depths')
+                    sliceCount = sliceCount + 1;
+                    if sliceCount == sliceIndices(pacbedIdx)
+                        tmpCbed = abs((ifftshift(fft2(tempWave))*dx*dy).^2);
+                        pacbeds(:, :, pacbedIdx) = pacbeds(:, :, pacbedIdx) + tmpCbed;
+                        pacbedIdx = pacbedIdx + 1;
+                    end
+                end
             end
         end
         tmpCbed = abs((ifftshift(fft2(tempWave))*dx*dy).^2);
         
         for detectorIdx = 1 : detectorNum
-            stemImg(iy, ix, detectorIdx) = sum(tmpCbed .*...
+            stemImgs(iy, ix, detectorIdx) = sum(tmpCbed .*...
                 params.detector(:, :, detectorIdx), 'all');
         end
         
@@ -145,6 +165,27 @@ for iy = 1 : scanNy
         end
     end
 end
+
+if nargout == 2
+    varargout{1} = stemImgs;
+    varargout{2} = pacbeds;
+elseif (nargout == 1) && (~isfield(params, 'depths'))
+    varargout{1} = stemImgs;
+elseif (nargout == 1) && isfield(params, 'depths')
+    varargout{1}.stemImgs = stemImgs;
+    varargout{2}.pacbeds = pacbeds;
+else
+    warning(['Invalid specification of depths or output argument, ',...
+        'results are temporarily saved to current path.']);
+    if exist('stemImgs', 'var')
+        save('tmp_stem_images.mat', 'stemImgs');
+    end
+    
+    if exist('pacbeds', 'var')
+        save('tmp_pacbeds.mat', 'pacbeds');
+    end
+end
+
 delete(process);
 
 end
