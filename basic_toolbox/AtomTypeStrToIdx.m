@@ -25,7 +25,15 @@ function [atomTypeIdx] = AtomTypeStrToIdx(atomTypeStr)
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-upperStr = upper(atomTypeStr);
+% determine if the first or first two character(s) is/are letter(s)
+atomLabel = '';
+for i = 1 : 2
+    if isletter(atomTypeStr(i))
+        atomLabel = [atomLabel, atomTypeStr(i)];
+    end
+end
+
+upperStr = upper(atomLabel);
 switch upperStr
     case 'H'
         atomTypeIdx = 1;
@@ -234,9 +242,7 @@ switch upperStr
     case 'LR'
         atomTypeIdx = 103;
     otherwise
-        errorMessage = sprintf('Error: Invalid input atom type string');
-        uiwait(warndlg(errorMessage));
-        return;
+        error('Invalid input atom type string.');
 end
 
 end

@@ -1,4 +1,4 @@
-function [atomCoordMat] = CellExpand_uvw(atomSiteMat, cellLengths,...
+function [cellCoordMat] = CellExpand_uvw(atomSiteMat, cellLengths,...
     cellAngles, uvw, sideLengths)
 %CellExpand_uvw() rotates the unit cell to the given orientation, duplicate
 %the unit cell and rehapes the cell.
@@ -40,11 +40,11 @@ viewDirection = uvw(1) * initConvMat(:, 1) +...
 Lz = norm(viewDirection);
 
 radius = sqrt(2 * max(sideLengths)^2 + Lz^2) / 2;
-atomCoordMat = CreateNanoCluster_uvw(atomSiteMat, cellLengths, cellAngles, uvw, radius);
+bulkCoordMat = CreateNanoCluster_uvw(atomSiteMat, cellLengths, cellAngles, uvw, radius);
 
 tolerance = 1e-8;
-atomCoordMat(:, (atomCoordMat(5, :) > Lz / 2 + tolerance) |...
-    (atomCoordMat(5, :) < -Lz / 2 - tolerance)) = [];
+cellCoordMat = bulkCoordMat(:, (bulkCoordMat(5, :) < Lz / 2 + tolerance) &...
+    (bulkCoordMat(5, :) > -Lz / 2 - tolerance));
 
 end
 
