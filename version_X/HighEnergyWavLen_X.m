@@ -4,7 +4,7 @@ function [wavLen] = HighEnergyWavLen_X(KeV)
 % Note: X denotes an experimental version!
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
+%   Copyright (C) 2019 - 2022  Francis Black Lee (Li Xian)
 
 %   This program is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
@@ -25,4 +25,5 @@ function [wavLen] = HighEnergyWavLen_X(KeV)
 wavLen = 12.3986 ./ sqrt((2 * 511.0 + KeV) .* KeV);
 
 end
+
 

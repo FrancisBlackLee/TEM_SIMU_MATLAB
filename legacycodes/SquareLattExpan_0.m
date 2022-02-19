@@ -10,7 +10,7 @@ function [sliceOut] = SquareLattExpan_0(sliceIn, lattConst, expanNum)
 %   expanNum -- expansion numbers by which the SliceIn is expanded [Nx, Ny];
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (C) 2019 - 2020  Francis Black Lee and Li Xian
+%   Copyright (C) 2019 - 2022  Francis Black Lee (Li Xian)
 
 %   This program is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
@@ -53,4 +53,5 @@ sliceOut(:, 4) = lattConst(3) * sliceOut(:, 4);
 sliceOut = sliceOut';
 
 end
+
 

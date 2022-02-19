@@ -1,4 +1,4 @@
-function [rotMat] = RotationOperator(direction)
+function [rotMat] = RotationOperator(directionZ, directionX)
 %RotationOperator() computes the martix form of the rotation operator given
 %the view or projection direction.
 % Input:
@@ -8,7 +8,7 @@ function [rotMat] = RotationOperator(direction)
 %       usage: [xp; yp; zp] = rotMat * [x; y; z];
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
+%   Copyright (C) 2019 - 2022  Francis Black Lee (Li Xian)
 
 %   This program is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
@@ -26,20 +26,34 @@ function [rotMat] = RotationOperator(direction)
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-newVecZ = reshape(direction, 1, []);
-newVecX = [0, newVecZ(3), -newVecZ(2)];
-if ~any(newVecX)
-    newVecX = [0, 1, 0];
-    newVecZ = newVecZ / norm(newVecZ);
-else
-    % normalization:
-    newVecZ = newVecZ / norm(newVecZ);
-    newVecX = newVecX / norm(newVecX);
-end
+newVecZ = reshape(directionZ, 1, []);
+newVecZ = newVecZ / norm(newVecZ);
 
-newVecY = cross(newVecZ, newVecX);
+if nargin == 1
+    newVecX = [0, newVecZ(3), -newVecZ(2)];
+    if ~any(newVecX)
+        newVecX = [0, 1, 0];
+        newVecY = [0, 0, 1];
+    else
+        % normalization:
+        newVecX = newVecX / norm(newVecX);
+        newVecY = cross(newVecZ, newVecX);
+    end
+elseif nargin == 2
+    newVecX = reshape(directionX, 1, []);
+    tolerance = 1.0e-8;
+    if abs(dot(newVecX, newVecZ)) < tolerance
+        newVecX = newVecX / norm(newVecX);
+        newVecY = cross(newVecZ, newVecX);
+    else
+        error('Input direction x is not vertical to direction z');
+    end
+else
+    error('Invalid input');
+end
 
 rotMat = [newVecX; newVecY; newVecZ];
 
 end
+
 

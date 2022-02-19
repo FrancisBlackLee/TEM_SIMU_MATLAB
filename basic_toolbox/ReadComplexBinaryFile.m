@@ -11,7 +11,7 @@ function [data] = ReadComplexBinaryFile(filename, dataSize, preferrence, varargi
 %       double);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
+%   Copyright (C) 2019 - 2022  Francis Black Lee (Li Xian)
 
 %   This program is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
@@ -61,4 +61,5 @@ fclose(fileID);
 data = tmpData(:, 1 : 2 : 2 * Nx - 1) + 1i * tmpData(:, 2 : 2 : 2 * Nx);
 
 end
+
 

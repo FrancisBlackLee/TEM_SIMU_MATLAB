@@ -1,5 +1,5 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
+%   Copyright (C) 2019 - 2022  Francis Black Lee (Li Xian)
 
 %   This program is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ clear all;
 %% specimen preparation:
 lattConst = [3.9051, 3.9051, 0]; % [a b]
 sliceDist = [1.9525, 1.9525]; % distance between each slice
-expanNum = [5, 5]; % expand the unit cell by Expan_Nx = 3 and Expan_Ny = 2, adaptive
+expanNum = [5, 5];
 % Laters: Each column for an atom
 sliceA = [38,   8;...
           1,    1;...

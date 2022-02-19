@@ -6,7 +6,7 @@ function [detector] = AnnularDetector_X(lowAngle, highAngle, wavLen, Lx, Ly, Nx,
 % Note: X denotes an experimental version!
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
+%   Copyright (C) 2019 - 2022  Francis Black Lee (Li Xian)
 
 %   This program is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
@@ -31,4 +31,5 @@ freqSqu = FX.^2 + FY.^2;
 detector = ((freqSqu < (highAngle * 1e-3 / wavLen)^2) & (freqSqu > (lowAngle * 1e-3 / wavLen)^2));
 
 end
+
 

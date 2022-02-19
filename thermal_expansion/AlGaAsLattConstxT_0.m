@@ -9,3 +9,4 @@ lattConstAxT = a0 .* (1 + ThermalExpanCoeff .* (T - 300));
 
 end
 
+

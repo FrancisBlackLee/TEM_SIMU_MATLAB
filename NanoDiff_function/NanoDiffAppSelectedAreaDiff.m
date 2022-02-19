@@ -10,7 +10,7 @@ function [diffPatt] = NanoDiffAppSelectedAreaDiff(keV, projPotMat,...
 %   diffPatt -- diffraction pattern;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
+%   Copyright (C) 2019 - 2022  Francis Black Lee (Li Xian)
 
 %   This program is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
@@ -48,4 +48,5 @@ diffPatt = abs(wave.^2);
 diffPatt = log(1 + 0.1 * diffPatt);
 
 end
+
 

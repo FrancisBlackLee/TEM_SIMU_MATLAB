@@ -10,7 +10,7 @@ stackedSliceDists = repmat(sliceDists, 1, stackNum);
 stackedSliceDists = cumsum(stackedSliceDists);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
+%   Copyright (C) 2019 - 2022  Francis Black Lee (Li Xian)
 
 %   This program is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
@@ -36,4 +36,5 @@ for depthIdx = 1 : length(depths)
 end
 
 end
+
 

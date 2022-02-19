@@ -9,7 +9,7 @@ function [strCellArray, lineType, canDelete] = CifLineParser(textLine, lastLoopO
 %       loop commad, 'true' for 'can delete', 'false' for 'cannot delete';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
+%   Copyright (C) 2019 - 2022  Francis Black Lee (Li Xian)
 
 %   This program is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
@@ -71,6 +71,9 @@ elseif strNum > 2
     if strCellArray{1}(1) == '#'
         lineType = 'Comment';
         canDelete = 'true';
+    elseif strCellArray{1}(1) == '_'
+        lineType = 'ValuedProperty';
+        canDelete = 'false';    
     else
         lineType = 'LoopValues';
         canDelete = 'false';
@@ -80,5 +83,8 @@ else
     canDelete = 'true';
 end
 
+% nested function
+
 end
+
 

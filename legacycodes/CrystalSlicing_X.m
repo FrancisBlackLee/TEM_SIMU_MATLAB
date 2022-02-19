@@ -13,13 +13,13 @@ function [slice, sliceDist, extraSlice] = CrystalSlicing_X(stdLatt, ...
 %   YN -- whether to show each slice: 1 --yes, 0 --no.
 %   PlotColor -- colors for each type of atom;
 %   LattMode -- lattice mode:
-%       LattMode == 0 : cubic specimen;
+%       LattMode == 0: cubic specimen;
 %       LattMode == 1: nanoparticle;
 %   NOTE: X denotes an experimental version!
 %   Current target: lattice with thermo-displacements.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
+%   Copyright (C) 2019 - 2022  Francis Black Lee (Li Xian)
 
 %   This program is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
@@ -153,4 +153,5 @@ else
 end
 
 end
+
 

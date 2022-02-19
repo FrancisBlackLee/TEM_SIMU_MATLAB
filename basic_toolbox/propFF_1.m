@@ -28,3 +28,4 @@ u2 = kernel .* ifftshift(fft2(fftshift(u1))) * dx_1 * dx_2;
 
 end
 
+

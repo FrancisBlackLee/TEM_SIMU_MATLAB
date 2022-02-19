@@ -3,7 +3,7 @@ function [crysInfo] = LoadCif(filename)
 % file for other functions of TEM_SIMU_MATLAB.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
+%   Copyright (C) 2019 - 2022  Francis Black Lee (Li Xian)
 
 %   This program is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
@@ -37,10 +37,10 @@ loopPropertyNum = 0;
 loopValueColNum = 2;
 
 % disp('CIF content');
-textLine = fgetl(fileID);
-while ischar(textLine)
-    [strCellArray, lineType, canDelete] = CifLineParser(textLine, loopObj);
-    % disp(strCellArray);
+tmpTextLine = ReadTextLine;
+while ischar(tmpTextLine)
+    [strCellArray, lineType, canDelete] = CifLineParser(tmpTextLine, loopObj);
+%     disp(strCellArray);
     if strcmp(canDelete, 'false')
         if strcmp(lineType, 'ValuedProperty')
             valuedPropertyNum = valuedPropertyNum + 1;
@@ -70,15 +70,47 @@ while ischar(textLine)
         loopObj = 'None';
     end
     
-    textLine = fgetl(fileID);
+    tmpTextLine = ReadTextLine;
     % in case there is one white line in the mid of the file text, if there
     % are two white lines, it is sufficient to treat it as the end of file
-    if ~ischar(textLine)
-        textLine = fgetl(fileID);
+    if ~ischar(tmpTextLine)
+        tmpTextLine = ReadTextLine;
     end
 end
 
 fclose(fileID);
 
+% nested function:
+
+    function [textLine] = ReadTextLine
+        textLine = fgetl(fileID);
+        textLine = FullString(textLine);
+    end
+
+    function [fullTextLine] = FullString(textLine)
+        singleQuoteIndices = strfind(textLine, '''');
+        if isempty(singleQuoteIndices)
+            % no string
+            fullTextLine = textLine;
+        elseif length(singleQuoteIndices) == 2
+            % contains full string
+            fullTextLine = textLine;
+        elseif length(singleQuoteIndices) == 1
+            % contains incomplete string
+            fullTextLine = textLine;
+            nextLine = fgetl(fileID);
+            singleQuoteIndices = strfind(nextLine, '''');
+            while length(singleQuoteIndices) ~= 1
+                fullTextLine = [fullTextLine, nextLine];
+                nextLine = fgetl(fileID);
+                singleQuoteIndices = strfind(nextLine, '''');
+            end
+            fullTextLine = [fullTextLine, nextLine];
+        else
+            error('Unable to parse the CIF data');
+        end
+    end
+
 end
+
 

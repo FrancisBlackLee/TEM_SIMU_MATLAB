@@ -1,5 +1,5 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (C) 2019 - 2020  Francis Black Lee and Li Xian
+%   Copyright (C) 2019 - 2022  Francis Black Lee (Li Xian)
 
 %   This program is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
@@ -46,3 +46,4 @@ plot(x, ProbeNSreal(Ny / 2 + 1, : ), 'r-', x, ProbeNSimag(Ny / 2 + 1, : ), 'b--'
 legend('real', 'imag');
 subplot(1, 2, 2);
 plot(x, ProbeNSinten(Ny / 2 + 1, : ));
+

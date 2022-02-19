@@ -5,7 +5,7 @@ function [sf] = ScatteringFactor(atomType, q)
 %   q: scattering angle;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
+%   Copyright (C) 2019 - 2022  Francis Black Lee (Li Xian)
 
 %   This program is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
@@ -45,4 +45,5 @@ for i = 1 : 3
         exp(-paramD(i) * q.^2);
 end
 end
+
 

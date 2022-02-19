@@ -1,5 +1,5 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (C) 2019 - 2020  Francis Black Lee and Li Xian
+%   Copyright (C) 2019 - 2022  Francis Black Lee (Li Xian)
 
 %   This program is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
@@ -31,13 +31,13 @@ filename_6 = 'tests\cif_op\Si_mp-149_conventional_standard.cif';
 filename_7 = 'tests\cif_op\Si_mp-149_primitive.cif';
 filename_8 = 'tests\cif_op\Si_mp-149_symmetrized.cif';
 
-crysInfo = LoadCif(filename_1);
+crysInfo = LoadCif(filename_8);
 
 [cellLengths, cellAngles] = ExtractCellConstFromCrysInfo(crysInfo);
 atomSiteMat = ExtractAtomSiteFromCrysInfo(crysInfo);
 fullAtomSiteMat = AddEquivAtomSites(atomSiteMat);
 
-uvw = [1, 0, 0];
+uvw = [1, 1, 1];
 convMat = ConversionMatrix_uvw(cellLengths, cellAngles, uvw);
 atomCartCoord = convMat * fullAtomSiteMat(3 : 5, :);
 
@@ -76,6 +76,8 @@ end
 hold off;
 
 axis equal;
+xlabel('x');
+ylabel('y');
 
 end
 
@@ -113,5 +115,8 @@ end
 hold off;
 
 axis equal;
+xlabel('x');
+ylabel('y');
+zlabel('z');
 
 end

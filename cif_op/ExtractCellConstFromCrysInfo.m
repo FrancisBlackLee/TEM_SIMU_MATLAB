@@ -8,7 +8,7 @@ function [cellLengths, cellAngles] = ExtractCellConstFromCrysInfo(crysInfo)
 %   cellAngles -- [alpha, beta, gamma];
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
+%   Copyright (C) 2019 - 2022  Francis Black Lee (Li Xian)
 
 %   This program is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
@@ -54,4 +54,5 @@ cellAngles(3) = str2double(crysInfo.valuedProperty{strcmp('_cell_angle_gamma',..
     crysInfo.valuedProperty(:, 1)), 2});
 
 end
+
 

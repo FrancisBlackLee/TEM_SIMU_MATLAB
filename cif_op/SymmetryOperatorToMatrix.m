@@ -7,7 +7,7 @@ function [convMat, glideVec] = SymmetryOperatorToMatrix(stringExpression)
 %   matrixExpression -- symmetry operator as a 3-by-3 matrix;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
+%   Copyright (C) 2019 - 2022  Francis Black Lee (Li Xian)
 
 %   This program is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
@@ -40,4 +40,5 @@ rowStr_3 = stringExpression(commaIndices(2) + 1 : end);
 [convMat(3, :), glideVec(3)] = SymmetryOperatorToRowVec(rowStr_3);
 
 end
+
 

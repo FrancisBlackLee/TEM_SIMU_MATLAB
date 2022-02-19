@@ -7,7 +7,7 @@ function scaleCoeff = AngleUnitToRadianScale(angleUnit)
 %   scaleCoeff -- scaling coeffcient, 0 for invalid input;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (C) 2019 - 2021  Francis Black Lee and Li Xian
+%   Copyright (C) 2019 - 2022  Francis Black Lee (Li Xian)
 
 %   This program is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
@@ -37,4 +37,5 @@ switch angleUnit
 end
 
 end
+
 
