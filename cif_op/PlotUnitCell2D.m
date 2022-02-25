@@ -1,5 +1,5 @@
-function PlotCrystalCell3D(convMat, fracCoords)
-%PlotCrystalCell2D.m plots the atoms in 3D cartesian coordinates, given the
+function PlotUnitCell2D(convMat, fracCoords)
+%PlotCrystalCell2D.m plots the atoms in 2D cartesian coordinates, given the
 %conversion matrix and fractional coordinates.
 %   convMat -- conversion matrix;
 %   fracCoords -- fractional coordinates of the unit cell, syntax: [T; P;
@@ -26,7 +26,7 @@ function PlotCrystalCell3D(convMat, fracCoords)
 
 fracCoords = AddEquivAtomSites(fracCoords);
 atomCartCoord = convMat * fracCoords(3 : 5, :);
-scatter3(atomCartCoord(1, :), atomCartCoord(2, :), atomCartCoord(3, :), 75, 'filled');
+scatter(atomCartCoord(1, :), atomCartCoord(2, :), 75, 'filled');
 
 initVertexSites = [0, 0, 0; 0, 0, 1; 0, 1, 0; 0, 1, 1; 1, 0, 0; 1, 0, 1; 1, 1, 0; 1, 1, 1]';
 adjVertexSites1 = [0, 0, 1; 0, 0, 0; 0, 1, 1; 0, 1, 0; 1, 0, 1; 1, 0, 0; 1, 1, 1; 1, 1, 0]';
@@ -42,23 +42,19 @@ hold on;
 vertexNum = size(initCellVertexes, 2);
 for vertexIdx = 1 : vertexNum
     line([initCellVertexes(1, vertexIdx), adjCellVertexes1(1, vertexIdx)],...
-        [initCellVertexes(2, vertexIdx), adjCellVertexes1(2, vertexIdx)],...
-        [initCellVertexes(3, vertexIdx), adjCellVertexes1(3, vertexIdx)], 'Color', 'blue');
+        [initCellVertexes(2, vertexIdx), adjCellVertexes1(2, vertexIdx)], 'Color', 'blue');
     
     line([initCellVertexes(1, vertexIdx), adjCellVertexes2(1, vertexIdx)],...
-        [initCellVertexes(2, vertexIdx), adjCellVertexes2(2, vertexIdx)],...
-        [initCellVertexes(3, vertexIdx), adjCellVertexes2(3, vertexIdx)], 'Color', 'blue');
+        [initCellVertexes(2, vertexIdx), adjCellVertexes2(2, vertexIdx)], 'Color', 'blue');
     
     line([initCellVertexes(1, vertexIdx), adjCellVertexes3(1, vertexIdx)],...
-        [initCellVertexes(2, vertexIdx), adjCellVertexes3(2, vertexIdx)],...
-        [initCellVertexes(3, vertexIdx), adjCellVertexes3(3, vertexIdx)], 'Color', 'blue');
+        [initCellVertexes(2, vertexIdx), adjCellVertexes3(2, vertexIdx)], 'Color', 'blue');
 end
 hold off;
 
 axis equal;
 xlabel('x');
 ylabel('y');
-zlabel('z');
 
 end
 

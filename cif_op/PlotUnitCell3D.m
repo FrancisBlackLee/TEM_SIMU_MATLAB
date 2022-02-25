@@ -1,5 +1,5 @@
-function PlotCrystalCell2D(convMat, fracCoords)
-%PlotCrystalCell2D.m plots the atoms in 2D cartesian coordinates, given the
+function PlotUnitCell3D(convMat, fracCoords)
+%PlotCrystalCell2D.m plots the atoms in 3D cartesian coordinates, given the
 %conversion matrix and fractional coordinates.
 %   convMat -- conversion matrix;
 %   fracCoords -- fractional coordinates of the unit cell, syntax: [T; P;
@@ -25,8 +25,19 @@ function PlotCrystalCell2D(convMat, fracCoords)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 fracCoords = AddEquivAtomSites(fracCoords);
-atomCartCoord = convMat * fracCoords(3 : 5, :);
-scatter(atomCartCoord(1, :), atomCartCoord(2, :), 75, 'filled');
+% sort fracCoords by the atomic number Z:
+[~, atomTypeOrder] = sort(fracCoords(1, :), 'ascend');
+fracCoords = fracCoords(:, atomTypeOrder);
+
+atomNum = size(fracCoords, 2);
+atomHead = 1;
+hold on;
+while atomHead <= atomNum
+    plotCoords = fracCoords(3 : 5, fracCoords(1, :) == fracCoords(1, atomHead));
+    plotCoords = convMat * plotCoords;
+    scatter3(plotCoords(1, :), plotCoords(2, :), plotCoords(3, :), 75, 'filled');
+    atomHead = atomHead + size(plotCoords, 2);
+end
 
 initVertexSites = [0, 0, 0; 0, 0, 1; 0, 1, 0; 0, 1, 1; 1, 0, 0; 1, 0, 1; 1, 1, 0; 1, 1, 1]';
 adjVertexSites1 = [0, 0, 1; 0, 0, 0; 0, 1, 1; 0, 1, 0; 1, 0, 1; 1, 0, 0; 1, 1, 1; 1, 1, 0]';
@@ -38,23 +49,26 @@ adjCellVertexes1 = convMat * adjVertexSites1;
 adjCellVertexes2 = convMat * adjVertexSites2;
 adjCellVertexes3 = convMat * adjVertexSites3;
 
-hold on;
 vertexNum = size(initCellVertexes, 2);
 for vertexIdx = 1 : vertexNum
     line([initCellVertexes(1, vertexIdx), adjCellVertexes1(1, vertexIdx)],...
-        [initCellVertexes(2, vertexIdx), adjCellVertexes1(2, vertexIdx)], 'Color', 'blue');
+        [initCellVertexes(2, vertexIdx), adjCellVertexes1(2, vertexIdx)],...
+        [initCellVertexes(3, vertexIdx), adjCellVertexes1(3, vertexIdx)], 'Color', 'blue');
     
     line([initCellVertexes(1, vertexIdx), adjCellVertexes2(1, vertexIdx)],...
-        [initCellVertexes(2, vertexIdx), adjCellVertexes2(2, vertexIdx)], 'Color', 'blue');
+        [initCellVertexes(2, vertexIdx), adjCellVertexes2(2, vertexIdx)],...
+        [initCellVertexes(3, vertexIdx), adjCellVertexes2(3, vertexIdx)], 'Color', 'blue');
     
     line([initCellVertexes(1, vertexIdx), adjCellVertexes3(1, vertexIdx)],...
-        [initCellVertexes(2, vertexIdx), adjCellVertexes3(2, vertexIdx)], 'Color', 'blue');
+        [initCellVertexes(2, vertexIdx), adjCellVertexes3(2, vertexIdx)],...
+        [initCellVertexes(3, vertexIdx), adjCellVertexes3(3, vertexIdx)], 'Color', 'blue');
 end
 hold off;
 
 axis equal;
 xlabel('x');
 ylabel('y');
+zlabel('z');
 
 end
 

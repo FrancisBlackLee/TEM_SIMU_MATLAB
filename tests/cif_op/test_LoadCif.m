@@ -31,7 +31,7 @@ filename_6 = 'tests\cif_op\Si_mp-149_conventional_standard.cif';
 filename_7 = 'tests\cif_op\Si_mp-149_primitive.cif';
 filename_8 = 'tests\cif_op\Si_mp-149_symmetrized.cif';
 
-crysInfo = LoadCif(filename_8);
+crysInfo = LoadCif(filename_1);
 
 [cellLengths, cellAngles] = ExtractCellConstFromCrysInfo(crysInfo);
 atomSiteMat = ExtractAtomSiteFromCrysInfo(crysInfo);
@@ -42,6 +42,6 @@ convMat = ConversionMatrix_uvw(cellLengths, cellAngles, uvw);
 atomCartCoord = convMat * fullAtomSiteMat(3 : 5, :);
 
 figure;
-PlotCrystalCell2D(convMat, fullAtomSiteMat);
+PlotUnitCell2D(convMat, fullAtomSiteMat);
 figure;
-PlotCrystalCell3D(convMat, fullAtomSiteMat);
+PlotUnitCell3D(convMat, fullAtomSiteMat);
