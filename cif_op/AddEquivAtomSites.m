@@ -8,7 +8,7 @@ function [newAtomSiteMat] = AddEquivAtomSites(atomSiteMat)
 %       already added, format: [type; occupancy; fractX; fractY; fractZ];
 %
 % NOTE:
-%   The input cell is best to be a unit cell.
+%   The input cell must be a unit cell.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2022  Francis Black Lee (Li Xian)

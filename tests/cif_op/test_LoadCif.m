@@ -39,7 +39,6 @@ fullAtomSiteMat = AddEquivAtomSites(atomSiteMat);
 
 uvw = [1, 1, 1];
 convMat = ConversionMatrix_uvw(cellLengths, cellAngles, uvw);
-atomCartCoord = convMat * fullAtomSiteMat(3 : 5, :);
 
 figure;
 PlotUnitCell2D(convMat, fullAtomSiteMat);
