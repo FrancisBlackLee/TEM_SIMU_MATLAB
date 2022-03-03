@@ -1,4 +1,4 @@
-function [imageMatrix] = VtemlabImageReader(filename, size1, size2, size3)
+function [imageMatrix] = VtemlabImageReader(filename, size1, size2)
 %VtemlabImageReader.m converts the vtemlab image data to matlab matrix.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -20,11 +20,8 @@ function [imageMatrix] = VtemlabImageReader(filename, size1, size2, size3)
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-if nargin == 3 % without input of size3
-    size3 = 1;
-end
-
 rawData = load(filename);
+size3 = size(rawData, 1);
 imageMatrix = zeros(size1, size2, size3);
 for imageIdx = 1 : size3
     tmpImage = reshape(rawData(imageIdx, :), size2, size1);
