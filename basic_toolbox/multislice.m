@@ -3,16 +3,16 @@ function [varargout] = multislice(incidentWave, wavLen, Lx, Ly,...
 %MULTISLICE.M performs the multislice procedure. See E. J. Kirkland
 %Advanced Computing in Electron Microscopy.
 % Input:
-%   IncidentWave;
+%   incidentWave;
 %   Lx, Ly -- sampling parameters;
-%   TransFuncs -- transmission functions;
-%   LayerDist -- distance from one layer to the next layer;
-%   StackNum -- number of stackings;
-%   SaveSliceSeries -- Slice indices upon which the wave functions are to
+%   transFuncs -- transmission functions;
+%   sliceDist -- distance from one layer to the next layer;
+%   stackNum -- number of stackings;
+%   saveSliceSeries -- Slice indices upon which the wave functions are to
 %       be saved, i.e. [1, 2, 6, 8, 12, 34], note that the array should be
 %       in an increasing order and it maximum element should be no greater
 %       than N + 1, where N = StackNum * LayerNum;
-%   SaveDir -- the directory where you want these wave functions to be
+%   saveDir -- the directory where you want these wave functions to be
 %       saved;
 %
 % Output:
@@ -22,7 +22,6 @@ function [varargout] = multislice(incidentWave, wavLen, Lx, Ly,...
 %       data to saveDir fails or saveDir is not specified;
 %   [wave, selectWaves] -- output the exit wave and the selected wave
 %       functions if SaveSliceSeries is specified.
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2022  Francis Black Lee (Li Xian)

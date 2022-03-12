@@ -1,5 +1,5 @@
 function [varargout] = STEM_X(Lx, Ly, params, transFuncs, sliceDists,...
-    stackNum, aberrType, cbedOption, cbedDir, preferrence, varargin)
+    stackNum, aberrType, cbedOption, cbedDir, preference, varargin)
 %STEM_X.m is a specially designed multislice interface for STEM simulation.
 %   Lx, Ly -- sampling sidelength in angstrom;
 %   params -- STEM parameter setting:
@@ -58,10 +58,10 @@ function [varargout] = STEM_X(Lx, Ly, params, transFuncs, sliceDists,...
 if nargin == 6
     cbedOption = 0;
     aberrType = 'reduced';
-    preferrence = 'column';
+    preference = 'column';
 elseif nargin == 7
     cbedOption = 0;
-    preferrence = 'column';
+    preference = 'column';
 elseif nargin == 8
     % when cbedOption == 1 and no input cbedDir, create a temporary one
     if cbedOption == 1
@@ -71,7 +71,7 @@ elseif nargin == 8
             error('Error: creating cbed directory failed!');
         end
     end
-    preferrence = 'column';
+    preference = 'column';
 elseif nargin == 9
     if (cbedOption == 1) && (~(strcmp(cbedDir, 'column') || strcmp(cbedDir, 'row')))
         if ~isfolder(cbedDir)
@@ -82,7 +82,7 @@ elseif nargin == 9
         % and with specified binary writing preferrence, create a temporary
         % folder as the output directory and assign the value of the 9th
         % argument to preferrence
-        preferrence = cbedDir;
+        preference = cbedDir;
         cbedDir = 'tmp_cbed';
         status = mkdir(cbedDir);
         if status == 0
@@ -161,7 +161,7 @@ for iy = 1 : scanNy
         if cbedOption == 1
             cbedName = ['cbed_y', num2str(iy), '_x', num2str(ix), '.bin'];
             cbedName = fullfile(cbedDir, cbedName);
-            WriteBinaryFile(cbedName, tmpCbed, preferrence, varargin{:});
+            WriteBinaryFile(cbedName, tmpCbed, preference, varargin{:});
         end
     end
 end

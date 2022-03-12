@@ -1,4 +1,4 @@
-function [limited] = BandwidthLimit(unlimited, Lx, Ly, Nx, Ny, proportion)
+function [limited] = BandwidthLimit(unlimited, Lx, Ly, Nx, Ny, proportion, shiftMode)
 %BandwidthLimit limits the input 2D matrix in the frequency space with 
 %input cutoff proportion ranging from 0 to 1.
 %   unlimited -- matrix to be bandwidth limited;
@@ -25,17 +25,32 @@ function [limited] = BandwidthLimit(unlimited, Lx, Ly, Nx, Ny, proportion)
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+if nargin == 6
+    shiftMode.in = false;
+    shiftMode.out = false;
+end
+
 dx = Lx / Nx;
 dy = Ly / Ny;
-fx = -1 / (2 * dx) : 1 / Lx : 1 / (2 * dx) - 1 / Lx;
-fy = -1 / (2 * dy) : 1 / Ly : 1 / (2 * dy) - 1 / Ly;
-[Fx, Fy] = meshgrid(fx, fy);
-FreqSquare = Fx.^2 + Fy.^2;
-Aperture = ones(size(Fx));
-R_apert = proportion * min(1 / (2 * dx), 1 / (2 * dy));
-Aperture(FreqSquare > R_apert^2) = 0;
-reciprocal = fftshift(Aperture) .* fft2(fftshift(unlimited));
-limited = ifftshift(ifft2(reciprocal));
+fx = InitFreqAxis(Lx, Nx);
+fy = InitFreqAxis(Ly, Ny);
+[fxMesh, fyMesh] = meshgrid(fx, fy);
+freqSquare = fxMesh.^2 + fyMesh.^2;
+r = proportion * min(1 / (2 * dx), 1 / (2 * dy));
+aperture = (freqSquare <= r^2);
+
+if shiftMode.in
+    reciprocal = fftshift(aperture) .* fft2(unlimited);
+else
+    reciprocal = fftshift(aperture) .* fft2(fftshift(unlimited));
+end
+
+if shiftMode.out
+    limited = ifft2(reciprocal);
+else
+    limited = ifftshift(ifft2(reciprocal));
+end
+
 amp = abs(limited);
 limited = limited ./ amp;
 

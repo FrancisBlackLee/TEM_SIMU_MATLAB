@@ -5,10 +5,6 @@ function [sliceIndices] = DepthsToSliceIndices(sliceDists, stackNum, depths)
 %   stackNum -- stacking number;
 %   depths -- transmission depths;
 
-sliceDists = reshape(sliceDists, 1, []);
-stackedSliceDists = repmat(sliceDists, 1, stackNum);
-stackedSliceDists = cumsum(stackedSliceDists);
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2022  Francis Black Lee (Li Xian)
 
@@ -27,6 +23,10 @@ stackedSliceDists = cumsum(stackedSliceDists);
 
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+sliceDists = reshape(sliceDists, 1, []);
+stackedSliceDists = repmat(sliceDists, 1, stackNum);
+stackedSliceDists = cumsum(stackedSliceDists);
 
 sliceIndices = zeros(size(depths));
 for depthIdx = 1 : length(depths)

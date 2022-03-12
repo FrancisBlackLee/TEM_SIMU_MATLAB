@@ -19,7 +19,7 @@ function [exitWave] = multislice_X(inciWave, KeV, Lx, Ly, transFuncs,...
 %   ProjPotDir -- directory where the projected potential (in V-Angs) are
 %       stored. Also note that these ProjPot files are named in the same
 %       style, name ordering is the same as the slice ordering.
-%   FileExtension -- a required input if TransFuncDir is input. '*.txt' is
+%   FileExtension -- a required input if TransFuncDir is input. '*.bin' is
 %       suggested.
 %   Note: X denotes an experimental version. This function can be further
 %       optimized for ADF-STEM, but there is no need to keep modifying this
