@@ -27,7 +27,7 @@ function [atomTypeIdx] = AtomTypeStrToIdx(atomTypeStr)
 
 % determine if the first or first two character(s) is/are letter(s)
 atomLabel = '';
-for i = 1 : 2
+for i = 1 : strlength(atomTypeStr)
     if isletter(atomTypeStr(i))
         atomLabel = [atomLabel, atomTypeStr(i)];
     end
