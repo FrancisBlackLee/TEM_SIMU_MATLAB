@@ -29,6 +29,12 @@ function [atomSiteMat] = ExtractAtomSiteFromCrysInfo(crysInfo)
 
 % find symmetry operations
 symEquivOpIdx = find(strcmp('_symmetry_equiv_pos_as_xyz', crysInfo.loopProperty(:, 1)));
+if isempty(symEquivOpIdx)
+    loopPropertyNum = size(crysInfo.loopProperty, 1);
+    symEquivOpIdx = loopPropertyNum + 1;
+    crysInfo.loopProperty{symEquivOpIdx, 1} = '_symmetry_equiv_pos_as_xyz';
+    crysInfo.loopProperty{symEquivOpIdx, 2} = 'x,y,z';
+end
 symEquivOpNum = sum(~cellfun(@isempty, crysInfo.loopProperty(symEquivOpIdx, :))) - 1;
 symEquivOpMat = zeros(3, 3, symEquivOpNum);
 glideMat = zeros(3, symEquivOpNum);
