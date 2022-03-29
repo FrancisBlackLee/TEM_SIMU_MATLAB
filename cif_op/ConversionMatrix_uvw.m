@@ -4,8 +4,8 @@ function [convMat] = ConversionMatrix_uvw(cellLengths, cellAngles, uvw)
 % Input:
 %   cellLengths -- element 1 for cell length a, 2 for cell length b and 3
 %       for cell length c;
-%   cellAngles -- element 1 for cell angle alpha (between bases a and c);
-%       2 for cell angle beta (between bases b and c) and
+%   cellAngles -- element 1 for cell angle alpha (between bases b and c);
+%       2 for cell angle beta (between bases a and c) and
 %       3 for cell angle gamma (between bases a and b);
 %   uvw -- zone axis / orientation indices;
 % Output:
