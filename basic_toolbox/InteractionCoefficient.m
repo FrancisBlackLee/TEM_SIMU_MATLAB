@@ -21,13 +21,8 @@ function [interCoeff] = InteractionCoefficient(KeV)
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-lightSpeed = 2.998e8; % in meter
-eleCharge = 1.602e-19; % in coulomb
-voltage = 1000 * KeV; % in volt
-m0 = 9.109e-31; % in kilogram
-lambda = HighEnergyWavLen_X(KeV);
-interCoeff = 2 * pi/(lambda * KeV) * (m0 * lightSpeed^2 + eleCharge * voltage)/...
-    (2 * m0 * lightSpeed^2 + eleCharge * voltage);
+wavLen = HighEnergyWavLen_X(KeV);
+interCoeff = 2 * pi / (wavLen * KeV) * (511 + KeV) / (2 * 511 + KeV);
 
 end
 
