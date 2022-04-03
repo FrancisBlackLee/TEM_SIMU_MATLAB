@@ -26,6 +26,7 @@
 #include <time.h>
 #include <direct.h>
 
+#include "interact.h"
 #include "mathconst.h"
 #include "mode.h"
 #include "multislice.h"
@@ -316,7 +317,7 @@ int TestCbedTdsKernel()
 	char folder[] = "si_111";
 
 	int expanNum[2] = { 12,7 };
-	int configNum = 8;
+	int configNum = 4;
 	int stackNum = 107;
 	int Nx = 512, Ny = 512;
 	int typeNum = 1;
@@ -362,20 +363,20 @@ int TestCbedTdsKernel()
 	double numApert = 8;
 	double bwlProp = 0.67;
 
-	int depthLevelNum = 51;
-	double* depthList = (double*)mkl_malloc(depthLevelNum * sizeof(double), 64);
-	int* sliceIndexList = (int*)malloc(depthLevelNum * sizeof(int));
-	for (int depthIdx = 0; depthIdx < depthLevelNum; depthIdx++)
+	int depthNum = 51;
+	double* depthList = (double*)mkl_malloc(depthNum * sizeof(double), 64);
+	int* sliceIndexList = (int*)malloc(depthNum * sizeof(int));
+	for (int depthIdx = 0; depthIdx < depthNum; depthIdx++)
 	{
 		depthList[depthIdx] = 500.0 + (double)depthIdx * 10.0;
 		sliceIndexList[depthIdx] = 0;
 	}
 
 	DepthListToSliceIndexList(testSliceList, sliceNum, stackNum, depthList,
-		sliceIndexList, depthLevelNum);
+		sliceIndexList, depthNum);
 
 	printf("> select data output slice:\n");
-	for (int sliceIdx = 0; sliceIdx < depthLevelNum; sliceIdx++)
+	for (int sliceIdx = 0; sliceIdx < depthNum; sliceIdx++)
 	{
 		printf("%d\t(%.4f Angs.)\n", sliceIndexList[sliceIdx], depthList[sliceIdx]);
 	}
@@ -385,7 +386,7 @@ int TestCbedTdsKernel()
 	snprintf(cbedFilename, FILENAME_MAX, "%s\\test_cbed.txt", folder);
 
 	errorCode = CbedTdsKernel(otfParam, voltage, numApert, testThermoSliceList,
-		testPropKerList, 0.0, 0.0, bwlProp, Nx, Ny, depthLevelNum, sliceIndexList,
+		testPropKerList, 0.0, 0.0, bwlProp, Nx, Ny, depthNum, sliceIndexList,
 		cbedFilename);
 	if (errorCode)
 	{
@@ -403,6 +404,34 @@ int TestCbedTdsKernel()
 	FreePropKerList(testPropKerList, sliceDistEqual);
 	mkl_free(depthList);
 	free(sliceIndexList);
+
+	return VTEMLAB_SUCCESS;
+}
+
+
+int TestInteract()
+{
+	PrintLicense();
+
+	int testInt;
+	AssignInt("integer", testInt);
+	printf("val = %d\n", testInt);
+
+	double testDouble;
+	AssignDouble("double", testDouble);
+	printf("val = %.4f\n", testDouble);
+
+	char filename[FILENAME_MAX];
+	AssignString("filename", filename);
+	printf("val = %s\n", filename);
+
+	int vecLen = 10;
+	double* testDoubleArray = (double*)mkl_malloc(vecLen * sizeof(double), 64);
+	AssignDoubleArray("double array", testDoubleArray, vecLen);
+	for (int i = 0; i < vecLen; i++)
+		printf("val[%d] = %.4f\n", i, testDoubleArray[i]);
+
+	mkl_free(testDoubleArray);
 
 	return VTEMLAB_SUCCESS;
 }

@@ -26,7 +26,8 @@
 enum
 {
 	VTEMLAB_SUCCESS  = 0,  // success
-	VTEMLAB_FAILURE  = -1, // failure
+	VTEMLAB_CONTINUE = -1, // continue
+	VTEMLAB_FAILURE  = -2, // failure
 	VTEMLAB_ENULLPTR = 1,  // null pointer
 	VTEMLAB_ENOMEM   = 2,  // malloc failure, no memory
 	VTEMLAB_ELOSS    = 3,  // loss of accuracy

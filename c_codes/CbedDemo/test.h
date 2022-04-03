@@ -53,4 +53,6 @@ int TestCrysFileToProjPot_conv_Frac();
 // Test CbedTdsKernel
 int TestCbedTdsKernel();
 
+int TestInteract();
+
 #endif // !TEST_H

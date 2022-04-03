@@ -84,50 +84,14 @@ int SliceComplexProjPot_thermo_conv(ThermoSliceList* thermoSlice,
 	MKL_Complex16* projPot, MKL_Complex16* container, int Nx, int Ny,
 	int projPotOutMode)
 {
-	// check if thermoSlice and its contents are NULL
-	if (thermoSlice == NULL)
-	{
-		PrintErrorMsg("SliceComplexProjPot_thermo_conv", VTEMLAB_ENULLPTR);
-		return VTEMLAB_ENULLPTR;
-	}
-	if (thermoSlice->typeListHead == NULL)
-	{
-		PrintErrorMsg("SliceComplexProjPot_thermo_conv", VTEMLAB_ENULLPTR);
-		return VTEMLAB_ENULLPTR;
-	}
-	if (thermoSlice->posiOrientDispArray == NULL)
-	{
-		PrintErrorMsg("SliceComplexProjPot_thermo_conv", VTEMLAB_ENULLPTR);
-		return VTEMLAB_ENULLPTR;
-	}
-	if (thermoSlice->rndThermoDispX == NULL)
-	{
-		PrintErrorMsg("SliceComplexProjPot_thermo_conv", VTEMLAB_ENULLPTR);
-		return VTEMLAB_ENULLPTR;
-	}
-	if (thermoSlice->rndThermoDispY == NULL)
-	{
-		PrintErrorMsg("SliceComplexProjPot_thermo_conv", VTEMLAB_ENULLPTR);
-		return VTEMLAB_ENULLPTR;
-	}
-
-	// check if scattFac, convKer, projPot, and tmpProjPot are NULL
-	if (scattParams == NULL)
-	{
-		PrintErrorMsg("SliceComplexProjPot_thermo_conv", VTEMLAB_ENULLPTR);
-		return VTEMLAB_ENULLPTR;
-	}
-	if (convKer == NULL)
-	{
-		PrintErrorMsg("SliceComplexProjPot_thermo_conv", VTEMLAB_ENULLPTR);
-		return VTEMLAB_ENULLPTR;
-	}
-	if (projPot == NULL)
-	{
-		PrintErrorMsg("SliceComplexProjPot_thermo_conv", VTEMLAB_ENULLPTR);
-		return VTEMLAB_ENULLPTR;
-	}
-	if (container == NULL)
+	bool anyNullPtr = (thermoSlice == NULL) ||
+		(thermoSlice->typeListHead == NULL) ||
+		(thermoSlice->posiOrientDispArray == NULL) ||
+		(thermoSlice->rndThermoDispX == NULL) ||
+		(thermoSlice->rndThermoDispY == NULL) ||
+		(scattParams == NULL) || (convKer == NULL) ||
+		(projPot == NULL) || (container == NULL);
+	if (anyNullPtr)
 	{
 		PrintErrorMsg("SliceComplexProjPot_thermo_conv", VTEMLAB_ENULLPTR);
 		return VTEMLAB_ENULLPTR;

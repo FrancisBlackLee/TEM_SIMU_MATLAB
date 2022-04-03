@@ -436,8 +436,8 @@ int Save3dImage(char* filename, double** stemImg, int sliceNum,
 	err = fopen_s(&destFile, filename, "w+");
 	if (err)
 	{
-		PrintErrorMsg("Save3dImage", VTEMLAB_EINVAL);
-		return VTEMLAB_EINVAL;
+		PrintErrorMsg("Save3dImage", VTEMLAB_EFILEW);
+		return VTEMLAB_EFILEW;
 	}
 
 	for (int sliceIdx = 0; sliceIdx < sliceNum; sliceIdx++)
@@ -714,10 +714,10 @@ int CbedMultisliceKernel(MKL_Complex16* wave, int wIMode, int wOMode,
 		return VTEMLAB_ENOMEM;
 	}
 
-	int sliceCount = 0;
-	int tmpRecordSliceIdx = 0;
 	for (int configIdx = 0; configIdx < configNum; configIdx++)
 	{
+		int sliceCount = 0;
+		int tmpRecordSliceIdx = 0;
 		UpdateProcess("CbedMultisliceKernel", configIdx, configNum);
 		cblas_zcopy(vecLen, initWave, 1, wave, 1);
 		for (int stackIdx = 0; stackIdx < stackNum; stackIdx++)
@@ -770,6 +770,7 @@ int CbedMultisliceKernel(MKL_Complex16* wave, int wIMode, int wOMode,
 
 		UpdateProcess("CbedMultisliceKernel", configIdx + 1, configNum);
 	}
+	printf("\n\n");
 	PrintErrorMsg("CbedMultisliceKernel", VTEMLAB_SUCCESS);
 
 	double invConfigNum = 1.0 / (double)configNum;
@@ -904,4 +905,19 @@ int CbedTdsKernel(OtfParamSet otfParam, double voltage, double numApert,
 	mkl_free(wave);
 
 	return VTEMLAB_SUCCESS;
+}
+
+
+// get the stack thickness from a SliceList
+double GetStackThickness(SliceList* sList)
+{
+	double t = 0.0;
+	SliceList* sNode = sList->NextSlice;
+	while (sNode != NULL)
+	{
+		t += sNode->SliceDist;
+		sNode = sNode->NextSlice;
+	}
+
+	return t;
 }

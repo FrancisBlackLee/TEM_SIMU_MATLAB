@@ -118,4 +118,7 @@ int CbedTdsKernel(OtfParamSet otfParam, double voltage, double numApert,
 	double bwlProp, int Nx, int Ny, int selectSliceNum, int* selectSliceIndices,
 	char* cbedFilename);
 
+// get the stack thickness from a SliceList
+double GetStackThickness(SliceList* sList);
+
 #endif // !MULTISLICE_H

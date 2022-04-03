@@ -31,6 +31,9 @@ const char* ErrorMessage(const int errorCode)
 	case VTEMLAB_SUCCESS:
 		return "Succes";
 		break;
+	case VTEMLAB_CONTINUE:
+		return "Continue";
+		break;
 	case VTEMLAB_FAILURE:
 		return "Failure";
 		break;

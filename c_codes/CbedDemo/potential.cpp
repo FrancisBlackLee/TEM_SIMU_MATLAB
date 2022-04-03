@@ -306,11 +306,17 @@ int MultiAtomProjPot_conv(double* scattParams, double*& projPot,
 int SaveProjPot(char* filename, double* projPot, double Lx, double Ly, 
 	int Nx, int Ny, double sliceDist)
 {
+	if ((Nx == 0) || (Ny == 0))
+	{
+		PrintErrorMsg("SaveProjPot", VTEMLAB_EINVAL);
+		return VTEMLAB_EINVAL;
+	}
+
 	int ix, iy;
 	FILE* destFile;
 	errno_t err;
 	err = fopen_s(&destFile, filename, "w+");
-	if (err || (Ny * Nx == 0))
+	if (err)
 	{
 		PrintErrorMsg("SaveProjPot", VTEMLAB_EFILEW);
 		return VTEMLAB_EFILEW;
