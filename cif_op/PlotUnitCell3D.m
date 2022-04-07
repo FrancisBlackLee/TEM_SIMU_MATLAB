@@ -71,9 +71,9 @@ end
 hold off;
 
 axis equal;
-xlabel('x');
-ylabel('y');
-zlabel('z');
+xlabel('x (\AA)', 'interpreter', 'latex');
+ylabel('y (\AA)', 'interpreter', 'latex');
+zlabel('z (\AA)', 'interpreter', 'latex');
 
 % nested function:
     function PlotSingleUnitCell(cellIndices)
