@@ -1,5 +1,7 @@
-function [imageMatrix] = VtemlabImageReader(filename, size1, size2)
+function [imageMatrix] = VtemlabImageReader(filename, size1, size2, varargin)
 %VtemlabImageReader.m converts the vtemlab image data to matlab matrix.
+%   varargin -- extra arguments for reading binary file except the
+%       precision option.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2022  Francis Black Lee (Li Xian)
@@ -20,12 +22,26 @@ function [imageMatrix] = VtemlabImageReader(filename, size1, size2)
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-rawData = load(filename);
-size3 = size(rawData, 1);
-imageMatrix = zeros(size1, size2, size3);
-for imageIdx = 1 : size3
-    tmpImage = reshape(rawData(imageIdx, :), size2, size1);
-    imageMatrix(:, :, imageIdx) = tmpImage';
+[~, ~, ext] = fileparts(filename);
+if strcmp(ext, '.txt')
+    rawData = load(filename);
+    size3 = size(rawData, 1);
+    imageMatrix = zeros(size1, size2, size3);
+    for imageIdx = 1 : size3
+        tmpImage = reshape(rawData(imageIdx, :), size2, size1);
+        imageMatrix(:, :, imageIdx) = tmpImage';
+    end
+    
+elseif strcmp(ext, '.bin')
+    fileID = fopen(filename);
+    imageNum = fread(fileID, 1, 'int', varargin{:});
+    rowNum = fread(fileID, 1, 'int', varargin{:});
+    colNum = fread(fileID, 1, 'int', varargin{:});
+    imageMatrix = zeros(rowNum, colNum, imageNum);
+    for imageIdx = 1 : imageNum
+        tmpImage = fread(fileID, [colNum, rowNum], 'double', varargin{:});
+        imageMatrix = tmpImage';
+    end
 end
 
 end
