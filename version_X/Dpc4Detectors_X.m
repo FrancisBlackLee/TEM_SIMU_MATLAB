@@ -1,6 +1,8 @@
-function [detector] = AnnularDetector_X(lowAngle, highAngle, wavLen, Lx, Ly, Nx, Ny)
-%AnularDetector_X.m generates the detector for ADF-STEM mode.
+function [detectors] = Dpc4Detectors_X(lowAngle, highAngle, rotAngle,...
+    wavLen, Lx, Ly, Nx, Ny)
+%Dpc4Detectors_X generates 4-piece segmented DPC detectors
 %   lowAngle, highAngle -- describe the shape of the detector in mrad;
+%   rotAngle -- rotation angle of the detectors;
 %   wavLen -- wavelength of the electron beam;
 %   Lx, Ly, Nx, Ny -- sampling parameters;
 % Note: X denotes an experimental version!
@@ -28,9 +30,25 @@ fx = InitFreqAxis(Lx, Nx);
 fy = InitFreqAxis(Ly, Ny);
 [FX, FY] = meshgrid(fx, fy);
 freqSqr = FX.^2 + FY.^2;
-detector = ((freqSqr < (highAngle * 1e-3 / wavLen)^2) &...
-    (freqSqr > (lowAngle * 1e-3 / wavLen)^2));
+
+lowFreqSqr = (lowAngle * 1e-3 / wavLen)^2;
+highFreqSqr = (highAngle * 1e-3 / wavLen)^2;
+
+mask = (freqSqr > lowFreqSqr) & (freqSqr < highFreqSqr);
+
+detectors = zeros(Ny, Nx, 4);
+% quadrant 1:
+detectors(:, :, 1) = (mask & (FX > 0) & (FY > 0));
+detectors(:, :, 1) = imrotate(detectors(:, :, 1), rotAngle, 'crop');
+% quadrant 2:
+detectors(:, :, 2) = (mask & (FX < 0) & (FY > 0));
+detectors(:, :, 2) = imrotate(detectors(:, :, 2), rotAngle, 'crop');
+% quadrant 3:
+detectors(:, :, 3) = (mask & (FX < 0) & (FY < 0));
+detectors(:, :, 3) = imrotate(detectors(:, :, 3), rotAngle, 'crop');
+% quadrant 4:
+detectors(:, :, 4) = (mask & (FX > 0) & (FY < 0));
+detectors(:, :, 4) = imrotate(detectors(:, :, 4), rotAngle, 'crop');
 
 end
-
 
