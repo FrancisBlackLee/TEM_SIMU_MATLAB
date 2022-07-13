@@ -40,7 +40,7 @@ elseif strcmp(ext, '.bin')
     imageMatrix = zeros(rowNum, colNum, imageNum);
     for imageIdx = 1 : imageNum
         tmpImage = fread(fileID, [colNum, rowNum], 'double', varargin{:});
-        imageMatrix = tmpImage';
+        imageMatrix(:, :, imageIdx) = tmpImage';
     end
 end
 
