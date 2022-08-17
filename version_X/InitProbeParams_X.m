@@ -1,15 +1,7 @@
-function [probe] = GenerateProbe_X(varargin)
-%GenerateProbe_X.m generates an electron probe.
-% GenerateProbe_X(otf, xp, yp, Lx, Ly, Nx, Ny):
-%   OTF -- prepared objective transfer function in reciprocal space, note
-%       that ObjTransFunc_X.m does not generate the OTF with an aperture,
-%       thus the input OTF must have been multiplied by an aperture in
-%       advance;
-%   Lx, Ly, Nx, Ny -- sampling parameters, L denotes side length and N the
-%       sampling number in real space;
-%   xp, yp -- probe position in real space;
-%
-% GenerateProbe_X(params):
+function [params] = InitProbeParams_X()
+%InitProbeParams_X.m initializes params that GenerateProbe_X(params)
+%utilizes.
+% Output:
 %   params -- parameters for generating the probe:
 %       params.KeV -- beam energy in KeV;
 %       params.type -- aberration type: 'reduced' (C3, C5, df) or 'full' 
@@ -51,47 +43,18 @@ function [probe] = GenerateProbe_X(varargin)
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-if nargin == 7
-    otf = varargin{1};
-    xp = varargin{2};
-    yp = varargin{3};
-    Lx = varargin{4};
-    Ly = varargin{5};
-    Nx = varargin{6};
-    Ny = varargin{7};
-
-elseif nargin == 1
-    params = varargin{1};
-    xp = params.xp;
-    yp = params.yp;
-    Lx = params.Lx;
-    Ly = params.Ly;
-    Nx = params.Nx;
-    Ny = params.Ny;
-    wavLen = HighEnergyWavLen_X(params.KeV);
-    if strcmp(params.type, 'reduced')
-        otf = params.aperture .* ObjTransFunc_X(params, Lx, Ly, Nx, Ny);
-    elseif strcmp(params.type, 'full')
-        otfPhase = AberrationPhaseShift_X(params.aberration, wavLen,...
-            Lx, Ly, Nx, Ny);
-        otf = params.aperture .* exp(-1i * otfPhase);
-    else
-        error('Invalid aberration type!\n');
-    end
-else
-    error("Incorrect number of input arguments.");
-end
-
-dx = Lx / Nx;
-dy = Ly / Ny;
-fx = InitFreqAxis(Lx, Nx);
-fy = InitFreqAxis(Ly, Ny);
-[FX, FY] = meshgrid(fx, fy);
-probe = ifftshift(ifft2(fftshift(otf .* exp(-1i * 2 * pi * (FX * xp + FY * yp)))));
-
-normCoeff = sqrt(sum(abs(probe.^2), 'all') * dx * dy);
-probe = probe / normCoeff;
+params.KeV = 300;
+params.type = 'reduced';
+params.Cs3 = 0;
+params.Cs5 = 0;
+params.df = 0;
+params.aberration = InitObjectiveLensAberrations_X();
+params.aperture = 0;
+params.xp = 0;
+params.yp = 0;
+params.Lx = 10;
+params.Ly = 10;
+params.Nx = 512;
+params.Ny = 512;
 
 end
-
-

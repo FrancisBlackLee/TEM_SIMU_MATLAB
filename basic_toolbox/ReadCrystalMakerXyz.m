@@ -28,9 +28,7 @@ function [typeList, xyzList] = ReadCrystalMakerXyz(filename)
 
 filePtr = fopen(filename, 'r');
 if filePtr == -1
-    typeList = [];
-    xyzList = [];
-    msgbox('Failed to open file!');
+    error('Failed to open file!');
 else
     atomNum = fscanf(filePtr, '%d', 1);
     typeList = zeros(1, atomNum);
