@@ -1,4 +1,4 @@
-function [convMat] = ConversionMatrix_uvw(cellLengths, cellAngles, uvw)
+function [convMat] = ConversionMatrix_uvw(cellLengths, cellAngles, uvw, hkl)
 %ConversionMatrix_uvw() computes the conversion matrix, given the cell
 %constants and zone axis / orientation indices.
 % Input:
@@ -35,7 +35,15 @@ if all(cellLengths) && all(cellAngles) && any(uvw)
 
     viewDirection = CrystalIndicesToBasis(initConvMat, uvw);
 
-    rotMat = RotationOperator(viewDirection);
+    if nargin == 3
+        rotMat = RotationOperator(viewDirection);
+    elseif nargin == 4
+        horizonalDirection = CrystalIndicesToBasis(initConvMat, hkl);
+        rotMat = RotationOperator(viewDirection, horizonalDirection);
+    else
+        error('Incorrect number of input arguments.');
+    end
+
     convMat = rotMat * initConvMat;
 else
     convMat = zeros(3);

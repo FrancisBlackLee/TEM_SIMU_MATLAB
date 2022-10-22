@@ -1,5 +1,5 @@
 function [atomCoordMat] = CreateNanoCluster_uvw(atomSiteMat, cellLengths,...
-    cellAngles, uvw, radius)
+    cellAngles, uvw, radius, hkl)
 %CreateNanoCluster_uvw() rotates the unit cell to the given orientation, 
 %duplicate the unit cell and rehapes the lattice to nano-cluster.
 % Input:
@@ -64,7 +64,14 @@ elseif ~(radius > 0)
     ME = MException(errID, msgtext);
     throw(ME);
 else
-    convMat = ConversionMatrix_uvw(cellLengths, cellAngles, uvw);
+    if nargin == 5
+        convMat = ConversionMatrix_uvw(cellLengths, cellAngles, uvw);
+    elseif nargin == 6
+        convMat = ConversionMatrix_uvw(cellLengths, cellAngles, uvw, hkl);
+    else
+        error('Incorrect number of input arguments.');
+    end
+    
     vecA = convMat(:, 1);
     vecB = convMat(:, 2);
     vecC = convMat(:, 3);
