@@ -1,9 +1,7 @@
-function [typeList, xyzList, label] = ReadVestaXyz(filename)
-%ReadCrystalMakerXyz() reads crystal coordinate data from xyz file export
-%from VESTA.
+function WriteVestaXyz(filename, typeList, xyzList, label)
+%WriteCrystalMakerXyz() writes crystal coordinate data as VESTA xyz file.
 % Input:
 %   filename -- filename of the xyz file;
-% Output:
 %   typeList -- list of the atomic types, 1 by atomNum array;
 %   xyzList -- list of the atomic xyz coordinates, 3 by atomNum matrix;
 
@@ -26,24 +24,22 @@ function [typeList, xyzList, label] = ReadVestaXyz(filename)
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-if isfile(filename)
-    lines = readlines(filename);
-    atomNum = str2num(lines{1});
-    label = lines{2};
-    typeList = zeros(1, atomNum);
-    xyzList = zeros(3, atomNum);
-    for atomIdx = 1 : atomNum
-        names = split(lines{atomIdx + 2});
-        if isempty(names{1})
-            names(1) = [];
-        end
-        typeList(atomIdx) = AtomTypeStrToIdx(names{1});
-        xyzList(1, atomIdx) = str2double(names{2});
-        xyzList(2, atomIdx) = str2double(names{3});
-        xyzList(3, atomIdx) = str2double(names{4});
-    end
+filePtr = fopen(filename, 'w');
+if filePtr == -1
+    error('Failed to open file!');
 else
-    error('File does not exist');
+    atomNum = length(typeList);
+    fprintf(filePtr, '%d\n', atomNum);
+    fprintf(filePtr, '%s\n', label);
+    for atomIdx = 1 : atomNum
+        fprintf(filePtr, '%s  %f  %f  %f\n',...
+            AtomTypeIdxToStr(typeList(atomIdx)),...
+            xyzList(1, atomIdx),...
+            xyzList(2, atomIdx),...
+            xyzList(3, atomIdx));
+    end
+
+    fclose(filePtr);
 end
 
 end
