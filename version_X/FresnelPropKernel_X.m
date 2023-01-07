@@ -7,7 +7,7 @@ function [PropKernel] = FresnelPropKernel_X(Lx, Ly, Nx, Ny, WavLen, PropDist)
 % Note: X denotes an experimental version!
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (C) 2019 - 2022  Francis Black Lee (Li Xian)
+%   Copyright (C) 2019 - 2023  Francis Black Lee (Li Xian)
 
 %   This program is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
@@ -31,5 +31,6 @@ fy = InitFreqAxis(Ly, Ny);
 PropKernel = exp(-1i * pi * WavLen * PropDist * (FX.^2 + FY.^2));
 
 end
+
 
 

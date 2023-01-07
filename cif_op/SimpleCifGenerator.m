@@ -6,7 +6,7 @@ function SimpleCifGenerator(filename, convMat, fracCoords)
 %   fracCoords -- fractional coordinates.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (C) 2019 - 2022  Francis Black Lee (Li Xian)
+%   Copyright (C) 2019 - 2023  Francis Black Lee (Li Xian)
 
 %   This program is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
@@ -90,4 +90,5 @@ end
 fclose(fileID);
 
 end
+
 

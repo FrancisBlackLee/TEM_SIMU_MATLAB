@@ -1,5 +1,5 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (C) 2019 - 2022  Francis Black Lee (Li Xian)
+%   Copyright (C) 2019 - 2023  Francis Black Lee (Li Xian)
 
 %   This program is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
@@ -30,3 +30,4 @@ KeV = 300;
 InciWave = ones(Ny, Nx);
 SliceDist = [1.6410, 2.1053, 1.7477, 2.2120];
 ExitWave = multislice_X(InciWave, KeV, Lx, Ly, 'files', SliceDist, 1, ProjPotDir, '*.txt');
+

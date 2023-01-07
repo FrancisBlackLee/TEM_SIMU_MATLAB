@@ -11,3 +11,4 @@ rho = rho * 4 * pi .* r.^2;
 plot(r, rho);
 % data = [r;rho]';
 % save('tests\charge_density_Ge.txt', 'data', '-ascii', '-double', '-tabs');
+

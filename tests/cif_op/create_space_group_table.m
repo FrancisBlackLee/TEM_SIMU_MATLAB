@@ -61,3 +61,4 @@ space_group_table = table(symmetry_Int_Tables_number, space_group_IT_number,...
     space_group_H_M, space_group_crystal_system, symmetry_cell_setting);
 
 % writetable(space_group_table, 'cif_op\space_group_table.txt');
+

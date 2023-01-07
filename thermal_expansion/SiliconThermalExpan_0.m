@@ -7,3 +7,4 @@ aT = aT0 + 1.8138e-5 * T + 1.542e-9 * T.^2;
 expanCoeff = aT / aT0;
 
 end
+

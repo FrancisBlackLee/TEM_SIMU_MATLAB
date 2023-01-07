@@ -10,3 +10,4 @@ plot(r, radPot);
 
 data = [r; radPot]';
 save('tests\radial_potential_Ge.txt', 'data', '-ascii', '-double', '-tabs');
+

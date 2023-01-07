@@ -10,7 +10,7 @@ function [u] = ThermoDisplace_0(massNum, debyeTemp, temperature)
 %       Angstrom);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (C) 2019 - 2022  Francis Black Lee (Li Xian)
+%   Copyright (C) 2019 - 2023  Francis Black Lee (Li Xian)
 
 %   This program is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
@@ -31,5 +31,6 @@ function [u] = ThermoDisplace_0(massNum, debyeTemp, temperature)
 u = sqrt(144.38 * temperature ./ (massNum .* debyeTemp.^2));
 
 end
+
 
 

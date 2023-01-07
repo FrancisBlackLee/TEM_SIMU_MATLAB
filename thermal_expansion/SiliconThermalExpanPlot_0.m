@@ -28,3 +28,4 @@ expanCoeff = (4.8e-5 * T.^3 + (a * T.^5 + b * T.^5.5 + c * T.^6 ...
 
 figure;
 plot(T, expanCoeff);
+

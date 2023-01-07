@@ -36,7 +36,7 @@ function [phaseShift] = MultiAberrPhaseError_X_v2(aberr, realRotAngle,...
 %       please refer to Sec. 2.8 of Advanced Computig Electron Microscopy.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (C) 2019 - 2022  Francis Black Lee (Li Xian)
+%   Copyright (C) 2019 - 2023  Francis Black Lee (Li Xian)
 
 %   This program is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
@@ -73,5 +73,6 @@ end
 phaseShift = 2 * pi / wavLen * phaseShift;
 
 end
+
 
 

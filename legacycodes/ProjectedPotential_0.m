@@ -5,7 +5,7 @@ function projPot = ProjectedPotential_0(Lx, Ly, Nx, Ny, atomCoordType)
 %   AtomCoordType -- [x1, ..., xN; y1, ..., yN; z1, ..., zN; Type1, ..., TypeN];
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (C) 2019 - 2022  Francis Black Lee (Li Xian)
+%   Copyright (C) 2019 - 2023  Francis Black Lee (Li Xian)
 
 %   This program is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
@@ -58,5 +58,6 @@ end
 projPot = a * e * projPot;
 
 end
+
 
 

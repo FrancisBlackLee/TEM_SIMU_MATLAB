@@ -12,7 +12,7 @@ function [slice, sliceDist] = CrystalSlicing_3(crysMat, distError, zMax, YN, plo
 %   designed for LPCMO slicing.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (C) 2019 - 2022  Francis Black Lee (Li Xian)
+%   Copyright (C) 2019 - 2023  Francis Black Lee (Li Xian)
 
 %   This program is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
@@ -91,5 +91,6 @@ if YN == 1
 end
 
 end
+
 
 

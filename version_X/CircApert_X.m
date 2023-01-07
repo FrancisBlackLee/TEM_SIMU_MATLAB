@@ -7,7 +7,7 @@ function [aperture] = CircApert_X(Lx, Ly, Nx, Ny, wavLen, numApert)
 % Note: X denotes an experimental version!
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (C) 2019 - 2022  Francis Black Lee (Li Xian)
+%   Copyright (C) 2019 - 2023  Francis Black Lee (Li Xian)
 
 %   This program is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
@@ -33,5 +33,6 @@ freqSqu = FX.^2 + FY.^2;
 aperture = (freqSqu < (numApert * 1e-3 / wavLen)^2);
 
 end
+
 
 

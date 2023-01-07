@@ -9,7 +9,7 @@ function [convMat] = BasesToConvMat(bases)
 %   convMat -- conversion matrix;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (C) 2019 - 2022  Francis Black Lee (Li Xian)
+%   Copyright (C) 2019 - 2023  Francis Black Lee (Li Xian)
 
 %   This program is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
@@ -34,4 +34,5 @@ vecC = reshape(bases.c, [], 1);
 convMat = [vecA, vecB, vecC];
 
 end
+
 

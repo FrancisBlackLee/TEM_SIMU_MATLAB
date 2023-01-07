@@ -13,7 +13,7 @@ function [otf] = ObjTransFunc_X(params, Lx, Ly, Nx, Ny)
 % Note: X denotes an experimental version!
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (C) 2019 - 2022  Francis Black Lee (Li Xian)
+%   Copyright (C) 2019 - 2023  Francis Black Lee (Li Xian)
 
 %   This program is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
@@ -48,5 +48,6 @@ otfPhase = 2*pi/wavLen * (0.5 * df * angFreqSqu + 0.25 * Cs3 * angFreqSqu.^2 ...
 otf = exp(-1i * otfPhase);
 
 end
+
 
 

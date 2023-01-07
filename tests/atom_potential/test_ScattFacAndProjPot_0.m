@@ -26,3 +26,4 @@ plot(x, refProjPot(N / 2 + 1, :), x, testProjPot(N / 2 + 1, :));
 xlabel('$ x(\AA) $', 'Interpreter', 'latex');
 ylabel('$ V_z (V \cdot \AA) $', 'Interpreter', 'latex');
 legend('ref', 'test');
+

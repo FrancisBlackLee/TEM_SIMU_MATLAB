@@ -27,3 +27,4 @@ scatter(atomTypeCoords(3, :), atomTypeCoords(4, :), '+');
 axis square;
 xlabel('$x (\AA)$', 'interpreter', 'latex');
 ylabel('$y (\AA)$', 'interpreter', 'latex');
+

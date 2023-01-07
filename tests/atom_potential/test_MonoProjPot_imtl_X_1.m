@@ -33,3 +33,4 @@ scatter(xyCoords(1, :), xyCoords(2, :), 'filled');
 hold off;
 xlabel('$x (\AA)$', 'interpreter', 'latex');
 ylabel('$V_z (kV-\AA)$', 'interpreter', 'latex');
+
