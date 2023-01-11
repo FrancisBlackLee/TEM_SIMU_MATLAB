@@ -1,5 +1,5 @@
 function [aperture] = AnnularAperture_X(Lx, Ly, Nx, Ny, wavLen,...
-    innerAngle, outerAngle)
+    innerAngle, outerAngle, pol, azi)
 %AnnularAperture_X.m generates an annular aperture in reciprocal space.
 %   Lx, Ly, Nx, Ny -- real-space sampling parameters;
 %   wavLen -- wavelength;
@@ -29,9 +29,18 @@ function [aperture] = AnnularAperture_X(Lx, Ly, Nx, Ny, wavLen,...
 fx = InitFreqAxis(Lx, Nx);
 fy = InitFreqAxis(Ly, Ny);
 [FX, FY] = meshgrid(fx, fy);
-angleMesh = sqrt((FX.^2 + FY.^2) * wavLen^2) * 1.0e3;
-
-aperture = (angleMesh > innerAngle) & (angleMesh < outerAngle);
+if nargin == 7
+    freqSqr = FX.^2 + FY.^2;
+    aperture = (freqSqr > (innerAngle * 1.0e-3 / wavLen)^2) &...
+        (freqSqr < (outerAngle * 1.0e-3 / wavLen)^2);
+else
+    tiltFreq = pol * 1.0e-3 / wavLen;
+    tiltFreqX = tiltFreq * cosd(azi);
+    tiltFreqY = tiltFreq * sind(azi);
+    freqSqr = (FX - tiltFreqX).^2 + (FY - tiltFreqY).^2;
+    aperture = (freqSqr > (innerAngle * 1.0e-3 / wavLen)^2) &...
+        (freqSqr < (outerAngle * 1.0e-3 / wavLen)^2);
+end
 
 end
 

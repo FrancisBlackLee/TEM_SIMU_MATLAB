@@ -1,4 +1,4 @@
-function [aperture] = CircApert_X(Lx, Ly, Nx, Ny, wavLen, numApert)
+function [aperture] = CircApert_X(Lx, Ly, Nx, Ny, wavLen, numApert, pol, azi)
 %CircApert_X.m generates a circular aperture in reciprocal space.
 %   Lx, Ly, Nx, Ny -- sampling parameters, L denotes side length and N the
 %       sampling number in real space;
@@ -28,9 +28,16 @@ function [aperture] = CircApert_X(Lx, Ly, Nx, Ny, wavLen, numApert)
 fx = InitFreqAxis(Lx, Nx);
 fy = InitFreqAxis(Ly, Ny);
 [FX, FY] = meshgrid(fx, fy);
-freqSqu = FX.^2 + FY.^2;
-
-aperture = (freqSqu < (numApert * 1e-3 / wavLen)^2);
+if nargin == 6
+    freqSqr = FX.^2 + FY.^2;
+    aperture = (freqSqr < (numApert * 1.0e-3 / wavLen)^2);
+else
+    tiltFreq = pol * 1.0e-3 / wavLen;
+    tiltFreqX = tiltFreq * cosd(azi);
+    tiltFreqY = tiltFreq * sind(azi);
+    freqSqr = (FX - tiltFreqX).^2 + (FY - tiltFreqY).^2;
+    aperture = (freqSqr < (numApert * 1.0e-3 / wavLen)^2);
+end
 
 end
 
