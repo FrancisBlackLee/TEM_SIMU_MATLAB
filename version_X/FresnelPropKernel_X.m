@@ -1,9 +1,11 @@
-function [PropKernel] = FresnelPropKernel_X(Lx, Ly, Nx, Ny, WavLen, PropDist)
+function [propKernel] = FresnelPropKernel_X(Lx, Ly, Nx, Ny, wavLen, propDist, tiltX, tiltY)
 %FresnelPropKernel_X.m computes the Fresnel propagation kernel.
 %   Lx, Ly -- sampling side length;
 %   Nx, Ny -- sampling number;
-%   WavLen -- wavelength;
-%   PropDist -- propagation distance
+%   wavLen -- wavelength;
+%   propDist -- propagation distance
+%   tiltX -- small tilt angle in mrad in x direction
+%   tiltY -- small tilt angle in mrad in y direction
 % Note: X denotes an experimental version!
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -28,7 +30,16 @@ function [PropKernel] = FresnelPropKernel_X(Lx, Ly, Nx, Ny, WavLen, PropDist)
 fx = InitFreqAxis(Lx, Nx);
 fy = InitFreqAxis(Ly, Ny);
 [FX, FY] = meshgrid(fx, fy);
-PropKernel = exp(-1i * pi * WavLen * PropDist * (FX.^2 + FY.^2));
+if nargin == 6
+    propKernel = exp(-1i * pi * wavLen * propDist * (FX.^2 + FY.^2));
+elseif nargin == 8
+    tx = tiltX * 1.0e-3;
+    ty = tiltY * 1.0e-3;
+    propKernel = exp(-1i * pi * wavLen * propDist * (FX.^2 + FY.^2) +...
+        1i * 2 * pi * propDist * (FX * tan(tx) + FY * tan(ty)));
+else
+    error('Incorrect number of arguments.');
+end
 
 end
 
