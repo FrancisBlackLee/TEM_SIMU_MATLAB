@@ -9,9 +9,9 @@ function [newTypeCoords] = RemoveSymmetricAtoms(oldTypeCoords, tolerance, vararg
 %   varargin -- (coordType, lattConsts), syntax:
 %       no input
 %       ('frac') -- fractional coordinates:
-%       (lattConsts) -- coordType = 'cart', and the lattice constants;
-%       ('cart', lattConsts) -- cartesian coordinates, and the lattice
-%           constants.
+%       (convMat) -- coordType = 'cart', and the conversion matrix;
+%       ('cart', convMat) -- cartesian coordinates, and the conversion
+%           matrix.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (C) 2019 - 2023  Francis Black Lee (Li Xian)
@@ -41,14 +41,12 @@ switch nargin
         % do nothing
     case 3
         if isnumeric(varargin{1})
-            if length(varargin{1}) == 3
+            if size(varargin{1}, 1) == 3 && size(varargin{1}, 2) == 3
                 coordType = 'cart';
-                lattConsts = varargin{1};
-                newTypeCoords(3, :) = newTypeCoords(3, :) / varargin{1}(1);
-                newTypeCoords(4, :) = newTypeCoords(4, :) / varargin{1}(2);
-                newTypeCoords(5, :) = newTypeCoords(5, :) / varargin{1}(3);
+                convMat = varargin{1};
+                newTypeCoords(3 : 5, :) = convMat \ newTypeCoords(3 : 5, :);
             else
-                error('Invalid input of lattice constants');
+                error('Invalid input of conversion matrix');
             end
         elseif ischar(varargin{1})
             if ~strcmp(varargin{1}, 'frac')
@@ -59,17 +57,16 @@ switch nargin
         end
     case 4
         if ischar(varargin{1}) && isnumeric(varargin{2})
-            if strcmp(varargin{1}, 'cart') && (length(varargin{2}) == 3)
+            if strcmp(varargin{1}, 'cart') && size(varargin{2}, 1) == 3 &&...
+                    size(varargin{2}, 2) == 3
                 coordType = 'cart';
-                lattConsts = varargin{2};
-                newTypeCoords(3, :) = newTypeCoords(3, :) / varargin{2}(1);
-                newTypeCoords(4, :) = newTypeCoords(4, :) / varargin{2}(2);
-                newTypeCoords(5, :) = newTypeCoords(5, :) / varargin{2}(3);
+                convMat = varargin{2};
+                newTypeCoords(3 : 5, :) = convMat \ newTypeCoords(3 : 5, :);
             else
-                error('Invalid input of coordinate type or lattice constants');
+                error('Invalid input of coordinate type or conversion matrix');
             end
         else
-            error('Invalid input of coordinate type or lattice constants');
+            error('Invalid input of coordinate type or conversion matrix');
         end
     otherwise
         error('Invalid input');
@@ -98,9 +95,7 @@ newTypeCoords = (uniquetol(newTypeCoords', tolerance, 'ByRows', true))';
 newTypeCoords(5, abs(newTypeCoords(5, :)) < tolerance) = 1;
 
 if strcmp(coordType, 'cart')
-    newTypeCoords(3, :) = newTypeCoords(3, :) * lattConsts(1);
-    newTypeCoords(4, :) = newTypeCoords(4, :) * lattConsts(2);
-    newTypeCoords(5, :) = newTypeCoords(5, :) * lattConsts(3);
+    newTypeCoords(3 : 5, :) =  convMat * newTypeCoords(3 : 5, :);
 end
 
 % nested functions:
