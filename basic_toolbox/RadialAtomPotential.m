@@ -32,6 +32,8 @@ B = [scattParam(startIndex, 2), scattParam(startIndex, 4), scattParam(startIndex
 C = [scattParam(startIndex + 1, 3), scattParam(startIndex + 2, 1), scattParam(startIndex + 2, 3)];
 D = [scattParam(startIndex + 1, 4), scattParam(startIndex + 2, 2), scattParam(startIndex + 2, 4)];
 
+radiusCoords(radiusCoords < 1e-4) = 1e-4;
+
 radialPotential = zeros(size(radiusCoords));
 for i = 1 : 3
     radialPotential = radialPotential +...
