@@ -1,4 +1,4 @@
-function [superFracCoords, superConvMat, cutoff] = CrystalAdvisor(cifFilename, uvw)
+function [superFracCoords, superConvMat, cutoff] = CrystalAdvisor(cifFilename, uvw, reduce, maxReduceNum)
 %CrystalAdvisor.m generates the structure of the supercell for a crystal
 %unit cell with respect to the given orientation.
 % Input:
@@ -32,6 +32,20 @@ function [superFracCoords, superConvMat, cutoff] = CrystalAdvisor(cifFilename, u
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+if nargin == 1
+    uvw = [0, 0, 1];
+    reduce = false;
+elseif nargin == 2
+    reduce = false;
+elseif nargin == 3
+    if reduce
+        maxReduceNum = 8;
+    end
+elseif nargin > 4
+    error("Incorrect number of input arguments");
+end
+
+
 crysInfo = LoadCif(cifFilename);
 [cellLengths, cellAngles] = ExtractCellConstFromCrysInfo(crysInfo);
 unitFracCoords = ExtractAtomSiteFromCrysInfo(crysInfo);
@@ -41,6 +55,10 @@ fullUnitFracCoords = AddEquivAtomSites(unitFracCoords);
 superFracCoords = SupercellAdvisor(fullUnitFracCoords, zoneAxes, bases, convMat);
 superFracCoords = RemoveSymmetricAtoms(superFracCoords);
 superConvMat = BasesToConvMat(bases);
+
+if reduce
+    [superFracCoords, superConvMat] = ReduceUnitCell(superFracCoords, superConvMat, maxReduceNum);
+end
 
 end
 
