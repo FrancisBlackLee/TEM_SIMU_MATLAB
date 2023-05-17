@@ -26,7 +26,12 @@ function [atomTypeIdx] = AtomTypeStrToIdx(atomTypeStr)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % determine if the first or first two character(s) is/are letter(s)
-atomLabel = atomTypeStr(isletter(atomTypeStr));
+atomTypeStr = char(atomTypeStr);
+if strlength(atomTypeStr) >= 2
+    atomLabel = atomTypeStr(isletter(atomTypeStr(1:2)));
+else
+    atomLabel = atomTypeStr(isletter(atomTypeStr));
+end
 
 upperStr = upper(atomLabel);
 switch upperStr
