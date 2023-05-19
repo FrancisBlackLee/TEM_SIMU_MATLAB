@@ -1,4 +1,4 @@
-function [bases] = ConvMatToBases(convMat)
+function [varargout] = ConvMatToBases(convMat)
 %ConvMatToBases.m converts the conversion matrix to the lattice or cell
 %bases.
 % Input:
@@ -27,9 +27,21 @@ function [bases] = ConvMatToBases(convMat)
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bases.a = convMat(:, 1)';
-bases.b = convMat(:, 2)';
-bases.c = convMat(:, 3)';
+if nargout == 1
+    bases.a = convMat(:, 1)';
+    bases.b = convMat(:, 2)';
+    bases.c = convMat(:, 3)';
+    varargout{1} = bases;
+elseif nargout == 3
+    a1 = convMat(:, 1)';
+    a2 = convMat(:, 2)';
+    a3 = convMat(:, 3)';
+    varargout{1} = a1;
+    varargout{2} = a2;
+    varargout{3} = a3;
+else
+    error('Incorrect number of output arguments');
+end
 
 end
 
