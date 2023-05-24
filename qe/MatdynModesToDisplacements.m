@@ -31,8 +31,8 @@ xyz = convMat * superCell(3 : 5, :);
 
 for iConfig = 1 : nConfig
     for iAtom = 1 : superCellAtomNum
-        u = zeros(nq, 3);
-        parfor iq = 1 : nq
+        u = zeros(1, 3);
+        for iq = 1 : nq
             if qs(iq, 1) >= 0 % only count positive-x space
                 for iBand = 1 : nBand
                     q = qs(iq, :) * [b1; b2; b3];
@@ -43,7 +43,7 @@ for iConfig = 1 : nConfig
                             tanh(hbar * omega / (2 * kb * T))));
                         rnd1 = normrnd(0, sigma);
                         rnd2 = normrnd(0, sigma);
-                        u(iq, :) = u(iq, :) + sqrt(2) * real(eigenVecs(iUnitCellAtom, :, iBand, iq) *...
+                        u = u + sqrt(2) * real(eigenVecs(iUnitCellAtom, :, iBand, iq) *...
                             exp(2 * pi * 1i * dot(q, xyz(:, iAtom)'))) * rnd1 -...
                             sqrt(2) * imag(eigenVecs(iUnitCellAtom, :, iBand, iq) *...
                             exp(2 * pi * 1i * dot(q, xyz(:, iAtom)'))) * rnd2;
@@ -51,7 +51,7 @@ for iConfig = 1 : nConfig
                 end
             end
         end
-        displacements(:, iAtom, iConfig) = sum(u, 1)';
+        displacements(:, iAtom, iConfig) = u';
     end
 end
 
