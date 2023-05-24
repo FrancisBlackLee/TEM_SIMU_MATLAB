@@ -29,6 +29,8 @@ convMat = [a1; a2; a3]';
 
 xyz = convMat * superCell(3 : 5, :);
 
+wb = waitbar(0, 'wait...');
+
 for iConfig = 1 : nConfig
     for iAtom = 1 : superCellAtomNum
         u = zeros(1, 3);
@@ -53,7 +55,12 @@ for iConfig = 1 : nConfig
         end
         displacements(:, iAtom, iConfig) = u';
     end
+
+    wbMsg = [num2str(iConfig), '/', num2str(nConfig), ' done'];
+    waitbar(iConfig / nConfig, wb, wbMsg);
 end
+
+close(wb);
 
 nCell = superCellAtomNum / unitCellAtomNum;
 displacements = displacements / sqrt(nCell) * 1e10; % angstrom
