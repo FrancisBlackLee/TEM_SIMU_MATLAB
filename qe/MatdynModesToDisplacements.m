@@ -3,6 +3,8 @@ function [displacements] = MatdynModesToDisplacements(superCell, a1, a2, a3,...
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 
+thr = 1e-4;
+
 superCellAtomNum = size(superCell, 2);
 unitCellAtomNum = length(mass);
 
@@ -35,7 +37,7 @@ for iConfig = 1 : nConfig
                 for iBand = 1 : nBand
                     q = qs(iq, :) * [b1; b2; b3];
                     omega = 2 * pi * bands(iq, iBand) * 1e12;
-                    if omega ~= 0
+                    if abs(bands(iq, iBand)) > thr
                         iUnitCellAtom = mod(iAtom - 1, unitCellAtomNum) + 1;
                         sigma = sqrt(hbar / (2 * omega * m(iUnitCellAtom) *...
                             tanh(hbar * omega / (2 * kb * T))));

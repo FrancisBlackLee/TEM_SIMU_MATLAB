@@ -4,12 +4,8 @@ clear;
 close all;
 %% main:
 pwscf = ReadPwscfInput('tests/qe/si_cubic.1_scf.in');
-mass = zeros(1, pwscf.system.nat);
-for iType = 1 : pwscf.system.ntyp
-    mass(pwscf.atomic_positions.types == pwscf.atomic_species.types(iType)) =...
-        pwscf.atomic_species.masses(iType);
-end
+pwscf = ExpandPwscfAtomMass(pwscf);
 
 [qs, bands, eigenVecs] = ReadMatdynModes('tests/qe/matdyn.modes');
 
-dwfs = MatdynModesToDebyeWallerFactor(qs, bands, eigenVecs, mass, 293);
+dwfs = MatdynModesToDebyeWallerFactor(qs, bands, eigenVecs, pwscf.mass, 293);

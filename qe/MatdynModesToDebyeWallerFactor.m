@@ -2,6 +2,8 @@ function [dwfs] = MatdynModesToDebyeWallerFactor(qs, bands, eigenVecs, mass, T)
 %UNTITLED3 Summary of this function goes here
 %   Detailed explanation goes here
 
+thr = 1e-4;
+
 nAtom = length(mass);
 dwfs = zeros(3, 3, nAtom);
 
@@ -18,7 +20,7 @@ for iAtom = 1 : nAtom
             for alpha = 1 : 3
                 for beta = 1 : 3
                     omega = 2 * pi * bands(iq, iBand) * 1e12;
-                    if omega ~= 0
+                    if abs(bands(iq, iBand)) > thr
                         dwfs(alpha, beta, iAtom) = dwfs(alpha, beta, iAtom) +...
                             coth(hbar * omega / (2 * kb * T)) *...
                             eigenVecs(iAtom, alpha, iBand, iq) *...
