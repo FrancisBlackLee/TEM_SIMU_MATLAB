@@ -79,16 +79,9 @@ superCartCoords = convMat * superFracCoords(3 : 5, :);
 bases.a = reshape(bases.a, 1, []);
 bases.b = reshape(bases.b, 1, []);
 bases.c = reshape(bases.c, 1, []);
-projections = [bases.a * superCartCoords;...
-               bases.b * superCartCoords;...
-               bases.c * superCartCoords];
-
-projCoeffMat = [dot(bases.a, bases.a), dot(bases.a, bases.b), dot(bases.a, bases.c);...
-                dot(bases.a, bases.b), dot(bases.b, bases.b), dot(bases.b, bases.c);...
-                dot(bases.a, bases.c), dot(bases.b, bases.c), dot(bases.c, bases.c)];
-
+superConvMat = BasesToConvMat(bases);
 tmpSuperFracCoords = superFracCoords;
-tmpSuperFracCoords(3 : 5, :) = projCoeffMat \ projections;
+tmpSuperFracCoords(3 : 5, :) = superConvMat \ superCartCoords;
 tmpSuperFracCoords(3 : 5, :) = mod(tmpSuperFracCoords(3 : 5, :), 1);
 tolerance = 1.0e-6;
 superFracCoords = (uniquetol(tmpSuperFracCoords', tolerance, 'ByRows', true))';

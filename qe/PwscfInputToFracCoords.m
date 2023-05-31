@@ -64,39 +64,24 @@ if strcmp(pwscf.atomic_positions.option, 'alat')
     ys = reshape(pwscf.atomic_positions.ys * alat, 1, []);
     zs = reshape(pwscf.atomic_positions.zs * alat, 1, []);
     xyz = [xs; ys; zs];
-    projections = [a1 * xyz;...
-                   a2 * xyz;...
-                   a3 * xyz];
-    projCoeffMat = [dot(a1, a1), dot(a1, a2), dot(a1, a3);...
-                    dot(a1, a2), dot(a2, a2), dot(a2, a3);...
-                    dot(a1, a3), dot(a2, a3), dot(a3, a3)];
-    fracXyz = projCoeffMat \ projections;
+    convMat = BasesToConvMat(a1, a2, a3);
+    fracXyz = convMat \ xyz;
     fracXyz = mod(fracXyz, 1);
 elseif strcmp(pwscf.atomic_positions.option, 'bohr')
     xs = reshape(pwscf.atomic_positions.xs * bohrRadius, 1, []);
     ys = reshape(pwscf.atomic_positions.ys * bohrRadius, 1, []);
     zs = reshape(pwscf.atomic_positions.zs * bohrRadius, 1, []);
     xyz = [xs; ys; zs];
-    projections = [a1 * xyz;...
-                   a2 * xyz;...
-                   a3 * xyz];
-    projCoeffMat = [dot(a1, a1), dot(a1, a2), dot(a1, a3);...
-                    dot(a1, a2), dot(a2, a2), dot(a2, a3);...
-                    dot(a1, a3), dot(a2, a3), dot(a3, a3)];
-    fracXyz = projCoeffMat \ projections;
+    convMat = BasesToConvMat(a1, a2, a3);
+    fracXyz = convMat \ xyz;
     fracXyz = mod(fracXyz, 1);
 elseif strcmp(pwscf.atomic_positions.option, 'angstrom')
     xs = reshape(pwscf.atomic_positions.xs, 1, []);
     ys = reshape(pwscf.atomic_positions.ys, 1, []);
     zs = reshape(pwscf.atomic_positions.zs, 1, []);
     xyz = [xs; ys; zs];
-    projections = [a1 * xyz;...
-                   a2 * xyz;...
-                   a3 * xyz];
-    projCoeffMat = [dot(a1, a1), dot(a1, a2), dot(a1, a3);...
-                    dot(a1, a2), dot(a2, a2), dot(a2, a3);...
-                    dot(a1, a3), dot(a2, a3), dot(a3, a3)];
-    fracXyz = projCoeffMat \ projections;
+    convMat = BasesToConvMat(a1, a2, a3);
+    fracXyz = convMat \ xyz;
     fracXyz = mod(fracXyz, 1);
 elseif strcmp(pwscf.atomic_positions.option, 'crystal') ||...
         strcmp(pwscf.atomic_positions.option, 'crystalsg')
