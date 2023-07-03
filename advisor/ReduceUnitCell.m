@@ -1,11 +1,38 @@
-function [periodicUnit, newConvMat] = ReduceUnitCell(unitCell, convMat, maxReduceNum)
-%UNTITLED3 Summary of this function goes here
-%   Detailed explanation goes here
+function [periodicUnit, newConvMat] = ReduceUnitCell(unitCell, convMat, maxIter)
+%ReduceUnitCell reduces the input unit cell to a smaller unit cell and
+%adjusts the conversion matrix as well.
+% Input:
+%   unitCell -- unit cell to be reduced;
+%   convMat -- conversion matrix of the input unit cell;
+%   maxIter -- max iteration along each direction.
+% Output:
+%   periodicUnit -- reduced unit cell, which may be a smaller periodic
+%       unit;
+%   newConvMat -- new conversion matrix of the reduced unit cell.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%   Copyright (C) 2019 - 2023  Francis Black Lee (Li Xian)
+
+%   This program is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   any later version.
+
+%   This program is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+
+%   You should have received a copy of the GNU General Public License
+%   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+%   Email: warner323@outlook.com
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if nargin < 2 || nargin > 3
     error('Too few input arguments');
 elseif nargin == 2
-    maxReduceNum = 10;
+    maxIter = 10;
 end
 
 fullUnitCell = AddEquivAtomSites(unitCell);
@@ -27,7 +54,7 @@ newConvMat(:, 3) = newConvMat(:, 3) / nz;
     function [outUnit, n] = ReduceAlongDim(inUnit, dim)
         outUnit = inUnit;
         n = 1;
-        for reduceNum = 2 : maxReduceNum
+        for reduceNum = 2 : maxIter
             glide = 1 / reduceNum;
             glideUnit = inUnit(:, inUnit(dim, :) <= glide);
             if ~isempty(glideUnit)

@@ -1,6 +1,31 @@
 function WriteEjkXyz(filename, lattConsts, typeCoords, wobbles)
-%UNTITLED Summary of this function goes here
-%   Detailed explanation goes here
+%WriteEjkXyz writes an xyz file of E. J. Kirkland's format.
+% Input:
+%   filename -- filename of the input ejk xyz file;
+%   lattConsts -- lattice constants in angstrom;
+%   typeCoords -- a matrix describing the unit cell, the frist row denotes
+%       the atomic number, second row the atomic occupancy, third to fifth
+%       rows the atomic cartesian coordinates;
+%   wobbles -- mean square root of atomic displacements.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%   Copyright (C) 2019 - 2023  Francis Black Lee (Li Xian)
+
+%   This program is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   any later version.
+
+%   This program is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+
+%   You should have received a copy of the GNU General Public License
+%   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+%   Email: warner323@outlook.com
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 fid = fopen(filename, 'w');
 if fid == -1
