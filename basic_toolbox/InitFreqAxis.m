@@ -1,4 +1,4 @@
-function [f] = InitFreqAxis(L, N)
+function [f] = InitFreqAxis(L, N, nBin)
 %InitFreqAxis.m initializes the spatial frequency axis with the origin at
 %its center.
 % Input:
@@ -26,8 +26,12 @@ function [f] = InitFreqAxis(L, N)
 %   Email: warner323@outlook.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+if nargin == 2
+    nBin = 1;
+end
+
 d = L / N;
-f = -1 / (2 * d) : 1 / L : 1 / (2 * d) - 1 / L;
+f = -1 / (2 * d) : nBin / L : 1 / (2 * d) - 1 / L;
 
 end
 
