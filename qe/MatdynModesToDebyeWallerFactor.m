@@ -1,8 +1,10 @@
-function [dwfs] = MatdynModesToDebyeWallerFactor(qs, bands, eigenVecs, mass, T)
+function [dwfs] = MatdynModesToDebyeWallerFactor(qs, bands, eigenVecs, mass, T, thr)
 %UNTITLED3 Summary of this function goes here
 %   Detailed explanation goes here
 
-thr = 1e-4;
+if nargin == 5
+    thr = 1e-1;
+end
 
 nAtom = length(mass);
 dwfs = zeros(3, 3, nAtom);
