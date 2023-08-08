@@ -10,19 +10,19 @@ if isfield(pwscf.system, 'celldm_1')
     celldm(1) = pwscf.system.celldm_1 * bohrRadius;
     alat = celldm(1);
     if isfield(pwscf.system, 'celldm_2')
-        celldm(2) = pwscf.system.celldm_2 * bohrRadius;
+        celldm(2) = pwscf.system.celldm_2;
     end
     if isfield(pwscf.system, 'celldm_3')
-        celldm(3) = pwscf.system.celldm_3 * bohrRadius;
+        celldm(3) = pwscf.system.celldm_3;
     end
     if isfield(pwscf.system, 'celldm_4')
-        celldm(4) = pwscf.system.celldm_4 * bohrRadius;
+        celldm(4) = pwscf.system.celldm_4;
     end
     if isfield(pwscf.system, 'celldm_5')
-        celldm(5) = pwscf.system.celldm_5 * bohrRadius;
+        celldm(5) = pwscf.system.celldm_5;
     end
     if isfield(pwscf.system, 'celldm_6')
-        celldm(6) = pwscf.system.celldm_6 * bohrRadius;
+        celldm(6) = pwscf.system.celldm_6;
     end
 
     [a1, a2, a3, b1, b2, b3] = PwscfBravisLatticeVector(pwscf.system.ibrav, celldm);
