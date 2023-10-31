@@ -14,11 +14,16 @@ function [xMesh, yMesh, fxMesh, fyMesh] = InitNonorthoMesh2D(a1, a2, na1, na2, n
 %   fxMesh -- fx mesh
 %   fyMesh -- fy mesh
 
-da1 = a1 * na1 / n1;
-da2 = a2 * na2 / n2;
-da3 = [0, 0, 1];
+% da1 = a1 * na1 / n1;
+% da2 = a2 * na2 / n2;
+% da3 = [0, 0, 1];
+% 
+% [b1, b2, ~] = DirectToReciprocal(da1, da2, da3);
 
-[b1, b2, ~] = DirectToReciprocal(da1, da2, da3);
+a3 = [0, 0, 1];
+[b1, b2, ~] = DirectToReciprocal(a1, a2, a3);
+b1 = b1 * n1 / na1 / (2 * pi);
+b2 = b2 * n2 / na2 / (2 * pi);
 
 % real space:
 gridA1 = InitAxis(na1, n1);
