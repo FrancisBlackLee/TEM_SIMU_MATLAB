@@ -1,0 +1,40 @@
+(C) VTEMLAB 0.2.9
+CBED simulation report:
+specimen file type: ejkxyz
+specimen file: tests/nonorthogonal/MoS2_110.ejkxyz
+specimen tiled by [7, 12] (x and y direction)
+frozen phonon mode: default einstein
+1 frozen config. (time points) used
+specimen sliced adaptively
+specimen sliced by min spacing of 1.5 Angs.
+output results at depths of [495 ] (angstroms)
+projected potential calculated in real space using EJK scattering coefficients
+real-space threshold determined automatically
+high tension: 300 keV
+sampling:
+LX = 38.7038 Angs.
+LY = 38.3069 Angs.
+NX = 512
+NY = 512
+circular aperture used (3 mrad)
+aberrations:
+C1: 0 Angs.
+A1: 0 Angs., 0 deg.
+B2: 0 Angs., 0 deg.
+A2: 0 Angs., 0 deg.
+C3: 0 Angs.
+S3: 0 Angs., 0 deg.
+A3: 0 Angs., 0 deg.
+B4: 0 Angs., 0 deg.
+D4: 0 Angs., 0 deg.
+A4: 0 Angs., 0 deg.
+C5: 0 Angs.
+S5: 0 Angs., 0 deg.
+R5: 0 Angs., 0 deg.
+A5: 0 Angs., 0 deg.
+probe position: (0, 0)
+results saved as tests/nonorthogonal/MoS2_110_cbed.bin
+data encoded in binary form
+cuda block size = 128
+computation carried out in 1 group(s)
+buffer size = 4
