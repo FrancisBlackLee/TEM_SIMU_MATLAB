@@ -1,4 +1,4 @@
-function [avRoi] = AverageUnitCellImage(rawRoi, rawPos, scanNx, scanNy, thr)
+function [avRoi] = AverageUnitCellImage(rawRoi, rawPos, scanNx, scanNy, thr, varargin)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -8,7 +8,7 @@ end
 
 % draw unit cell shape
 grayRawRoi = mat2gray(rawRoi);
-markedRawRoi = insertMarker(grayRawRoi, rawPos, "circle", "Size", 8, "Color", 'red');
+markedRawRoi = insertMarker(grayRawRoi, rawPos, varargin{:});
 figure;
 imshow(markedRawRoi);
 title("marked raw roi");

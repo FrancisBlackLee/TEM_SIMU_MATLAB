@@ -12,7 +12,8 @@ scanNx = 36;
 scanNy = 62;
 thr = 10;
 
-avRoi = AverageUnitCellImage(rawRoi, rawPos, scanNx, scanNy, thr);
+avRoi = AverageUnitCellImage(rawRoi, rawPos, scanNx, scanNy, thr, ...
+    "circle", "Size", 8, "Color", 'red');
 
 figure;
 imshow(avRoi, []);
