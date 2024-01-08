@@ -1,7 +1,10 @@
 function [h] = PhTransitionPotential(aTypes, aCarts, aFracs, qs, bands, ...
-    eigenVecs, iq, iBand, lx, ly, nx, ny, nPh, thr)
+    eigenVecs, iq, iBand, lx, ly, nx, ny, keV, nPh, thr)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
+
+wavLen = HighEnergyWavLen_X(keV);
+k0 = 2 * pi / wavLen;
 
 h = zeros(ny, nx);
 if abs(bands(iq, iBand)) > thr
@@ -25,14 +28,14 @@ if abs(bands(iq, iBand)) > thr
     
     for iAtom = 1 : nAtom
         h1 = exp(-2 * pi * 1i * (fxMesh * aCarts(1, iAtom) + ...
-            fyMesh * aCarts(2, iAtom))) .* ...
-        ScatteringFactor(aTypes(iAtom), frMesh);
+            fyMesh * aCarts(2, iAtom) + k0 * aCarts(3, iAtom))) .* ...
+            ScatteringFactor(aTypes(iAtom), frMesh);
     
         h2 = ones(ny, nx);
         iUnitCellAtom = mod(iAtom - 1, nUnitCellAtom) + 1;
-        epsilon = 1 / sqrt(nCell) * real(eigenVecs(iUnitCellAtom, :, iBand, iq) * ...
+        epsilon = sqrt(2 / nCell) * real(eigenVecs(iUnitCellAtom, :, iBand, iq) * ...
             exp(2 * pi * 1i * dot(q, aFracs(:, iAtom)')));
-        qEpsilon = fxMesh * epsilon(1) + fyMesh * epsilon(2);
+        qEpsilon = fxMesh * epsilon(1) + fyMesh * epsilon(2) + k0 * epsilon(3);
         for iPh = 1 : nPh
             h2 = h2 .* (-1i * sqrt(2 * dwf) * qEpsilon).^nPh / factorial(nPh) .* ...
                 exp(-dwf * qEpsilon.^2);

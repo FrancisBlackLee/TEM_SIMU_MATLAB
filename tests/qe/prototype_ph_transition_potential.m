@@ -6,7 +6,7 @@ close all;
 pwscf = ReadPwscfInput('tests/qe/si_cubic.1_scf.in');
 [unitCell, a1, a2, a3, b1, b2, b3] = PwscfInputToFracCoords(pwscf);
 pwscf = ExpandPwscfAtomMass(pwscf);
-nks = [8, 8, 8];
+nks = [5, 5, 5];
 nCell = nks(1) * nks(2) * nks(3);
 superCell = TileAsymUnitCell(unitCell, nks);
 convMat = BasesToConvMat(a1, a2, a3);
@@ -17,7 +17,7 @@ figure;
 PlotUnitCell3D(convMat, superCell);
 
 %% matdyn.modes
-[qs, bands, eigenVecs] = ReadMatdynModes('tests/qe/matdyn.modes');
+[qs, bands, eigenVecs] = ReadMatdynModes('tests/qe/matdyn5x5x5.modes');
 thr = 0.2;
 nPh = 1;
 
@@ -34,19 +34,21 @@ fy = InitFreqAxis(ly, ny);
 frMesh = sqrt(fxMesh.^2 + fyMesh.^2);
 
 %% transition function:
-iq = 169;
+wavLen = HighEnergyWavLen_X(300);
+k0 = 2 * pi / wavLen;
+iq = 26;
 q = qs(iq, :);
 nAtom = size(superCell, 2);
 nBand = size(bands, 2);
 h = zeros(ny, nx);
 hbar = 1.054571817e-34;
 nUnitCellAtom = size(unitCell, 2);
-iBand = 5;
+iBand = 1;
 eLoss = 4.136 * abs(bands(iq, iBand));
 for iAtom = 1 : nAtom
     h1 = exp(-2 * pi * 1i * (fxMesh * carts(1, iAtom) + ...
-        fyMesh * carts(2, iAtom))) .* ...
-    ScatteringFactor(superCell(1, iAtom), frMesh);
+        fyMesh * carts(2, iAtom) + k0 * carts(3, iAtom))) .* ...
+        ScatteringFactor(superCell(1, iAtom), frMesh);
 
     h2 = ones(ny, nx);
     iUnitCellAtom = mod(iAtom - 1, nUnitCellAtom) + 1;
@@ -54,9 +56,9 @@ for iAtom = 1 : nAtom
         if abs(bands(iq, iBand)) > thr
             omega = 2 * pi * bands(iq, iBand) * 1e12;
             dwf = pi^2 * hbar / omega;
-            epsilon = 1 / sqrt(nCell) * real(eigenVecs(iUnitCellAtom, :, iBand, iq) * ...
+            epsilon = sqrt(2 / nCell) * real(eigenVecs(iUnitCellAtom, :, iBand, iq) * ...
                 exp(2 * pi * 1i * dot(q, fracs(:, iAtom)')));
-            qEpsilon = fxMesh * epsilon(1) + fyMesh * epsilon(2);
+            qEpsilon = fxMesh * epsilon(1) + fyMesh * epsilon(2) + k0 * epsilon(3);
             h2 = h2 .* (-1i * sqrt(2 * dwf) * qEpsilon).^nPh / factorial(nPh) .* ...
                 exp(-dwf * qEpsilon.^2);
         end

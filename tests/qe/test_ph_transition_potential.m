@@ -33,10 +33,10 @@ fy = InitFreqAxis(ly, ny);
 
 %% transition function:
 iq = 26;
-iBand = 1;
+iBand = 24;
 eLoss = 4.136 * abs(bands(iq, iBand));
 h = PhTransitionPotential(superCell(1, :), carts, fracs, qs, bands, eigenVecs, ...
-    iq, iBand, lx, ly, nx, ny, nPh, thr);
+    iq, iBand, lx, ly, nx, ny, 300, nPh, thr);
 
 %% plot transition probability
 rH = ifftshift(fft2(fftshift(h)));
