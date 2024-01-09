@@ -70,8 +70,8 @@ meV = 0 : dmeV : 80;
 nmeV = length(meV);
 phSpectraProf = zeros(1, nmeV);
 for imeV = 1 : nmeV
-    phSpectraProf(imeV) = sum(phSpectra(eLosses > meV(imeV) & ...
-        eLosses < meV(imeV) + dmeV), 'all');
+    phSpectraProf(imeV) = sum(phSpectra(eLosses > meV(imeV) - 0.5 * dmeV & ...
+        eLosses < meV(imeV) + 0.5 * dmeV), 'all');
 end
 
 filtPhSpectraProf = gaussfilt(meV, phSpectraProf, 1);
