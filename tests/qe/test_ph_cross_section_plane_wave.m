@@ -31,7 +31,7 @@ ny = 512;
 keV = 300;
 wavLen0 = HighEnergyWavLen_X(keV);
 wave = ones(ny, nx);
-detector = CircApert_X(lx, ly, nx, ny, wavLen0, 2);
+detector = CircApert_X(lx, ly, nx, ny, wavLen0, 5);
 [phCs, eLosses] = PhCrossSection(wave, superCell(1, :), carts, fracs, qs, ...
     bands, eigenVecs, lx, ly, keV, detector, nPh, thr);
 

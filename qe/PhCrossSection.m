@@ -15,6 +15,7 @@ wb = waitbar(0, 'init...');
 shiftedWave = fftshift(wave);
 shiftedDetector = fftshift(detector);
 for iq = 1 : nq
+    t0 = tic;
     parfor iBand = 1 : nBand
         k_h = PhTransitionPotential(aTypes, aCarts, aFracs, qs, bands, eigenVecs, ...
             iq, iBand, lx, ly, nx, ny, keV, nPh, thr);
@@ -28,7 +29,9 @@ for iq = 1 : nq
 
         phCs(iq, iBand) = kN / k0 * sum(k_phWaveI .* shiftedDetector, 'all');
     end
-    waitbar(iq / nq, wb, [num2str(iq), ' / ', num2str(nq)]);
+    dt = toc(t0);
+    waitbar(iq / nq, wb, [num2str(iq), ' / ', num2str(nq),...
+        ', remaining: ', num2str((nq - iq) * dt), ' s']);
 end
 close(wb);
 
