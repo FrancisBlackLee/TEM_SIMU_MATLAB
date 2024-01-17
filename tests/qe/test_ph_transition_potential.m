@@ -10,8 +10,8 @@ nks = [5, 5, 5];
 nCell = nks(1) * nks(2) * nks(3);
 superCell = TileAsymUnitCell(unitCell, nks);
 convMat = BasesToConvMat(a1, a2, a3);
-carts = convMat * superCell(3 : 5, :);
-fracs = superCell(3 : 5, :);
+fracs = superCell(3 : 5, :) - nks' / 2;
+carts = convMat * fracs;
 
 figure;
 PlotUnitCell3D(convMat, superCell);
@@ -41,7 +41,7 @@ h = PhTransitionPotential(superCell(1, :), carts, fracs, qs, bands, eigenVecs, .
 %% plot transition probability
 rH = ifftshift(fft2(fftshift(h)));
 rHSqr = abs(rH.^2);
-blurredRhSqr = imgaussfilt(rHSqr, 2);
+blurredRhSqr = imgaussfilt(rHSqr, 1);
 figure;
 subplot(1, 2, 1);
 imagesc(x, y, blurredRhSqr);
@@ -52,7 +52,7 @@ ylabel('y (\AA)', 'Interpreter', 'latex');
 title('$|H(\mathbf{r})|^2$', 'Interpreter', 'latex');
 
 hSqr = abs(h.^2);
-blurredHSqr = imgaussfilt(hSqr, 2);
+blurredHSqr = imgaussfilt(hSqr, 1);
 subplot(1, 2, 2);
 imagesc(fx, fy, blurredHSqr);
 colormap('jet');

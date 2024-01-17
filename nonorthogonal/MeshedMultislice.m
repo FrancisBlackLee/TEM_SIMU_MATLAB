@@ -5,8 +5,8 @@ function exitWave = MeshedMultislice(inciWave, wavLen, fxMesh, fyMesh, transFunc
 
 tmpWave = fftshift(inciWave);
 nSlicePerStack = length(sliceDists);
-[n1, n2] = size(inciWave);
-shiftedPropKernels = 1i * ones(n1, n2, nSlicePerStack);
+[n2, n1] = size(inciWave);
+shiftedPropKernels = 1i * ones(n2, n1, nSlicePerStack);
 
 for iSlice = 1 : nSlicePerStack
     shiftedPropKernels(:, :, iSlice) = fftshift(MeshedFresnelPropKernel(fxMesh, ...
