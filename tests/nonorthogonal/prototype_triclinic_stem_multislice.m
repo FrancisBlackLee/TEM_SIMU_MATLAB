@@ -76,10 +76,11 @@ probe = MeshedProbe(aberrs, wavLen, aperture, 0, 0, mappedFxMesh, mappedFyMesh);
 probeI = abs(probe.^2);
 
 figure;
-mesh(xMesh, yMesh, probeI);
+mesh(xMesh, yMesh, probeI, 'FaceColor', 'flat');
 xlabel('x (\AA)', 'Interpreter', 'latex');
 ylabel('y (\AA)', 'Interpreter', 'latex');
 title('probe on tilted plane');
+axis equal;
 view(0, 90);
 
 %% propagation kernels:
@@ -109,7 +110,7 @@ wave = ifftshift(fft2(fftshift(wave)));
 waveI = abs(wave.^2);
 logWaveI = log(1 + 1000 * waveI / max(waveI, [], 'all'));
 figure;
-mesh(mappedFxMesh, mappedFyMesh, logWaveI);
+mesh(mappedFxMesh, mappedFyMesh, logWaveI, 'FaceColor', 'flat');
 xlabel('$f_x$ (1 / \AA)', 'Interpreter', 'latex');
 ylabel('$f_y$ (1 / \AA)', 'Interpreter', 'latex');
 title('CBED on tilted plane (log scale)');
@@ -134,7 +135,7 @@ detWave = detWaveReal + 1i * detWaveImag;
 detWaveI = abs(detWave.^2);
 
 figure;
-mesh(fxMesh, fyMesh, detWaveI);
+mesh(fxMesh, fyMesh, detWaveI, 'FaceColor', 'flat');
 xlabel('$f_x$ (1 / \AA)', 'Interpreter', 'latex');
 ylabel('$f_y$ (1 / \AA)', 'Interpreter', 'latex');
 title('CBED on detector plane');
@@ -143,7 +144,7 @@ view(0, 90);
 
 logDetWaveI = log(1 + 1000 * detWaveI / max(detWaveI, [], 'all'));
 figure;
-mesh(fxMesh, fyMesh, logDetWaveI);
+mesh(fxMesh, fyMesh, logDetWaveI, 'FaceColor', 'flat');
 xlabel('$f_x$ (1 / \AA)', 'Interpreter', 'latex');
 ylabel('$f_y$ (1 / \AA)', 'Interpreter', 'latex');
 title('CBED on detector plane (log scale)');
@@ -154,7 +155,7 @@ view(0, 90);
 detector = MeshedAnnularDetector(mappedFxMesh, mappedFyMesh, wavLen, 76, 200);
 
 figure;
-mesh(mappedFxMesh * wavLen * 1e3, mappedFyMesh * wavLen * 1e3, detector);
+mesh(mappedFxMesh * wavLen * 1e3, mappedFyMesh * wavLen * 1e3, detector, 'FaceColor', 'flat');
 xlabel('$\beta_x$ (mrad)', 'Interpreter', 'latex');
 ylabel('$\beta_y$ (mrad)', 'Interpreter', 'latex');
 title('HAADF detector on tilted plane (log scale)');
