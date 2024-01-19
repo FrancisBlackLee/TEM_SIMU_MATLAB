@@ -38,7 +38,7 @@ sliceDists = a3Proj * sliceDists;
 keV = 300;
 wavLen = HighEnergyWavLen_X(keV);
 aberrs = InitObjectiveLensAberrations_X();
-c2Angle = 20;
+c2Angle = 21.4;
 
 %% meshes:
 n1 = 1024;

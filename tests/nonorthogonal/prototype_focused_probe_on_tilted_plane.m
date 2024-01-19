@@ -7,7 +7,7 @@ keV = 300;
 wavLen = HighEnergyWavLen_X(keV);
 aberrs = InitObjectiveLensAberrations_X();
 aberrs.C1 = 0;
-c2Angle = 20;
+c2Angle = 21.4;
 
 %% sampling on source plane:
 srcLx = 15;
