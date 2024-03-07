@@ -54,7 +54,8 @@ refY = InitAxis(refLy, refNy);
 refFx = InitFreqAxis(refLx, refNx);
 refFy = InitFreqAxis(refLy, refNy);
 [refFxMesh, refFyMesh] = meshgrid(refFx, refFy);
-refFzMesh = sqrt(wavLen^-2 - refFxMesh.^2 - refFyMesh.^2);
+refFrMesh = sqrt(refFxMesh.^2 + refFyMesh.^2);
+refFzMesh = sqrt(wavLen^-2 - (sin(refFrMesh * wavLen) / wavLen).^2);
 
 % a1  a2  a3
 % a4  a5  a6
