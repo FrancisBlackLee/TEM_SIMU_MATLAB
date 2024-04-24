@@ -34,12 +34,16 @@ else
     fprintf(fid, 'Created by TEM_SIMU_MATLAB\n');
     fprintf(fid, '\t%.6f\t%.6f\t%.6f\n', lattConsts(1), lattConsts(2),...
         lattConsts(3));
-    atomNum = size(typeCoords, 2);
-    for atomIdx = 1 : atomNum
-        fprintf(fid, '%d\t%.6f\t%.6f\t%.6f\t%.6f\t%.6f\n',...
-            typeCoords(1, atomIdx), typeCoords(3, atomIdx), typeCoords(4, atomIdx),...
-            typeCoords(5, atomIdx), typeCoords(2, atomIdx), wobbles(atomIdx));
-    end
+%     atomNum = size(typeCoords, 2);
+%     for atomIdx = 1 : atomNum
+%         fprintf(fid, '%d\t%.6f\t%.6f\t%.6f\t%.6f\t%.6f\n',...
+%             typeCoords(1, atomIdx), typeCoords(3, atomIdx), typeCoords(4, atomIdx),...
+%             typeCoords(5, atomIdx), typeCoords(2, atomIdx), wobbles(atomIdx));
+%     end
+
+    fprintf(fid, '%d\t%.6f\t%.6f\t%.6f\t%.6f\t%.6f\n', [typeCoords(1, :);...
+        typeCoords(3 : 5, :); typeCoords(2, :); reshape(wobbles, 1, [])]);
+
     fprintf(fid, '-1\n');
 
     fclose(fid);
