@@ -1,4 +1,4 @@
-% test_WriteEjkXyz.m
+% test_WriteVtlXyz.m
 clc;
 clear;
 close all;
@@ -9,5 +9,5 @@ convMat = ConversionMatrix(cellLengths, cellAngles);
 initAtomSites = ExtractAtomSiteFromCrysInfo(crysInfo);
 atomSites = RemoveSymmetricAtoms(initAtomSites);
 atomSites(3 : 5, :) = convMat * atomSites(3 : 5, :);
-wobbles = 0.08 * ones(1, size(atomSites, 2));
-WriteEjkXyz('tests/cif_op/test_si100.xyz', cellLengths, atomSites, wobbles);
+wobbles = 0.08 * ones(3, size(atomSites, 2));
+WriteVtlXyz('tests/cif_op/test_si100.vtlxyz', cellLengths, atomSites, wobbles);
