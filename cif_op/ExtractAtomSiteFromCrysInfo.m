@@ -1,4 +1,4 @@
-function [atomSiteMat] = ExtractAtomSiteFromCrysInfo(crysInfo)
+function [atomSites] = ExtractAtomSiteFromCrysInfo(crysInfo)
 %ExtractAtomSiteFromCrysInfo() extracts atom sites (after symmetry
 %operation) from the crysInfo struct output by LoadCif().
 % Input:
@@ -29,6 +29,11 @@ function [atomSiteMat] = ExtractAtomSiteFromCrysInfo(crysInfo)
 
 % find symmetry operations
 symEquivOpIdx = find(strcmp('_symmetry_equiv_pos_as_xyz', crysInfo.loopProperty(:, 1)));
+% find the alternative
+if isempty(symEquivOpIdx)
+    symEquivOpIdx = find(strcmp('_space_group_symop_operation_xyz', crysInfo.loopProperty(:, 1)));
+end
+
 if isempty(symEquivOpIdx)
     loopPropertyNum = size(crysInfo.loopProperty, 1);
     symEquivOpIdx = loopPropertyNum + 1;
@@ -67,35 +72,35 @@ fractCoordMat(1, :) = str2double(crysInfo.loopProperty(fractXIdx, 2 : atomNum + 
 fractCoordMat(2, :) = str2double(crysInfo.loopProperty(fractYIdx, 2 : atomNum + 1));
 fractCoordMat(3, :) = str2double(crysInfo.loopProperty(fractZIdx, 2 : atomNum + 1));
 
-atomSiteMat = [typeList; occuList; fractCoordMat];
-atomSiteMat = repmat(atomSiteMat, 1, symEquivOpNum);
+atomSites = [typeList; occuList; fractCoordMat];
+atomSites = repmat(atomSites, 1, symEquivOpNum);
 for i = 1 : symEquivOpNum
     head = (i - 1) * atomNum + 1;
     rear = i * atomNum;
-    atomSiteMat(3 : 5, head : rear) = symEquivOpMat(:, :, i) * atomSiteMat(3 : 5, head : rear) +...
+    atomSites(3 : 5, head : rear) = symEquivOpMat(:, :, i) * atomSites(3 : 5, head : rear) +...
         glideMat(:, i);
 end
 
 tolerance = 1e-5;
 
-index = find(atomSiteMat(3, :) > 1 + tolerance);
-atomSiteMat(3, index) = mod(atomSiteMat(3, index), 1);
-index = find(atomSiteMat(3, :) < 0 - tolerance);
-atomSiteMat(3, index) = atomSiteMat(3, index) - floor(atomSiteMat(3, index));
+index = find(atomSites(3, :) > 1 + tolerance);
+atomSites(3, index) = mod(atomSites(3, index), 1);
+index = find(atomSites(3, :) < 0 - tolerance);
+atomSites(3, index) = atomSites(3, index) - floor(atomSites(3, index));
 
-index = find(atomSiteMat(4, :) > 1 + tolerance);
-atomSiteMat(4, index) = mod(atomSiteMat(4, index), 1);
-index = find(atomSiteMat(4, :) < 0 - tolerance);
-atomSiteMat(4, index) = atomSiteMat(4, index) - floor(atomSiteMat(4, index));
+index = find(atomSites(4, :) > 1 + tolerance);
+atomSites(4, index) = mod(atomSites(4, index), 1);
+index = find(atomSites(4, :) < 0 - tolerance);
+atomSites(4, index) = atomSites(4, index) - floor(atomSites(4, index));
 
-index = find(atomSiteMat(5, :) > 1 + tolerance);
-atomSiteMat(5, index) = mod(atomSiteMat(5, index), 1);
-index = find(atomSiteMat(5, :) < 0 - tolerance);
-atomSiteMat(5, index) = atomSiteMat(5, index) - floor(atomSiteMat(5, index));
+index = find(atomSites(5, :) > 1 + tolerance);
+atomSites(5, index) = mod(atomSites(5, index), 1);
+index = find(atomSites(5, :) < 0 - tolerance);
+atomSites(5, index) = atomSites(5, index) - floor(atomSites(5, index));
 
-atomSiteMat = atomSiteMat';
-atomSiteMat = uniquetol(atomSiteMat, tolerance, 'ByRows', true);
-atomSiteMat = atomSiteMat';
+atomSites = atomSites';
+atomSites = uniquetol(atomSites, tolerance, 'ByRows', true);
+atomSites = atomSites';
 
 end
 

@@ -1,0 +1,41 @@
+data_crystal_structure_P1
+
+_symmetry_space_group_name_H-M     'P 1'
+_symmetry_Int_Tables_number        1
+
+_cell_length_a                     7.92173
+_cell_length_b                     7.92173
+_cell_length_c                     12.93329
+_cell_angle_alpha                  90.00000
+_cell_angle_beta                   90.00000
+_cell_angle_gamma                  120.00000
+_cell_volume                       702.87774
+_cell_formula_units_Z              1
+
+loop_
+_space_group_symop_operation_xyz
+x,y,z
+
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_occupancy
+As1    As    0.33333   0.66667   0.37550   1.00000
+As2    As    0.66667   0.33333   0.87550   1.00000
+In1    In    0.33333   0.66667   0.00000   1.00000
+In2    In    0.66667   0.33333   0.50000   1.00000
+loop_
+_atom_site_aniso_label
+_atom_site_aniso_U_11
+_atom_site_aniso_U_22
+_atom_site_aniso_U_33
+_atom_site_aniso_U_23
+_atom_site_aniso_U_13
+_atom_site_aniso_U_12
+   As1    0.05094    0.05094    0.02285   -0.00000    0.00000    0.02547
+   As2    0.05094    0.05094    0.02285    0.00000    0.00000    0.02547
+   In1    0.05608    0.05608    0.02617    0.00000   -0.00000    0.02804
+   In2    0.05608    0.05608    0.02617    0.00000    0.00000    0.02804
