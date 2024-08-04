@@ -32,7 +32,7 @@ title('supercell (tiled on a1-a2 plane)');
 [slices, sliceDists, extraSlice] = CrystalSlicing_X(supercell, supercell, ...
     0.3, 1, 0, 0);
 nSlice = length(sliceDists);
-sliceDists = a3Proj * sliceDists;
+sliceDists = norm(a3p) * sliceDists;
 
 %% STEM settings:
 keV = 300;
