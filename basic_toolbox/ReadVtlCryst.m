@@ -1,4 +1,4 @@
-function [bases, typeCoords, wobbles] = ReadVtlCryst(filename)
+function [bases, typeCoords, vbases, wobbles] = ReadVtlCryst(filename)
 %UNTITLED Summary of this function goes here
 %   comment
 %   (ax, ay, az)
@@ -12,6 +12,7 @@ if fileID == -1
     error('Failed to open file!');
 else
     commentLine = fgetl(fileID);
+    % a
     vecLine = fgetl(fileID);
     vecLine = extractBetween(vecLine, '(', ')');
     vecStrs = split(vecLine);
@@ -20,6 +21,7 @@ else
     az = str2double(vecStrs(3));
     bases.a = [ax, ay, az];
 
+    % b
     vecLine = fgetl(fileID);
     vecLine = extractBetween(vecLine, '(', ')');
     vecStrs = split(vecLine);
@@ -28,6 +30,7 @@ else
     bz = str2double(vecStrs(3));
     bases.b = [bx, by, bz];
 
+    % c
     vecLine = fgetl(fileID);
     vecLine = extractBetween(vecLine, '(', ')');
     vecStrs = split(vecLine);
@@ -35,6 +38,33 @@ else
     cy = str2double(vecStrs(2));
     cz = str2double(vecStrs(3));
     bases.c = [cx, cy, cz];
+
+    % va
+    vecLine = fgetl(fileID);
+    vecLine = extractBetween(vecLine, '(', ')');
+    vecStrs = split(vecLine);
+    vax = str2double(vecStrs(1));
+    vay = str2double(vecStrs(2));
+    vaz = str2double(vecStrs(3));
+    vbases.a = [vax, vay, vaz];
+
+    % vb
+    vecLine = fgetl(fileID);
+    vecLine = extractBetween(vecLine, '(', ')');
+    vecStrs = split(vecLine);
+    vbx = str2double(vecStrs(1));
+    vby = str2double(vecStrs(2));
+    vbz = str2double(vecStrs(3));
+    vbases.b = [vbx, vby, vbz];
+
+    % vc
+    vecLine = fgetl(fileID);
+    vecLine = extractBetween(vecLine, '(', ')');
+    vecStrs = split(vecLine);
+    vcx = str2double(vecStrs(1));
+    vcy = str2double(vecStrs(2));
+    vcz = str2double(vecStrs(3));
+    vbases.c = [vcx, vcy, vcz];
 
     tmpType = fscanf(fileID, '%d', 1);
     atomCount = 0;

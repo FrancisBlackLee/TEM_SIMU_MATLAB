@@ -1,9 +1,12 @@
-function WriteVtlCryst(filename, bases, typeCoords, wobbles)
+function WriteVtlCryst(filename, bases, typeCoords, vbases, wobbles)
 %UNTITLED2 Summary of this function goes here
 %   comment
-%   (ax, ay, az)
-%   (bx, by, bz)
-%   (cx, cy, cz)
+%   a = (ax, ay, az)
+%   b = (bx, by, bz)
+%   c = (cx, cy, cz)
+%   va = (vax, vay, vaz)
+%   vb = (vbx, vby, vbz)
+%   vc = (vcx, vcy, vcz)
 %   type  fracX  fracY  fracZ  occu  anisoUa  anisoUb  anisoUc
 %   -1
 
@@ -13,11 +16,17 @@ if fid == -1
 else
     fprintf(fid, 'Created by TEM_SIMU_MATLAB\n');
     % a
-    fprintf(fid, '(%.8f  %.8f  %.8f)\n', bases.a);
+    fprintf(fid, 'a = (%.8f  %.8f  %.8f)\n', bases.a);
     % b
-    fprintf(fid, '(%.8f  %.8f  %.8f)\n', bases.b);
+    fprintf(fid, 'b = (%.8f  %.8f  %.8f)\n', bases.b);
     % c
-    fprintf(fid, '(%.8f  %.8f  %.8f)\n', bases.c);
+    fprintf(fid, 'c = (%.8f  %.8f  %.8f)\n', bases.c);
+    % va
+    fprintf(fid, 'va = (%.8f  %.8f  %.8f)\n', vbases.a);
+    % vb
+    fprintf(fid, 'vb = (%.8f  %.8f  %.8f)\n', vbases.b);
+    % vc
+    fprintf(fid, 'vc = (%.8f  %.8f  %.8f)\n', vbases.c);
 
     atomNum = size(typeCoords, 2);
     for atomIdx = 1 : atomNum

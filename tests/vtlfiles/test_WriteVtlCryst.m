@@ -14,4 +14,4 @@ nAtom = size(unitCell, 2);
 wobbles = rand(3, nAtom);
 
 WriteVtlCryst('tests/vtlfiles/AlGaAs2_mp-1228891_symmetrized.cryst', bases, ...
-    unitCell, wobbles);
+    unitCell, bases, wobbles);
