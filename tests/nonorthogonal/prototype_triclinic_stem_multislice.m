@@ -99,9 +99,10 @@ for iStack = 1 : nStack
         wave = ifftshift(ifft2(fftshift(propKernels(:, :, iSlice)) .*...
             fft2(fftshift(wave))));
         
-%         waveI = abs(wave.^2);
-%         mesh(xMesh, yMesh, waveI);
-%         view(0, 90);
+        waveI = abs(wave.^2);
+        mesh(xMesh, yMesh, waveI);
+        view(0, 90);
+        drawnow;
     end
 end
 

@@ -12,7 +12,7 @@ a1p = [norm(a1); 0; 0];
 a2p = [norm(a2) * cosA1A2; norm(a2) * sinA1A2; 0];
 a3p = cross(a1p, a2p);
 
-rotMat = [a1, a2, a3] / [a1p, a2p, a3p];
+rotMat = [a1p, a2p, a3p] / [a1, a2, a3];
 invRotMat = inv(rotMat);
 
 end
