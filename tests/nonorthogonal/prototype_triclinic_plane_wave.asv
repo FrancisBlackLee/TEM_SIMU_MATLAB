@@ -1,0 +1,45 @@
+% prototype_triclinic_plane_wave.m
+clc;
+clear;
+close all;
+%% load unit cell:
+crysInfo = LoadCif('tests/nonorthogonal/Gd2B4O9.cif');
+[cellLengths, cellAngles] = ExtractCellConstFromCrysInfo(crysInfo);
+[unitCell, convMat, cutoff] = CrystalAdvisor('tests/nonorthogonal/Gd2B4O9.cif', ...
+    [0, 0, 1], true);
+
+figure;
+PlotUnitCell3D(convMat, unitCell);
+title('unit cell');
+
+[a1, a2, a3] = ConvMatToBases(convMat);
+[a1p, a2p, rotMat, invRotMat] = NonorthoBasesReorient(a1, a2);
+convMatP = [reshape(a1p, [], 1), reshape(a2p, [], 1), zeros(3, 1)];
+
+a3p = rotMat * reshape(a3, [], 1);
+a3Proj = dot(a1, cross(a2, a3)) / norm(cross(a1, a2));
+
+%% build a supercell:
+na1 = 3;
+na2 = 3;
+supercell = TileUnitCell(unitCell, [na1, na2, 1]);
+
+figure;
+PlotUnitCell3D(convMat, supercell);
+title('supercell (tiled on a1-a2 plane)');
+
+%% slice the supercell:
+[slices, sliceDists, extraSlice] = CrystalSlicing_X(supercell, supercell, ...
+    0.3, 1, 0, 0);
+nSlice = length(sliceDists);
+sliceDists = norm(a3p) * sliceDists;
+
+%% tem settings:
+keV = 300;
+wavLen = HighEnergyWavLen_X(keV);
+
+pol = acos(dot(a3p, [0,0,1]') / norm(a3p));
+azi = atan2(a3p(2), a3p(1));
+
+fx0 = pol * cos(azi) / wavLen;
+fy0 = 
