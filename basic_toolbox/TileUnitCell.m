@@ -82,7 +82,8 @@ nc = tiles(3);
 
 cellNum = na * nb * nc;
 atomNumPerUnitCell = size(baseUnitCell, 2);
-superCell = zeros(5, cellNum * atomNumPerUnitCell);
+entryNum = size(baseUnitCell, 1);
+superCell = zeros(entryNum, cellNum * atomNumPerUnitCell);
 
 if any(mod(tiles, 1))
     error('Invalid tiles');
