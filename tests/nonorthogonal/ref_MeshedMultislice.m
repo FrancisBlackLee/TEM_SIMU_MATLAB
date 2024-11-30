@@ -21,14 +21,14 @@ WriteEjkXyz('tests/nonorthogonal/MoS2_110.ejkxyz', lattConsts, unitCell, wobbles
 task = InitCbedGpuTask();
 
 task.specimen.filename = 'tests/nonorthogonal/MoS2_110.ejkxyz';
-task.specimen.tile = [7, 12];
+task.specimen.tile = [7, 12] * 2;
 task.specimen.nConfig = 1;
 task.specimen.depths = 495;
 
 task.beam.keV = 300;
 
-task.nPixel.nx = 512;
-task.nPixel.ny = 512;
+task.nPixel.nx = 1024;
+task.nPixel.ny = 1024;
 
 task.aperture.r = 3.0;
 

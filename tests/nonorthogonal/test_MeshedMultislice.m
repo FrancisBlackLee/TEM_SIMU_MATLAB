@@ -65,24 +65,28 @@ figure;
 mesh(fxMesh, fyMesh, waveI);
 xlabel('$f_x$ (1 / \AA)', 'Interpreter', 'latex');
 ylabel('$f_y$ (1 / \AA)', 'Interpreter', 'latex');
+colormap('jet');
 axis equal;
 axis tight;
 title('Nonorthogonal mesh: CBED');
+view(0, 90);
 
 %% load ref CBED:
-lx = 38.7038;
-ly = 38.3069;
-nx = 512;
-ny = 512;
-x = InitAxis(lx, nx);
-y = InitAxis(ly, ny);
-refCbed = ReadBinaryFile('tests/nonorthogonal/MoS2_110_cbed.bin', [ny, nx], 'row', 'float');
+refLy = 38.7038 * 2;
+refLx = 38.3069 * 2;
+refNx = 512 * 2;
+refNy = 512 * 2;
+refFx = InitFreqAxis(refLx, refNx);
+refFy = InitFreqAxis(refLy, refNy);
+refCbed = ReadBinaryFile('tests/nonorthogonal/MoS2_110_cbed.bin', [refNy, refNx], 'row', 'float');
 refCbed = refCbed / sum(refCbed, 'all');
 
 figure;
-imagesc(x, y, refCbed);
+imagesc(refFy, refFx, refCbed');
 xlabel('$f_x$ (1 / \AA)', 'Interpreter', 'latex');
 ylabel('$f_y$ (1 / \AA)', 'Interpreter', 'latex');
+colormap('jet');
 axis equal;
 axis tight;
 title('Orthogonal mesh: CBED');
+view(0, 90);
