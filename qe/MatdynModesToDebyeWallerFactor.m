@@ -17,10 +17,10 @@ nq = size(qs, 1);
 nBand = 3 * nAtom;
 
 for iAtom = 1 : nAtom
-    for iq = 1 : nq
-        for iBand = 1 : nBand
-            for alpha = 1 : 3
-                for beta = 1 : 3
+    for alpha = 1 : 3
+        for beta = 1 : alpha
+            for iq = 1 : nq
+                for iBand = 1 : nBand
                     omega = 2 * pi * bands(iq, iBand) * 1e12;
                     if abs(bands(iq, iBand)) > thr
                         dwfs(alpha, beta, iAtom) = dwfs(alpha, beta, iAtom) +...
@@ -30,10 +30,12 @@ for iAtom = 1 : nAtom
                     end
                 end
             end
+
+            dwfs(beta, alpha, iAtom) = dwfs(alpha, beta, iAtom);
         end
     end
 end
 
-dwfs = 8 * pi^2 * dwfs * hbar / (2 * nq) * 1e20;
+dwfs = real(8 * pi^2 * dwfs * hbar / (2 * nq) * 1e20);
 
 end
