@@ -3,7 +3,7 @@ clc;
 clear;
 close all;
 %% main:
-[bases, unitCell, vbases, wobbles] = ReadVtlCryst('tests/vtlfiles/AlGaAs2_mp-1228891_symmetrized.cryst');
+[bases, unitCell, vbases, anisoU] = ReadVtlCryst('tests/vtlfiles/AlGaAs2_mp-1228891_symmetrized.cryst');
 convMat = BasesToConvMat(bases);
 
 figure;

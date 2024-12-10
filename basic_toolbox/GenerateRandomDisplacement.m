@@ -1,19 +1,4 @@
-% test_aniso_u_tensor.m
-clc;
-clear;
-close all;
-%% main:
-% Example usage
-U = [0.050, 0.025, 0.000;
-     0.025, 0.050, 0.000;
-     0.000, 0.000, 0.030]; % Example ADP tensor (symmetric, positive-definite)
-
-random_displacement = generate_random_displacement(U, 100000);
-% disp('Random displacement:');
-% disp(random_displacement);
-
-%% function:
-function displacement = generate_random_displacement(U, n)
+function displacement = GenerateRandomDisplacement(U, n)
     % Ensure the ADP tensor is symmetric
     if ~isequal(U, U')
         error('The ADP tensor must be symmetric.');

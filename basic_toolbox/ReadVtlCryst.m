@@ -1,10 +1,13 @@
-function [bases, typeCoords, vbases, wobbles] = ReadVtlCryst(filename)
+function [bases, typeCoords, vbases, anisoU] = ReadVtlCryst(filename)
 %UNTITLED Summary of this function goes here
 %   comment
-%   (ax, ay, az)
-%   (bx, by, bz)
-%   (cx, cy, cz)
-%   type  fracX  fracY  fracZ  occu  anisoUa  anisoUb  anisoUc
+%   a = (ax, ay, az)
+%   b = (bx, by, bz)
+%   c = (cx, cy, cz)
+%   va = (vax, vay, vaz)
+%   vb = (vbx, vby, vbz)
+%   vc = (vcx, vcy, vcz)
+%   type  fracX  fracY  fracZ  occu  anisoU11  anisoU22  anisoU33  anisoU23  anisoU13  anisoU12
 %   -1
 
 fileID = fopen(filename);
@@ -75,9 +78,12 @@ else
         typeCoords(4, atomCount) = fscanf(fileID, '%f', 1);
         typeCoords(5, atomCount) = fscanf(fileID, '%f', 1);
         typeCoords(2, atomCount) = fscanf(fileID, '%f', 1);
-        wobbles(1, atomCount) = fscanf(fileID, '%f', 1);
-        wobbles(2, atomCount) = fscanf(fileID, '%f', 1);
-        wobbles(3, atomCount) = fscanf(fileID, '%f', 1);
+        anisoU(1, atomCount) = fscanf(fileID, '%f', 1);
+        anisoU(2, atomCount) = fscanf(fileID, '%f', 1);
+        anisoU(3, atomCount) = fscanf(fileID, '%f', 1);
+        anisoU(4, atomCount) = fscanf(fileID, '%f', 1);
+        anisoU(5, atomCount) = fscanf(fileID, '%f', 1);
+        anisoU(6, atomCount) = fscanf(fileID, '%f', 1);
         
         tmpType = fscanf(fileID, '%d', 1);
     end

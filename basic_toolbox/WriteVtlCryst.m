@@ -1,4 +1,4 @@
-function WriteVtlCryst(filename, bases, typeCoords, vbases, wobbles)
+function WriteVtlCryst(filename, bases, typeCoords, vbases, anisoU)
 %UNTITLED2 Summary of this function goes here
 %   comment
 %   a = (ax, ay, az)
@@ -7,7 +7,7 @@ function WriteVtlCryst(filename, bases, typeCoords, vbases, wobbles)
 %   va = (vax, vay, vaz)
 %   vb = (vbx, vby, vbz)
 %   vc = (vcx, vcy, vcz)
-%   type  fracX  fracY  fracZ  occu  anisoUa  anisoUb  anisoUc
+%   type  fracX  fracY  fracZ  occu  anisoU11  anisoU22  anisoU33  anisoU23  anisoU13  anisoU12
 %   -1
 
 fid = fopen(filename, 'w');
@@ -30,10 +30,11 @@ else
 
     atomNum = size(typeCoords, 2);
     for atomIdx = 1 : atomNum
-        fprintf(fid, '%d\t%.8f  %.8f  %.8f  %.8f  %.8f  %.8f  %.8f\n',...
+        fprintf(fid, '%d\t%.8f  %.8f  %.8f  %.8f  %.8f  %.8f  %.8f  %.8f  %.8f  %.8f\n',...
             typeCoords(1, atomIdx), typeCoords(3, atomIdx), typeCoords(4, atomIdx),...
-            typeCoords(5, atomIdx), typeCoords(2, atomIdx), wobbles(1, atomIdx),...
-            wobbles(2, atomIdx), wobbles(3, atomIdx));
+            typeCoords(5, atomIdx), typeCoords(2, atomIdx), anisoU(1, atomIdx),...
+            anisoU(2, atomIdx), anisoU(3, atomIdx), anisoU(4, atomIdx),...
+            anisoU(5, atomIdx), anisoU(6, atomIdx));
     end
     fprintf(fid, '-1\n');
 
