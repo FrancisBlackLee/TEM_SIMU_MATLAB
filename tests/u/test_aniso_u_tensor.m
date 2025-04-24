@@ -9,6 +9,10 @@ U = [0.050, 0.025, 0.000;
      0.000, 0.000, 0.030]; % Example ADP tensor (symmetric, positive-definite)
 
 random_displacement = generate_random_displacement(U, 100000);
+figure;
+scatter(random_displacement(1, :), random_displacement(2, :), 'filled');
+axis equal;
+axis tight;
 % disp('Random displacement:');
 % disp(random_displacement);
 

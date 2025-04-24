@@ -1,6 +1,12 @@
-function displacement = GenerateRandomDisplacement(U, n)
+function displacement = GenerateRandomDisplacement(U, n, tol)
+    if nargin == 2
+        tol = 1.0e-10;
+    end
     % Ensure the ADP tensor is symmetric
-    if ~isequal(U, U')
+%     if ~isequal(U, U')
+%         error('The ADP tensor must be symmetric.');
+%     end
+    if(any(abs(U - U') > tol))
         error('The ADP tensor must be symmetric.');
     end
     
