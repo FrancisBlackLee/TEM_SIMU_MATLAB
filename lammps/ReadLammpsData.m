@@ -74,10 +74,19 @@ else
             atomCount = atomCount + 1;
             strs = split(tmpLine);
             ids(atomCount) = str2double(strs{1});
-            axyz(1, atomCount) = AtomTypeStrToIdx(strs{2});
+            if isnan(str2double(strs{2}))
+                axyz(1, atomCount) = AtomTypeStrToIdx(strs{2});
+            else
+                axyz(1, atomCount) = str2double(strs{2});
+            end
+
             axyz(2, atomCount) = str2double(strs{3});
             axyz(3, atomCount) = str2double(strs{4});
             axyz(4, atomCount) = str2double(strs{5});
+
+            if atomCount == nAtom
+                break;
+            end
         end
     end
 
