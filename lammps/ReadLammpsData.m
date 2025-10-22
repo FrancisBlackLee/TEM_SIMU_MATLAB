@@ -80,9 +80,9 @@ else
                 axyz(1, atomCount) = str2double(strs{2});
             end
 
-            axyz(2, atomCount) = str2double(strs{3});
-            axyz(3, atomCount) = str2double(strs{4});
-            axyz(4, atomCount) = str2double(strs{5});
+            axyz(2, atomCount) = str2double(strs{3}) - xlo_xhi(1);
+            axyz(3, atomCount) = str2double(strs{4}) - ylo_yhi(1);
+            axyz(4, atomCount) = str2double(strs{5}) - zlo_zhi(1);
 
             if atomCount == nAtom
                 break;
