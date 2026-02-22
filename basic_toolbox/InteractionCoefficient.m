@@ -22,7 +22,7 @@ function [interCoeff] = InteractionCoefficient(KeV)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 wavLen = HighEnergyWavLen_X(KeV);
-interCoeff = 2 * pi / (wavLen * KeV) * (511 + KeV) / (2 * 511 + KeV);
+interCoeff = 2 * pi ./ (wavLen .* KeV) .* (511 + KeV) ./ (2 * 511 + KeV);
 
 end
 
